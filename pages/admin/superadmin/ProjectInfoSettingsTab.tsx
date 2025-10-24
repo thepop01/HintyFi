@@ -96,7 +96,7 @@ export const ProjectInfoSettingsTab: React.FC = () => {
             <FormRow><FormLabel>Long Desc</FormLabel><FormField><FormTextArea name="longDescription" value={formData.longDescription} onChange={handleChange} rows={5} /></FormField></FormRow>
             <FormRow><FormLabel>Logo</FormLabel><FormField><ImageUploadInput value={formData.logo} onChange={val => handleImageChange('logo', val)} /></FormField></FormRow>
             <FormRow><FormLabel>Banner</FormLabel><FormField><ImageUploadInput value={formData.banner} onChange={val => handleImageChange('banner', val)} /></FormField></FormRow>
-            <FormRow><FormLabel>Category</FormLabel><FormField><div className="grid grid-cols-2 sm:grid-cols-3 gap-2">{['defi', 'nft', 'gaming', 'socialfi', 'dex', 'rwa', 'infrastructure', 'wallet', 'depin', 'ai', 'meme', 'launchpad'].map(cat => (<FormCheckbox key={cat} label={cat} value={cat} checked={formData.category?.includes(cat as ProjectCategory)} onChange={handleCategoryChange} />))}</FormField></FormRow>
+            <FormRow><FormLabel>Category</FormLabel><FormField><div className="grid grid-cols-2 sm:grid-cols-3 gap-2">{['defi', 'nft', 'gaming', 'socialfi', 'dex', 'rwa', 'infrastructure', 'wallet', 'depin', 'ai', 'meme', 'launchpad'].map(cat => (<FormCheckbox key={cat} label={cat} value={cat} checked={formData.category?.includes(cat as ProjectCategory)} onChange={handleCategoryChange} />))}</div></FormField></FormRow>
             <FormRow><FormLabel>Strategy Walkthrough</FormLabel><FormField><FormTextArea value={formData.strategyWalkthrough?.join('\n') || ''} onChange={handleStrategyChange} rows={5} placeholder="One step per line" /></FormField></FormRow>
             
             <FormSectionHeader>Links</FormSectionHeader>

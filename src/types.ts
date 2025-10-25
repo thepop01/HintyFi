@@ -137,7 +137,7 @@ export interface User {
         twitter?: string;
         discord?: string;
     };
-    trndzScore?: number;
+    tirthPoints?: number;
     manualCredoPoints?: number;
     votedProjectIds?: string[];
     votedCampaignEntryIds?: string[];

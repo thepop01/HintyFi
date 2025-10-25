@@ -86,7 +86,7 @@ const seedData = () => {
       },
       projectsBuilding: ['Opals', 'CULT', 'Monadata AI'],
       discordRoles: ['Community Contributor', 'Artist', 'Cultist', 'Initiate', 'Genesis Holder'],
-      trndzScore: 12345,
+      tirthPoints: 12345,
       manualCredoPoints: 0,
       votedProjectIds: [],
       votedCampaignEntryIds: [],
@@ -110,7 +110,7 @@ const seedData = () => {
       },
       projectsBuilding: [],
       discordRoles: ['Animator', 'High Priest', 'with full access'],
-      trndzScore: 9870,
+      tirthPoints: 9870,
       manualCredoPoints: 0,
       votedProjectIds: [],
       votedCampaignEntryIds: [],
@@ -130,7 +130,7 @@ const seedData = () => {
       socials: { twitter: "CynthiaGamer" },
       projectsBuilding: ['Valor Quest', 'Showdown'],
       discordRoles: ['Gamer Guild'],
-      trndzScore: 8400,
+      tirthPoints: 8400,
       manualCredoPoints: 0,
       votedProjectIds: [],
       votedCampaignEntryIds: [],
@@ -143,7 +143,7 @@ const seedData = () => {
       discordId: '273462001309384707',
       socials: { twitter: "David_DeFi" },
       discordRoles: ['Early Supporter'],
-      trndzScore: 7650,
+      tirthPoints: 7650,
       manualCredoPoints: 0,
       votedProjectIds: [],
       votedCampaignEntryIds: [],
@@ -162,7 +162,7 @@ const seedData = () => {
       discordId: '273462001309384708',
       projectsBuilding: ['Kizzy'],
       discordRoles: ['Community Contributor'],
-      trndzScore: 10500,
+      tirthPoints: 10500,
       manualCredoPoints: 0,
       votedProjectIds: [],
       votedCampaignEntryIds: [],
@@ -175,7 +175,7 @@ const seedData = () => {
       discordId: '273462001309384709',
       socials: { twitter: "FrankieMemes" },
       discordRoles: ['Meme Lord'],
-      trndzScore: 6320,
+      tirthPoints: 6320,
       manualCredoPoints: 0,
       votedProjectIds: [],
       votedCampaignEntryIds: [],
@@ -189,7 +189,7 @@ const seedData = () => {
       socials: { twitter: "Grace3D" },
       projectsBuilding: ['Sunscreen'],
       discordRoles: ['3D Modeler'],
-      trndzScore: 11200,
+      tirthPoints: 11200,
       manualCredoPoints: 0,
       votedProjectIds: [],
       votedCampaignEntryIds: [],
@@ -1538,7 +1538,7 @@ export const submitIdentityAnswer = (questId: string, userId: string, answer: st
     };
     
     // Award Tirth point
-    users[userIndex].trndzScore = (users[userIndex].trndzScore || 0) + 1;
+    users[userIndex].tirthPoints = (users[userIndex].tirthPoints || 0) + 1;
 
     quest.identityQuestion.answers.push(newAnswer);
     save('quests', quests);
@@ -1580,7 +1580,7 @@ export const submitMultipleChoiceAnswer = (questId: string, userId: string, answ
     };
     
     // Award Tirth point
-    users[userIndex].trndzScore = (users[userIndex].trndzScore || 0) + 1;
+    users[userIndex].tirthPoints = (users[userIndex].tirthPoints || 0) + 1;
 
     quest.multipleChoiceQuestion.answers.push(newAnswer);
     save('quests', quests);
@@ -1645,7 +1645,7 @@ export const enterCampaign = (campaignId: string, user: User, link: string): { s
     
     const userIndex = users.findIndex(u => u.id === user.id);
     if (userIndex !== -1) {
-        users[userIndex].trndzScore = (users[userIndex].trndzScore || 0) + 1;
+        users[userIndex].tirthPoints = (users[userIndex].tirthPoints || 0) + 1;
     }
 
     campaign.entries.push(newEntry);
@@ -1671,7 +1671,7 @@ export const voteCampaignEntry = (campaignId: string, entryId: string, user: Use
         const currentUser = users[userIndex];
         if (!currentUser.votedCampaignEntryIds) currentUser.votedCampaignEntryIds = [];
         if (!currentUser.votedCampaignEntryIds.includes(entryId)) {
-            currentUser.trndzScore = (currentUser.trndzScore || 0) + 1;
+            currentUser.tirthPoints = (currentUser.tirthPoints || 0) + 1;
             currentUser.votedCampaignEntryIds.push(entryId);
         }
     }
@@ -1713,7 +1713,7 @@ export const voteProject = (projectId: string, user: User, vote: 'up' | 'down'):
         if (!currentUser.votedProjectIds) currentUser.votedProjectIds = [];
 
         if (!currentUser.votedProjectIds.includes(projectId)) {
-            currentUser.trndzScore = (currentUser.trndzScore || 0) + 1;
+            currentUser.tirthPoints = (currentUser.tirthPoints || 0) + 1;
             currentUser.votedProjectIds.push(projectId);
         }
     }
@@ -1849,7 +1849,7 @@ export const updateUserTirthPoints = (userId: string, pointDelta: number): boole
         if (userIndex === -1) return false;
 
         const user = users[userIndex];
-        user.trndzScore = (user.trndzScore || 0) + pointDelta;
+        user.tirthPoints = (user.tirthPoints || 0) + pointDelta;
         users[userIndex] = user;
 
         save('users', users);
@@ -1887,7 +1887,7 @@ export const selectCampaignWinners = (campaignId: string): { success: boolean; m
 
         users.forEach(user => {
             if (winnerUserIds.includes(user.id)) {
-                user.trndzScore = (user.trndzScore || 0) + 5;
+                user.tirthPoints = (user.tirthPoints || 0) + 5;
             }
         });
 
@@ -1993,7 +1993,7 @@ export const addPointsToUser = (userId: string, points: { credo?: number, tirth?
             user.manualCredoPoints = (user.manualCredoPoints || 0) + points.credo;
         }
         if (points.tirth) {
-            user.trndzScore = (user.trndzScore || 0) + points.tirth;
+            user.tirthPoints = (user.tirthPoints || 0) + points.tirth;
         }
 
         users[userIndex] = user;
@@ -2017,7 +2017,7 @@ export const removePointsFromUser = (userId: string, points: { credo?: number, t
             user.manualCredoPoints = (user.manualCredoPoints || 0) - points.credo;
         }
         if (points.tirth) {
-            user.trndzScore = (user.trndzScore || 0) - points.tirth;
+            user.tirthPoints = (user.tirthPoints || 0) - points.tirth;
         }
 
         users[userIndex] = user;

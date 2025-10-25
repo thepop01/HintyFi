@@ -144,7 +144,7 @@ const CommunitySheet: React.FC = () => {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-base text-on-surface-variant capitalize">{member.role}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-primary">{member.score.toLocaleString()}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-accent">{member.trndzScore?.toLocaleString() || 'N/A'}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-accent">{member.tirthPoints?.toLocaleString() || 'N/A'}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         {member.buildingProjects && member.buildingProjects.length > 0 ? (
                                             <div className="flex items-center">

@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { motion, Variants } from 'framer-motion';
 import * as ReactRouterDOM from 'react-router-dom';
-import { User, Project, NftCollection } from '../../src/types';
+import { User, Project, NftCollection, PointTier } from '../../src/types';
 import { getProjects, vouchForUser } from '../../src/services/dataService';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
@@ -43,6 +43,54 @@ const ProfileWall: React.FC<ProfileWallProps> = ({ user }) => {
     } = user;
 
     const allProjects = useMemo(() => getProjects(), []);
+
+    const credoPoints = useMemo(() => {
+        const projectsById = new Map<string, Project>();
+        allProjects.forEach(project => {
+            projectsById.set(project.id, project);
+        });
+
+        const findTier = (tiers: PointTier[] | undefined, amount: number): PointTier | undefined => {
+            if (!tiers) return undefined;
+            return tiers.find(tier => 
+                amount >= tier.minAmount && (tier.maxAmount === null || amount <= tier.maxAmount)
+            );
+        };
+
+        let points = 0;
+        const userRoles = new Set(user.discordRoles || []);
+
+        allProjects.forEach(project => {
+            if (project.discordRoles) {
+                project.discordRoles.forEach(role => {
+                    if (userRoles.has(role.name) && role.points) {
+                        points += role.points;
+                    }
+                });
+            }
+        });
+
+        (user.nftHoldings || []).forEach(holding => {
+            const project = projectsById.get(holding.projectId);
+            if (project && project.nftCollections) {
+                const pointsPerDay = project.nftCollections.reduce((total, collection) => total + (collection.pointsPerDay || 0), 0);
+                if (pointsPerDay > 0) points += holding.daysHeld * pointsPerDay;
+                const oneTimePoints = project.nftCollections.reduce((total, collection) => total + (collection.oneTimePoints || 0), 0);
+                points += oneTimePoints;
+            }
+        });
+
+        (user.tokenHoldings || []).forEach(holding => {
+            const project = projectsById.get(holding.projectId);
+            if (project && project.tokenHoldingTiers) {
+                const tier = findTier(project.tokenHoldingTiers, holding.amount);
+                if (tier) points += holding.daysHeld * tier.pointsPerDay;
+            }
+        });
+
+        points += user.manualCredoPoints || 0;
+        return Math.round(points);
+    }, [user, allProjects]);
 
     const userHoldings = useMemo(() => {
         if (!user.nftHoldings || user.nftHoldings.length === 0) {
@@ -132,7 +180,7 @@ const ProfileWall: React.FC<ProfileWallProps> = ({ user }) => {
                         <div className="profile-identity-text">
                             <h2 className="profile-badge-name">{name}</h2>
                             <p className="profile-badge-userid">USER ID: {id}</p>
-                            <p className="profile-badge-score">SCORE: {tirthPoints?.toLocaleString() || 'N/A'}</p>
+                            <p className="profile-badge-score">SCORE: {credoPoints?.toLocaleString() || 'N/A'}</p>
                         </div>
                     </div>
 

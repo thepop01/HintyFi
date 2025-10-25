@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
-import { getProjects, updateUserTirthPoints } from '../src/services/dataService';
+import { getProjects } from '../src/services/dataService';
 import { Project, Task } from '../src/types';
 import { ArrowLeft, CheckCircle, Circle, Link as LinkIcon, Edit3, Youtube } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -90,12 +90,7 @@ const ProjectTasksPage: React.FC = () => {
 
     const handleToggle = (taskId: string) => {
         if (!project) return;
-        const wasCompleted = isTaskCompleted(project.id, taskId);
         toggleTaskCompletion(project.id, taskId);
-        if (currentUser) {
-            const pointDelta = wasCompleted ? -1 : 1;
-            updateUserTirthPoints(currentUser.id, pointDelta);
-        }
     };
 
     if (!project) {

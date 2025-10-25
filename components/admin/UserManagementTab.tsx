@@ -316,7 +316,7 @@ const UserManagementTab: React.FC = () => {
                             onChange={handlePointsToAddChange}
                             placeholder="e.g., 50"
                         />
-                        <p className="text-xs text-on-surface-variant mt-1">Current total: {(userForAddPoints?.trndzScore || 0).toLocaleString()}</p>
+                        <p className="text-xs text-on-surface-variant mt-1">Current total: {(userForAddPoints?.tirthPoints || 0).toLocaleString()}</p>
                     </div>
                     <div className="flex justify-end gap-3 pt-4">
                         <button type="button" onClick={() => setUserForAddPoints(null)} className="neu-button px-4 py-1.5 font-semibold">Cancel</button>
@@ -351,7 +351,7 @@ const UserManagementTab: React.FC = () => {
                             onChange={handlePointsToRemoveChange}
                             placeholder="e.g., 50"
                         />
-                        <p className="text-xs text-on-surface-variant mt-1">Current total: {(userForRemovePoints?.trndzScore || 0).toLocaleString()}</p>
+                        <p className="text-xs text-on-surface-variant mt-1">Current total: {(userForRemovePoints?.tirthPoints || 0).toLocaleString()}</p>
                     </div>
                     <div className="flex justify-end gap-3 pt-4">
                         <button type="button" onClick={() => setUserForRemovePoints(null)} className="neu-button px-4 py-1.5 font-semibold">Cancel</button>

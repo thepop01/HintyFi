@@ -36,7 +36,7 @@ const ProfileWall: React.FC<ProfileWallProps> = ({ user }) => {
         id,
         name,
         profilePic,
-        trndzScore,
+        tirthPoints,
         discordRoles = [],
         projectsBuilding = [],
         banner,
@@ -132,7 +132,7 @@ const ProfileWall: React.FC<ProfileWallProps> = ({ user }) => {
                         <div className="profile-identity-text">
                             <h2 className="profile-badge-name">{name}</h2>
                             <p className="profile-badge-userid">USER ID: {id}</p>
-                            <p className="profile-badge-score">SCORE: {trndzScore?.toLocaleString() || 'N/A'}</p>
+                            <p className="profile-badge-score">SCORE: {tirthPoints?.toLocaleString() || 'N/A'}</p>
                         </div>
                     </div>
 

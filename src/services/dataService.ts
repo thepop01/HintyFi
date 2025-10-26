@@ -5,7 +5,7 @@ import { uid } from '../../utils/helpers';
 import { 
     User, Event, Project, CampaignEntry, CampaignEvent, ProjectCategory, TeamMember, 
     Utility, DiscordRole, DropStatus, PointTier, UserNftHolding, UserTokenHolding, 
-    Quest, QuestEntry, QuestAnswer, CredoSettings, NftPerk, Perk, NftCollection, 
+    Quest, QuestEntry, QuestAnswer, CredoSettings, NftPerk, NftCollection, 
     Task, WeeklyDiscordEvent, SiteContentSettings, Coin, AmaEvent, EventCategory, MultipleChoiceAnswer
 } from '../types';
 
@@ -1196,6 +1196,7 @@ const seedData = () => {
 
     if (name === 'Opals') {
         projectData.id = 'proj_45'; // Ensure consistent ID for Opals
+        projectData.stage = 'Launched'; // Mark as a past build
         projectData.isCrowned = true;
         projectData.isHot = true;
         projectData.votes = { up: 4, down: 2, voters: [ { userId: 'u_1', vote: 'up' }, { userId: 'u_2', vote: 'up' }, { userId: 'u_5', vote: 'up' }, { userId: 'u_4', vote: 'up' }, { userId: 'u_7', vote: 'down' }, { userId: 'u_3', vote: 'down' }, ] };
@@ -1981,7 +1982,7 @@ export const updateProjectStatus = (projectId: string, status: 'approved' | 'rej
     }
 }
 
-export const addPointsToUser = (userId: string, points: { credo?: number, tirth?: number }): boolean => {
+export const addPointsToUser = (userId: string, points: { credo?: number }, tirthAdjustment?: { points: number, category: 'tasks' | 'wins' | 'rewards', reason: string }): boolean => {
     try {
         const users = getUsers();
         const userIndex = users.findIndex(u => u.id === userId);
@@ -1992,8 +1993,16 @@ export const addPointsToUser = (userId: string, points: { credo?: number, tirth?
         if (points.credo) {
             user.manualCredoPoints = (user.manualCredoPoints || 0) + points.credo;
         }
-        if (points.tirth) {
-            user.tirthPoints = (user.tirthPoints || 0) + points.tirth;
+        if (tirthAdjustment && tirthAdjustment.points !== 0) {
+            if (!user.manualTirthAdjustments) {
+                user.manualTirthAdjustments = [];
+            }
+            user.manualTirthAdjustments.push({
+                points: tirthAdjustment.points,
+                category: tirthAdjustment.category,
+                reason: tirthAdjustment.reason,
+                timestamp: Date.now()
+            });
         }
 
         users[userIndex] = user;
@@ -2005,7 +2014,7 @@ export const addPointsToUser = (userId: string, points: { credo?: number, tirth?
     }
 };
 
-export const removePointsFromUser = (userId: string, points: { credo?: number, tirth?: number }): boolean => {
+export const removePointsFromUser = (userId: string, points: { credo?: number }, tirthAdjustment?: { points: number, category: 'tasks' | 'wins' | 'rewards', reason: string }): boolean => {
     try {
         const users = getUsers();
         const userIndex = users.findIndex(u => u.id === userId);
@@ -2016,8 +2025,16 @@ export const removePointsFromUser = (userId: string, points: { credo?: number, t
         if (points.credo) {
             user.manualCredoPoints = (user.manualCredoPoints || 0) - points.credo;
         }
-        if (points.tirth) {
-            user.tirthPoints = (user.tirthPoints || 0) - points.tirth;
+        if (tirthAdjustment && tirthAdjustment.points !== 0) {
+            if (!user.manualTirthAdjustments) {
+                user.manualTirthAdjustments = [];
+            }
+            user.manualTirthAdjustments.push({
+                points: -tirthAdjustment.points,
+                category: tirthAdjustment.category,
+                reason: tirthAdjustment.reason,
+                timestamp: Date.now()
+            });
         }
 
         users[userIndex] = user;

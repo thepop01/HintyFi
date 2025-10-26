@@ -124,6 +124,13 @@ export interface UserTokenHolding {
     daysHeld: number;
 }
 
+export interface ManualTirthAdjustment {
+    points: number;
+    reason: string;
+    timestamp: number;
+    category: 'tasks' | 'wins' | 'rewards';
+}
+
 // User
 export interface User {
     id: string;
@@ -139,6 +146,7 @@ export interface User {
     };
     tirthPoints?: number;
     manualCredoPoints?: number;
+    manualTirthAdjustments?: ManualTirthAdjustment[];
     votedProjectIds?: string[];
     votedCampaignEntryIds?: string[];
     vouchedFor?: string[];

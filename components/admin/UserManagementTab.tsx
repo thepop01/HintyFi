@@ -53,9 +53,9 @@ const UserManagementTab: React.FC = () => {
     useClickOutside(userSearchWrapperRef, () => setIsUserSearchFocused(false));
 
     const [userForRemovePoints, setUserForRemovePoints] = useState<User | null>(null);
-    const [pointsToRemove, setPointsToRemove] = useState({ credo: 0, tirth: 0 });
+    const [pointsToRemove, setPointsToRemove] = useState({ credo: 0, tirth: 0, tirthCategory: 'rewards', tirthReason: '' });
     const [userForAddPoints, setUserForAddPoints] = useState<User | null>(null);
-    const [pointsToAdd, setPointsToAdd] = useState({ credo: 0, tirth: 0 });
+    const [pointsToAdd, setPointsToAdd] = useState({ credo: 0, tirth: 0, tirthCategory: 'rewards', tirthReason: '' });
 
 
     const debouncedProjectSearchTerm = useDebounce(projectSearchTerm, 300);
@@ -96,27 +96,26 @@ const UserManagementTab: React.FC = () => {
     
     const handleOpenRemovePointsModal = (user: User) => {
         setUserForRemovePoints(user);
-        setPointsToRemove({ credo: 0, tirth: 0 });
+        setPointsToRemove({ credo: 0, tirth: 0, tirthCategory: 'rewards', tirthReason: '' });
     };
     
     const handleOpenAddPointsModal = (user: User) => {
         setUserForAddPoints(user);
-        setPointsToAdd({ credo: 0, tirth: 0 });
+        setPointsToAdd({ credo: 0, tirth: 0, tirthCategory: 'rewards', tirthReason: '' });
     };
 
-    const handlePointsToRemoveChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handlePointsChange = (setter: React.Dispatch<React.SetStateAction<any>>) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setPointsToRemove(prev => ({ ...prev, [name]: parseInt(value, 10) || 0 }));
-    };
-
-    const handlePointsToAddChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setPointsToAdd(prev => ({ ...prev, [name]: parseInt(value, 10) || 0 }));
+        setter(prev => ({ ...prev, [name]: (name === 'credo' || name === 'tirth') ? parseInt(value, 10) || 0 : value }));
     };
 
     const handleRemovePoints = () => {
         if (!userForRemovePoints) return;
-        const success = removePointsFromUser(userForRemovePoints.id, { credo: pointsToRemove.credo, tirth: pointsToRemove.tirth });
+        const success = removePointsFromUser(
+            userForRemovePoints.id,
+            { credo: pointsToRemove.credo },
+            { points: pointsToRemove.tirth, category: pointsToRemove.tirthCategory as any, reason: pointsToRemove.tirthReason }
+        );
         if (success) {
             addToast(`Points removed from ${userForRemovePoints.name}`, 'success');
             refreshData();
@@ -128,7 +127,11 @@ const UserManagementTab: React.FC = () => {
     
     const handleAddPoints = () => {
         if (!userForAddPoints) return;
-        const success = addPointsToUser(userForAddPoints.id, { credo: pointsToAdd.credo, tirth: pointsToAdd.tirth });
+        const success = addPointsToUser(
+            userForAddPoints.id,
+            { credo: pointsToAdd.credo },
+            { points: pointsToAdd.tirth, category: pointsToAdd.tirthCategory as any, reason: pointsToAdd.tirthReason }
+        );
         if (success) {
             addToast(`Points added to ${userForAddPoints.name}`, 'success');
             refreshData();
@@ -298,25 +301,26 @@ const UserManagementTab: React.FC = () => {
                 <div className="space-y-4">
                     <div>
                         <label className="font-semibold text-on-surface-variant text-sm mb-1 block">Credo Points to Add</label>
-                        <FormInput 
-                            type="number" 
-                            name="credo"
-                            value={pointsToAdd.credo}
-                            onChange={handlePointsToAddChange}
-                            placeholder="e.g., 100"
-                        />
-                        <p className="text-xs text-on-surface-variant mt-1">Current manual adjustment: {(userForAddPoints?.manualCredoPoints || 0).toLocaleString()}</p>
+                        <FormInput type="number" name="credo" value={pointsToAdd.credo} onChange={handlePointsChange(setPointsToAdd)} />
                     </div>
-                    <div>
-                        <label className="font-semibold text-on-surface-variant text-sm mb-1 block">Tirth Points to Add</label>
-                        <FormInput 
-                            type="number"
-                            name="tirth"
-                            value={pointsToAdd.tirth}
-                            onChange={handlePointsToAddChange}
-                            placeholder="e.g., 50"
-                        />
-                        <p className="text-xs text-on-surface-variant mt-1">Current total: {(userForAddPoints?.tirthPoints || 0).toLocaleString()}</p>
+                    <div className="p-3 border rounded-md border-border/20 space-y-3">
+                        <h4 className="font-bold">Tirth Points Adjustment</h4>
+                        <div>
+                            <label className="font-semibold text-on-surface-variant text-sm mb-1 block">Points to Add</label>
+                            <FormInput type="number" name="tirth" value={pointsToAdd.tirth} onChange={handlePointsChange(setPointsToAdd)} />
+                        </div>
+                        <div>
+                            <label className="font-semibold text-on-surface-variant text-sm mb-1 block">Category</label>
+                            <FormSelect name="tirthCategory" value={pointsToAdd.tirthCategory} onChange={handlePointsChange(setPointsToAdd)}>
+                                <option value="rewards">Rewards</option>
+                                <option value="wins">Campaign Wins</option>
+                                <option value="tasks">Task Completion</option>
+                            </FormSelect>
+                        </div>
+                        <div>
+                            <label className="font-semibold text-on-surface-variant text-sm mb-1 block">Reason (Optional)</label>
+                            <FormInput name="tirthReason" value={pointsToAdd.tirthReason} onChange={handlePointsChange(setPointsToAdd)} />
+                        </div>
                     </div>
                     <div className="flex justify-end gap-3 pt-4">
                         <button type="button" onClick={() => setUserForAddPoints(null)} className="neu-button px-4 py-1.5 font-semibold">Cancel</button>
@@ -331,27 +335,28 @@ const UserManagementTab: React.FC = () => {
                 title={`Remove Points from ${userForRemovePoints?.name}`}
             >
                 <div className="space-y-4">
-                    <div>
+                     <div>
                         <label className="font-semibold text-on-surface-variant text-sm mb-1 block">Credo Points to Remove</label>
-                        <FormInput 
-                            type="number" 
-                            name="credo"
-                            value={pointsToRemove.credo}
-                            onChange={handlePointsToRemoveChange}
-                            placeholder="e.g., 100"
-                        />
-                        <p className="text-xs text-on-surface-variant mt-1">Current manual adjustment: {(userForRemovePoints?.manualCredoPoints || 0).toLocaleString()}</p>
+                        <FormInput type="number" name="credo" value={pointsToRemove.credo} onChange={handlePointsChange(setPointsToRemove)} />
                     </div>
-                    <div>
-                        <label className="font-semibold text-on-surface-variant text-sm mb-1 block">Tirth Points to Remove</label>
-                        <FormInput 
-                            type="number"
-                            name="tirth"
-                            value={pointsToRemove.tirth}
-                            onChange={handlePointsToRemoveChange}
-                            placeholder="e.g., 50"
-                        />
-                        <p className="text-xs text-on-surface-variant mt-1">Current total: {(userForRemovePoints?.tirthPoints || 0).toLocaleString()}</p>
+                    <div className="p-3 border rounded-md border-border/20 space-y-3">
+                        <h4 className="font-bold">Tirth Points Adjustment</h4>
+                        <div>
+                            <label className="font-semibold text-on-surface-variant text-sm mb-1 block">Points to Remove</label>
+                            <FormInput type="number" name="tirth" value={pointsToRemove.tirth} onChange={handlePointsChange(setPointsToRemove)} />
+                        </div>
+                        <div>
+                            <label className="font-semibold text-on-surface-variant text-sm mb-1 block">Category</label>
+                            <FormSelect name="tirthCategory" value={pointsToRemove.tirthCategory} onChange={handlePointsChange(setPointsToRemove)}>
+                                <option value="rewards">Rewards</option>
+                                <option value="wins">Campaign Wins</option>
+                                <option value="tasks">Task Completion</option>
+                            </FormSelect>
+                        </div>
+                        <div>
+                            <label className="font-semibold text-on-surface-variant text-sm mb-1 block">Reason (Optional)</label>
+                            <FormInput name="tirthReason" value={pointsToRemove.tirthReason} onChange={handlePointsChange(setPointsToRemove)} />
+                        </div>
                     </div>
                     <div className="flex justify-end gap-3 pt-4">
                         <button type="button" onClick={() => setUserForRemovePoints(null)} className="neu-button px-4 py-1.5 font-semibold">Cancel</button>

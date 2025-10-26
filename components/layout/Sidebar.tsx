@@ -11,11 +11,10 @@ import {
   Rocket,
   Flame,
   Gem,
-  Megaphone,
-  ClipboardList,
   Briefcase,
   FileText,
   HelpCircle,
+  CalendarDays,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -79,6 +78,43 @@ const SubNavLink: React.FC<{ to: string, label: string, icon: React.ReactNode, i
         )}
       </AnimatePresence>
     </ReactRouterDOM.NavLink>
+);
+
+const ComingSoonSubNavLink: React.FC<{
+  icon: React.ReactNode;
+  label: string;
+  isExpanded?: boolean;
+}> = ({ icon, label, isExpanded }) => (
+  <div
+    className={`relative flex items-center h-9 rounded-md text-sm font-medium w-full cursor-not-allowed text-on-background-variant/50 ${
+        isExpanded ? 'px-3 gap-3' : 'justify-center'
+    }`}
+    // No title attribute to prevent hover text popup
+  >
+    {icon}
+    <AnimatePresence>
+      {isExpanded && (
+        <motion.span
+          initial={{ opacity: 0, width: 0 }}
+          animate={{ opacity: 1, width: 'auto', transition: { duration: 0.2, delay: 0.15 } }}
+          exit={{ opacity: 0, width: 0, transition: { duration: 0.1 } }}
+          className="whitespace-nowrap relative flex-grow min-w-0"
+        >
+          {/* This div is the white container box */}
+          <div className="relative bg-white rounded-md overflow-hidden">
+            {/* Blurred text, made transparent so it only affects layout/blur size */}
+            <span className="blur-sm select-none pointer-events-none px-2 text-transparent">{label}</span>
+            {/* "Coming Soon" text overlay */}
+            <span 
+              className="absolute inset-0 flex items-center justify-center text-sm font-bold text-black pointer-events-none"
+            >
+              Coming Soon
+            </span>
+          </div>
+        </motion.span>
+      )}
+    </AnimatePresence>
+  </div>
 );
 
 
@@ -149,7 +185,7 @@ const Sidebar: React.FC = () => {
 
   const isProjectPathActive = location.pathname === '/' || location.pathname.startsWith('/ecosystem') || location.pathname.startsWith('/early-projects');
   const isEventsPathActive = location.pathname.startsWith('/campaigns') || location.pathname.startsWith('/quest') || location.pathname.startsWith('/tasks') || location.pathname.startsWith('/this-week');
-  const isCredoActive = location.pathname.startsWith('/credo');
+  const isLedgerActive = location.pathname.startsWith('/ledger');
   const isAdminsActive = location.pathname.startsWith('/admin');
   const isSuperAdminActive = location.pathname.startsWith('/super-admin');
 
@@ -167,17 +203,17 @@ const Sidebar: React.FC = () => {
               <SubNavLink to="/" label="Ecosystem" icon={<Users size={16} />} isActive={location.pathname === '/'} />
               <SubNavLink to="/ecosystem/nft" label="NFT" icon={<Gem size={16} />} isActive={location.pathname === '/ecosystem/nft'} />
               <SubNavLink to="/ecosystem/meme" label="Meme" icon={<Flame size={16} />} isActive={location.pathname === '/ecosystem/meme'} />
-              <SubNavLink to="/ecosystem/ido" label="IDO/ICO" icon={<Rocket size={16} />} isActive={location.pathname === '/ecosystem/ido'} />
-              <SubNavLink to="/early-projects" label="Early Projects" icon={<Sparkles size={16} />} isActive={location.pathname === '/early-projects'} />
+              <ComingSoonSubNavLink label="IDO/ICO" icon={<Sparkles size={16} />} />
+              <ComingSoonSubNavLink label="Early Projects" icon={<Sparkles size={16} />} />
             </CollapsibleMenu>
             
             <CollapsibleMenu icon={<Calendar size={24} />} label="Events" isExpanded={isExpanded} isParentActive={isEventsPathActive}>
-               <SubNavLink to="/campaigns" label="Campaigns" icon={<Megaphone size={16} />} isActive={location.pathname.startsWith('/campaigns') || location.pathname.startsWith('/quest')} />
-               <SubNavLink to="/tasks" label="Tasks" icon={<ClipboardList size={16} />} isActive={location.pathname.startsWith('/tasks')} />
-               <SubNavLink to="/this-week" label="This Week" icon={<Sparkles size={16} />} isActive={location.pathname.startsWith('/this-week')} />
+               <ComingSoonSubNavLink label="Campaigns" icon={<Sparkles size={16} />} />
+               <ComingSoonSubNavLink label="Tasks" icon={<Sparkles size={16} />} />
+               <SubNavLink to="/this-week" label="This Week" icon={<CalendarDays size={16} />} isActive={location.pathname.startsWith('/this-week')} />
             </CollapsibleMenu>
             
-            <NavLink to="/credo" icon={<ScrollText size={24} />} label="Credo" isExpanded={isExpanded} isActive={isCredoActive} />
+            <NavLink to="/ledger" icon={<ScrollText size={24} />} label="Ledger" isExpanded={isExpanded} isActive={isLedgerActive} />
             
             <NavLink to="/admin" icon={<Shield size={24} />} label="Admin Dashboard" isExpanded={isExpanded} isActive={isAdminsActive} />
 

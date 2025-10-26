@@ -21,75 +21,23 @@ const CommunitySheet: React.FC = () => {
             projectsByName.set(project.name, project);
         });
 
-        const projectsById = new Map<string, Project>();
-        projects.forEach(project => {
-            projectsById.set(project.id, project);
-        });
-
-        // Helper to find correct token tier
-        const findTier = (tiers: PointTier[] | undefined, amount: number): PointTier | undefined => {
-            if (!tiers) return undefined;
-            return tiers.find(tier => 
-                amount >= tier.minAmount && (tier.maxAmount === null || amount <= tier.maxAmount)
-            );
-        };
-        
         return users
             .map(user => {
                 const buildingProjects = (user.projectsBuilding || [])
                     .map(name => projectsByName.get(name))
                     .filter((p): p is Project => p !== undefined);
-
-                // --- Calculate Credo Points ---
-                let credoPoints = 0;
-                const userRoles = new Set(user.discordRoles || []);
-
-                // 1. Role points from all projects
-                projects.forEach(project => {
-                    if (project.discordRoles) {
-                        project.discordRoles.forEach(role => {
-                            if (userRoles.has(role.name) && role.points) {
-                                credoPoints += role.points;
-                            }
-                        });
-                    }
-                });
-
-                // 2. NFT Holding points
-                (user.nftHoldings || []).forEach(holding => {
-                    const project = projectsById.get(holding.projectId);
-                    if (project && project.nftCollections) {
-                        const pointsPerDay = project.nftCollections.reduce((total, collection) => total + (collection.pointsPerDay || 0), 0);
-                        if (pointsPerDay > 0) {
-                            credoPoints += holding.daysHeld * pointsPerDay;
-                        }
-                        const oneTimePoints = project.nftCollections.reduce((total, collection) => total + (collection.oneTimePoints || 0), 0);
-                        credoPoints += oneTimePoints;
-                    }
-                });
-
-                // 3. Token Holding points
-                (user.tokenHoldings || []).forEach(holding => {
-                    const project = projectsById.get(holding.projectId);
-                    if (project && project.tokenHoldingTiers) {
-                        const tier = findTier(project.tokenHoldingTiers, holding.amount);
-                        if (tier) {
-                            credoPoints += holding.daysHeld * tier.pointsPerDay;
-                        }
-                    }
-                });
                 
-                // 4. Manual points (can be positive or negative)
-                credoPoints += user.manualCredoPoints || 0;
-
+                // Credo points are now 0 for everyone.
+                const credoPoints = 0;
 
                 return {
                     ...user,
-                    score: Math.round(credoPoints), // This is the Credo Points
+                    score: credoPoints,
                     buildingProjects: buildingProjects
                 };
             })
-            .sort((a, b) => b.score - a.score);
+            // Sort by Tirth points as Credo score is 0 for all
+            .sort((a, b) => (b.tirthPoints || 0) - (a.tirthPoints || 0));
 
     }, [users, projects]);
 

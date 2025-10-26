@@ -2,7 +2,8 @@
 import React, { useMemo } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-import { getProjectById, getEventById, getQuestById } from '../../src/services/dataService';
+import { getProjectById, getEventById, getQuestById, getUserById, getUsers } from '../../src/services/dataService';
+import { useAuth } from '../../context/AuthContext';
 
 const capitalize = (s: string) => {
     if (!s) return '';
@@ -13,6 +14,7 @@ const capitalize = (s: string) => {
 
 const Breadcrumbs: React.FC = () => {
     const location = useLocation();
+    const { currentUser } = useAuth();
     
     const breadcrumbs = useMemo(() => {
         const pathnames = location.pathname.split('/').filter(x => x);
@@ -27,13 +29,46 @@ const Breadcrumbs: React.FC = () => {
         const second = pathnames[1];
         const third = pathnames[2];
 
+        // Handle profile pages specifically
+        if (first === 'profile') {
+            const searchParams = new URLSearchParams(location.search);
+            const userId = searchParams.get('user');
+            
+            let user = null;
+            if (userId) {
+                user = getUserById(userId);
+            } else if (currentUser) {
+                user = getUserById(currentUser.id);
+            } else {
+                // Fallback logic from ProfilePage if no one is logged in and no user is specified.
+                user = getUsers().find(u => u.id === 'u_1');
+            }
+
+            if (user) {
+                const userName = user.name;
+                const profileLink = `/profile${userId ? `?user=${userId}` : ''}`;
+                
+                crumbs.push({ name: userName, to: profileLink });
+
+                if (second === 'points') {
+                    crumbs.push({ name: `${userName} Points`, to: location.pathname });
+                }
+            } else {
+                 // Fallback if user is not found
+                 crumbs.push({ name: 'User Profile', to: '/profile' });
+                 if (second === 'points') {
+                    crumbs.push({ name: 'User Points', to: location.pathname });
+                 }
+            }
+            return crumbs;
+        }
+
         // Top-level, non-dynamic pages
         const singlePathMap: Record<string, string> = {
             'campaigns': 'Campaigns',
             'tasks': 'Tasks',
             'this-week': 'This Week',
-            'credo': 'Credo',
-            'profile': 'Profile',
+            'ledger': 'Ledger',
             'admin': 'Admin Dashboard',
             'super-admin': 'Super Admin',
             'early-projects': 'Early',
@@ -146,7 +181,7 @@ const Breadcrumbs: React.FC = () => {
         }
 
         return []; // Return empty for paths not explicitly handled
-    }, [location.pathname]);
+    }, [location.pathname, location.search, currentUser]);
     
     if (breadcrumbs.length <= 1) {
         return null;

@@ -124,6 +124,7 @@ const ProjectTable: React.FC<{
                                     className={`relative border-b border-border/10 transition-colors ${isEarlyAndUnverified ? 'cursor-not-allowed' : 'hover:bg-border/10 cursor-pointer'}`}
                                     onClick={isEarlyAndUnverified ? undefined : () => onRowClick(project.id)}
                                     onMouseEnter={isEarlyAndUnverified ? undefined : () => prefetch(project.id)}
+                                    whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
                                 >
                                     {isEarlyAndUnverified && (
                                         <td colSpan={7} className="absolute inset-0 backdrop-blur-sm z-10 p-0 rounded-md">

@@ -5,7 +5,7 @@ import { User, Project, NftCollection, PointTier } from '../../src/types';
 import { getProjects, vouchForUser } from '../../src/services/dataService';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
-import { Wallet, ShieldCheck } from 'lucide-react';
+import { Wallet, ShieldCheck, BarChart } from 'lucide-react';
 
 const XIcon: React.FC<{ size?: number }> = ({ size = 18 }) => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ width: size, height: size }} className="fill-current">
@@ -45,51 +45,8 @@ const ProfileWall: React.FC<ProfileWallProps> = ({ user }) => {
     const allProjects = useMemo(() => getProjects(), []);
 
     const credoPoints = useMemo(() => {
-        const projectsById = new Map<string, Project>();
-        allProjects.forEach(project => {
-            projectsById.set(project.id, project);
-        });
-
-        const findTier = (tiers: PointTier[] | undefined, amount: number): PointTier | undefined => {
-            if (!tiers) return undefined;
-            return tiers.find(tier => 
-                amount >= tier.minAmount && (tier.maxAmount === null || amount <= tier.maxAmount)
-            );
-        };
-
-        let points = 0;
-        const userRoles = new Set(user.discordRoles || []);
-
-        allProjects.forEach(project => {
-            if (project.discordRoles) {
-                project.discordRoles.forEach(role => {
-                    if (userRoles.has(role.name) && role.points) {
-                        points += role.points;
-                    }
-                });
-            }
-        });
-
-        (user.nftHoldings || []).forEach(holding => {
-            const project = projectsById.get(holding.projectId);
-            if (project && project.nftCollections) {
-                const pointsPerDay = project.nftCollections.reduce((total, collection) => total + (collection.pointsPerDay || 0), 0);
-                if (pointsPerDay > 0) points += holding.daysHeld * pointsPerDay;
-                const oneTimePoints = project.nftCollections.reduce((total, collection) => total + (collection.oneTimePoints || 0), 0);
-                points += oneTimePoints;
-            }
-        });
-
-        (user.tokenHoldings || []).forEach(holding => {
-            const project = projectsById.get(holding.projectId);
-            if (project && project.tokenHoldingTiers) {
-                const tier = findTier(project.tokenHoldingTiers, holding.amount);
-                if (tier) points += holding.daysHeld * tier.pointsPerDay;
-            }
-        });
-
-        points += user.manualCredoPoints || 0;
-        return Math.round(points);
+        // Credo points are now 0 for everyone.
+        return 0;
     }, [user, allProjects]);
 
     const userHoldings = useMemo(() => {
@@ -111,11 +68,15 @@ const ProfileWall: React.FC<ProfileWallProps> = ({ user }) => {
         return holdings;
     }, [user.nftHoldings, allProjects]);
 
-    const userProjects = useMemo(() => {
+    const { buildingProjects, pastBuilds } = useMemo(() => {
         if (!projectsBuilding || projectsBuilding.length === 0) {
-            return [];
+            return { buildingProjects: [], pastBuilds: [] };
         }
-        return allProjects.filter(p => projectsBuilding.includes(p.name));
+        const allUserProjects = allProjects.filter(p => projectsBuilding.includes(p.name));
+        return {
+            buildingProjects: allUserProjects.filter(p => p.stage !== 'Launched'),
+            pastBuilds: allUserProjects.filter(p => p.stage === 'Launched')
+        };
     }, [projectsBuilding, allProjects]);
     
     const roleToProjectMap = useMemo(() => {
@@ -228,18 +189,27 @@ const ProfileWall: React.FC<ProfileWallProps> = ({ user }) => {
                         )}
                     </div>
                     
-                    <button 
-                        onClick={handleVouch}
-                        disabled={vouchButtonDisabled}
-                        className={`profile-vouch-button ${hasVouched || justVouched ? 'vouched' : 'can-vouch'}`}
-                    >
-                        <ShieldCheck size={20} />
-                        <span>{hasVouched || justVouched ? 'Vouched' : 'Vouch'}</span>
-                    </button>
+                    <div className="flex items-center gap-2 mt-auto">
+                        <button 
+                            onClick={handleVouch}
+                            disabled={vouchButtonDisabled}
+                            className={`profile-vouch-button flex-1 ${hasVouched || justVouched ? 'vouched' : 'can-vouch'}`}
+                        >
+                            <ShieldCheck size={20} />
+                            <span>{hasVouched || justVouched ? 'Vouched' : 'Vouch'}</span>
+                        </button>
+                        <ReactRouterDOM.Link 
+                            to={`/profile/points?user=${user.id}`}
+                            className="profile-vouch-button can-vouch flex-1"
+                        >
+                            <BarChart size={20} />
+                            <span>Points</span>
+                        </ReactRouterDOM.Link>
+                    </div>
                 </div>
 
                 <div className="profile-panels-group">
-                    {userProjects.length > 0 && (
+                    {buildingProjects.length > 0 && (
                         <motion.div
                             className="profile-side-panel"
                             variants={panelVariants}
@@ -248,10 +218,31 @@ const ProfileWall: React.FC<ProfileWallProps> = ({ user }) => {
                         >
                             <h3>BUILDING</h3>
                             <ul>
-                                {userProjects.map(project => (
+                                {buildingProjects.map(project => (
                                     <li key={project.id}>
                                         <ReactRouterDOM.Link to={`/project/${project.id}`} className="profile-project-item group">
-                                            <img src={project.logo} alt={project.name} className="profile-project-logo" loading="lazy" decoding="async" />
+                                            <img src={project.logo} alt={project.name} className="profile-project-logo transition-transform duration-200 group-hover:scale-110" loading="lazy" decoding="async" />
+                                            <span className="transition-colors duration-200 group-hover:text-primary">{project.name}</span>
+                                        </ReactRouterDOM.Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </motion.div>
+                    )}
+                    
+                    {pastBuilds.length > 0 && (
+                        <motion.div
+                            className="profile-side-panel"
+                            variants={panelVariants}
+                            initial="hidden"
+                            animate="visible"
+                        >
+                            <h3>PAST BUILDS</h3>
+                            <ul>
+                                {pastBuilds.map(project => (
+                                    <li key={project.id}>
+                                        <ReactRouterDOM.Link to={`/project/${project.id}`} className="profile-project-item group">
+                                            <img src={project.logo} alt={project.name} className="profile-project-logo transition-transform duration-200 group-hover:scale-110" loading="lazy" decoding="async" />
                                             <span className="transition-colors duration-200 group-hover:text-primary">{project.name}</span>
                                         </ReactRouterDOM.Link>
                                     </li>
@@ -293,7 +284,7 @@ const ProfileWall: React.FC<ProfileWallProps> = ({ user }) => {
                                 {userHoldings.map(collection => (
                                     <li key={collection.id}>
                                         <ReactRouterDOM.Link to={`/project/${collection.projectId}`} className="profile-project-item group">
-                                            <img src={collection.image} alt={collection.name} className="profile-project-logo !rounded-lg" loading="lazy" decoding="async" />
+                                            <img src={collection.image} alt={collection.name} className="profile-project-logo !rounded-lg transition-transform duration-200 group-hover:scale-110" loading="lazy" decoding="async" />
                                             <div className="flex flex-col -space-y-1">
                                                 <span className="transition-colors duration-200 group-hover:text-primary">{collection.name}</span>
                                                 <span className="text-xs text-on-surface-variant font-normal">{collection.projectName}</span>

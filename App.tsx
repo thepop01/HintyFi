@@ -10,7 +10,7 @@ import Layout from './components/layout/Layout';
 // Lazy load all page components for code splitting
 const CampaignPage = lazy(() => import('./pages/CampaignPage'));
 const EcosystemPage = lazy(() => import('./pages/EcosystemPage'));
-const CredoPage = lazy(() => import('./pages/CredoPage'));
+const LedgerPage = lazy(() => import('./pages/LedgerPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const CampaignDetailPage = lazy(() => import('./pages/CampaignDetailPage'));
 const ProjectProfilePage = lazy(() => import('./pages/ProjectProfilePage'));
@@ -24,6 +24,7 @@ const TasksPage = lazy(() => import('./pages/TasksPage'));
 const ProjectTasksPage = lazy(() => import('./pages/ProjectTasksPage'));
 const ProjectLeaderboardPage = lazy(() => import('./pages/ProjectLeaderboardPage'));
 const ThisWeekPage = lazy(() => import('./pages/ThisWeekPage'));
+const PointsPage = lazy(() => import('./pages/Pointspage'));
 
 
 // Admin Pages (New Structure)
@@ -90,8 +91,9 @@ const AppRoutes = () => (
                 <ReactRouterDOM.Route path="project/:id" element={<ProjectProfilePage />} />
                 <ReactRouterDOM.Route path="project/:id/tasks" element={<ProjectTasksPage />} />
                 <ReactRouterDOM.Route path="project/:id/leaderboard" element={<ProjectLeaderboardPage />} />
-                <ReactRouterDOM.Route path="credo" element={<CredoPage />} />
+                <ReactRouterDOM.Route path="ledger" element={<LedgerPage />} />
                 <ReactRouterDOM.Route path="profile" element={<ProfilePage />} />
+                <ReactRouterDOM.Route path="profile/points" element={<PointsPage />} />
                 
                 {/* Super Admin Routes */}
                 <ReactRouterDOM.Route path="super-admin" element={<SuperAdminLayout />}>

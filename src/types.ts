@@ -139,10 +139,10 @@ export interface User {
     walletAddress?: string;
     discordId?: string;
     profilePic?: string;
-    bio?: string;
     socials?: {
         twitter?: string;
         discord?: string;
+        github?: string;
     };
     tirthPoints?: number;
     manualCredoPoints?: number;
@@ -160,7 +160,6 @@ export interface User {
         canDeleteEvents?: boolean;
         canDeleteHighlights?: boolean;
     };
-    banner?: string;
     discordUsername?: string;
     nickname?: string;
 }

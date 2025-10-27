@@ -255,61 +255,15 @@ const EngagementPanel: React.FC<{ project: Project; events: Event[] }> = ({ proj
 };
 
 const TeamPanel: React.FC<{ team: TeamMember[]; allUsers: User[] }> = ({ team, allUsers }) => {
-    const allProjects = useMemo(() => getProjects(), []);
-    const projectsById = useMemo(() => {
-        const map = new Map<string, Project>();
-        allProjects.forEach(p => map.set(p.id, p));
-        return map;
-    }, [allProjects]);
-
     const usersByName = useMemo(() => {
         const map = new Map<string, User>();
         allUsers.forEach(user => map.set(user.name.toLowerCase(), user));
         return map;
     }, [allUsers]);
 
-    const findTier = (tiers: PointTier[] | undefined, amount: number): PointTier | undefined => {
-        if (!tiers) return undefined;
-        return tiers.find(tier =>
-            amount >= tier.minAmount && (tier.maxAmount === null || amount <= tier.maxAmount)
-        );
-    };
-
     const calculateCredibilityScore = (user: User): number => {
-        let credibilityScore = 0;
-        const userRoles = new Set(user.discordRoles || []);
-
-        allProjects.forEach(project => {
-            if (project.discordRoles) {
-                project.discordRoles.forEach(role => {
-                    if (userRoles.has(role.name) && role.points) {
-                        credibilityScore += role.points;
-                    }
-                });
-            }
-        });
-
-        (user.nftHoldings || []).forEach(holding => {
-            const project = projectsById.get(holding.projectId);
-            if (project && project.nftCollections) {
-                const pointsPerDay = project.nftCollections.reduce((total, collection) => total + (collection.pointsPerDay || 0), 0);
-                if (pointsPerDay > 0) {
-                    credibilityScore += holding.daysHeld * pointsPerDay;
-                }
-            }
-        });
-
-        (user.tokenHoldings || []).forEach(holding => {
-            const project = projectsById.get(holding.projectId);
-            if (project && project.tokenHoldingTiers) {
-                const tier = findTier(project.tokenHoldingTiers, holding.amount);
-                if (tier) {
-                    credibilityScore += holding.daysHeld * tier.pointsPerDay;
-                }
-            }
-        });
-
-        return Math.round(credibilityScore);
+        // As per user request, credibility score is being revamped and should be 0.
+        return 0;
     };
 
     if (!team || team.length === 0) return null;
@@ -332,7 +286,16 @@ const TeamPanel: React.FC<{ team: TeamMember[]; allUsers: User[] }> = ({ team, a
                                     loading="lazy"
                                 />
                                 <div className="overflow-hidden">
-                                    <p className="font-semibold text-on-surface capitalize truncate">{member.name}</p>
+                                    {user ? (
+                                        <ReactRouterDOM.Link
+                                            to={`/profile?user=${user.id}`}
+                                            className="font-semibold text-on-surface capitalize truncate hover:text-primary hover:underline"
+                                        >
+                                            {member.name}
+                                        </ReactRouterDOM.Link>
+                                    ) : (
+                                        <p className="font-semibold text-on-surface capitalize truncate">{member.name}</p>
+                                    )}
                                     <p className="text-sm text-on-surface-variant truncate">{member.role}</p>
                                     {credibilityScore !== null && (
                                         <p className="text-xs text-primary font-bold mt-1">

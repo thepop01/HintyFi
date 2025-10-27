@@ -78,11 +78,10 @@ const seedData = () => {
       discordUsername: 'alice.eth',
       nickname: 'AliceInWonderland',
       profilePic: "https://images.pexels.com/photos/7319163/pexels-photo-7319163.jpeg?auto=compress&cs=tinysrgb&w=400",
-      banner: "https://images.pexels.com/photos/1631677/pexels-photo-1631677.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      bio: "Cyber-explorer & digital artist. Building the future, one pixel at a time. Fueled by coffee and decentralization.",
       socials: {
         twitter: "alice_crypto",
-        discord: "alice#1234"
+        discord: "alice#1234",
+        github: "alice-crypto"
       },
       projectsBuilding: ['Opals', 'CULT', 'Monadata AI'],
       discordRoles: ['Community Contributor', 'Artist', 'Cultist', 'Initiate', 'Genesis Holder'],

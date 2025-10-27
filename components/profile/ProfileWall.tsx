@@ -53,8 +53,21 @@ const ProfileWall: React.FC<ProfileWallProps> = ({ user, isOwnProfile, onEdit })
     const allProjects = useMemo(() => getProjects(), []);
 
     const credoPoints = useMemo(() => {
-        // Credo points are now 0 for everyone.
-        return 0;
+        const teamMemberNames = new Set<string>();
+        allProjects.forEach(project => {
+            project.team?.forEach(member => {
+                teamMemberNames.add(member.name.toLowerCase());
+            });
+        });
+
+        const isBuilder = user.projectsBuilding && user.projectsBuilding.length > 0;
+        const isTeamMember = teamMemberNames.has(user.name.toLowerCase());
+
+        if (isBuilder || isTeamMember) {
+            return user.manualCredoPoints || 0;
+        }
+        
+        return 'N/A';
     }, [user, allProjects]);
 
     const userHoldings = useMemo(() => {
@@ -147,7 +160,9 @@ const ProfileWall: React.FC<ProfileWallProps> = ({ user, isOwnProfile, onEdit })
                         <div className="profile-identity-text">
                             <h2 className="profile-badge-name">{name}</h2>
                             <p className="profile-badge-userid">USER ID: {id}</p>
-                            <p className="profile-badge-score">SCORE: {credoPoints?.toLocaleString() || 'N/A'}</p>
+                            <p className="profile-badge-score">
+                                SCORE: {typeof credoPoints === 'number' ? credoPoints.toLocaleString() : credoPoints}
+                            </p>
                         </div>
                     </div>
 

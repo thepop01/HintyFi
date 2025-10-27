@@ -28,16 +28,50 @@ const PointEntry: React.FC<{ icon: React.ReactNode; label: string; points: numbe
 
 // Component for Credo Points breakdown
 const CredoPointsTab: React.FC<{ user: User; projects: Project[] }> = ({ user, projects }) => {
+    const { isEligible, credoPoints } = useMemo(() => {
+        const teamMemberNames = new Set<string>();
+        projects.forEach(project => {
+            project.team?.forEach(member => {
+                teamMemberNames.add(member.name.toLowerCase());
+            });
+        });
+
+        const isBuilder = user.projectsBuilding && user.projectsBuilding.length > 0;
+        const isTeamMember = teamMemberNames.has(user.name.toLowerCase());
+        
+        const eligible = isBuilder || isTeamMember;
+        
+        return {
+            isEligible: eligible,
+            credoPoints: eligible ? (user.manualCredoPoints || 0) : 'N/A'
+        };
+    }, [user, projects]);
+
     return (
         <div className="space-y-6">
             <div className="neu-outset-card p-4 text-center">
                 <p className="text-sm font-semibold text-on-surface-variant">Total Credo Points</p>
-                <p className="text-4xl font-bold text-primary">0</p>
+                <p className="text-4xl font-bold text-primary">
+                    {typeof credoPoints === 'number' ? credoPoints.toLocaleString() : credoPoints}
+                </p>
             </div>
-            <div className="text-center py-10 text-on-surface-variant">
-                <h3 className="text-xl font-bold">Coming Soon!</h3>
-                <p>Credo Points calculation is being revamped. Stay tuned for updates.</p>
-            </div>
+            
+            {isEligible ? (
+                <div className="space-y-4">
+                    <h3 className="font-bold text-lg text-on-surface-variant">Breakdown</h3>
+                    <PointEntry 
+                        icon={<Award />} 
+                        label="Manually Awarded Points" 
+                        points={typeof credoPoints === 'number' ? credoPoints : 0} 
+                        subtext="For significant contributions to the ecosystem."
+                    />
+                </div>
+            ) : (
+                <div className="text-center py-10 text-on-surface-variant">
+                    <h3 className="text-xl font-bold">Credo Points are for Builders</h3>
+                    <p>Credo Points are manually awarded to active builders and team members for their contributions to the ecosystem.</p>
+                </div>
+            )}
         </div>
     );
 };

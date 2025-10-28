@@ -24,7 +24,7 @@ const TasksPage = lazy(() => import('./pages/TasksPage'));
 const ProjectTasksPage = lazy(() => import('./pages/ProjectTasksPage'));
 const ProjectLeaderboardPage = lazy(() => import('./pages/ProjectLeaderboardPage'));
 const ThisWeekPage = lazy(() => import('./pages/ThisWeekPage'));
-const PointsPage = lazy(() => import('./pages/Pointspage'));
+const PointsPage = lazy(() => import('./pages/PointsPage'));
 
 
 // Admin Pages (New Structure)

@@ -1,11 +1,3 @@
-
-
-
-
-
-
-
-
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Coin, Project } from '../../src/types';

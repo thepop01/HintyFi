@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Project, ProjectCategory } from '../../src/types';
+import { Project, ProjectCategory, LinkItem } from '../../src/types';
 import { useSuperAdminContext } from '../../context/SuperAdminContext';
 import { useToast } from '../../context/ToastContext';
 import { addOrUpdateProject } from '../../src/services/dataService';
 import { uid } from '../../utils/helpers';
 import ImageUploadInput from '../../components/common/ImageUploadInput';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Trash2 } from 'lucide-react';
 
 const FormRow: React.FC<{ children: React.ReactNode }> = ({ children }) => <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-2 md:gap-4 items-start mb-4">{children}</div>;
 const FormLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => <label className="font-semibold text-on-surface-variant text-sm md:text-right pt-2.5">{children}</label>;
@@ -22,7 +22,7 @@ const AddIdoPage: React.FC = () => {
     const [formData, setFormData] = useState<Partial<Project>>({
         name: '', logo: '', banner: '', description: '', longDescription: '',
         category: ['launchpad'],
-        links: { website: '' },
+        links: { websites: [{label: 'Main Website', url: ''}] },
         idoDetails: { tokenPrice: '', vestingSchedule: '', totalSupply: '' }
     });
 
@@ -30,8 +30,30 @@ const AddIdoPage: React.FC = () => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
     
-     const handleLinkChange = (field: 'website' | 'twitter' | 'discord') => (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData(p => ({ ...p, links: { ...p.links, [field]: e.target.value } as Project['links'] }));
+     const handleLinkChange = (field: 'twitter' | 'discord') => (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData(p => ({ ...p, links: { ...p.links, websites: p.links?.websites || [], [field]: e.target.value } as Project['links'] }));
+    };
+
+    const handleWebsiteChange = (index: number, field: keyof LinkItem, value: string) => {
+        setFormData(p => {
+            const newWebsites = [...(p.links?.websites || [])];
+            newWebsites[index] = { ...newWebsites[index], [field]: value };
+            return { ...p, links: { ...p.links, websites: newWebsites } as Project['links'] };
+        });
+    };
+
+    const addWebsite = () => {
+        setFormData(p => {
+            const newWebsites = [...(p.links?.websites || []), { label: '', url: '' }];
+            return { ...p, links: { ...p.links, websites: newWebsites } as Project['links'] };
+        });
+    };
+
+    const removeWebsite = (index: number) => {
+        setFormData(p => {
+            const newWebsites = (p.links?.websites || []).filter((_, i) => i !== index);
+            return { ...p, links: { ...p.links, websites: newWebsites } as Project['links'] };
+        });
     };
     
     const handleIdoChange = (field: keyof NonNullable<Project['idoDetails']>, value: string) => {
@@ -51,10 +73,9 @@ const AddIdoPage: React.FC = () => {
             banner: formData.banner || '',
             description: formData.description || '',
             longDescription: formData.longDescription || '',
-            links: formData.links || { website: '' },
+            links: formData.links || { websites: [] },
             category: formData.category as ProjectCategory[],
             events: [],
-            // FIX: Changed 'live' to 'ongoing' to match the Project type definition for status.
             status: 'ongoing',
             createdAt: Date.now(),
             votes: { up: 0, down: 0, voters: [] },
@@ -85,7 +106,21 @@ const AddIdoPage: React.FC = () => {
                 <FormRow><FormLabel>Description</FormLabel><FormTextArea value={formData.description} onChange={e => handleChange('description', e.target.value)} /></FormRow>
                 <FormRow><FormLabel>Logo</FormLabel><ImageUploadInput value={formData.logo || ''} onChange={val => handleChange('logo', val)} /></FormRow>
                 <FormRow><FormLabel>Banner</FormLabel><ImageUploadInput value={formData.banner || ''} onChange={val => handleChange('banner', val)} /></FormRow>
-                <FormRow><FormLabel>Website</FormLabel><FormInput value={formData.links?.website} onChange={handleLinkChange('website')} /></FormRow>
+                
+                <FormSectionHeader>Links</FormSectionHeader>
+                <FormRow>
+                    <FormLabel>Websites</FormLabel>
+                    <div className="space-y-2">
+                        {formData.links?.websites.map((site, i) => (
+                             <div key={i} className="flex items-center gap-2">
+                                <FormInput value={site.label} onChange={e => handleWebsiteChange(i, 'label', e.target.value)} placeholder="Label (e.g., Main Site)" className="w-1/3"/>
+                                <FormInput value={site.url} onChange={e => handleWebsiteChange(i, 'url', e.target.value)} placeholder="https://..." />
+                                <button type="button" onClick={() => removeWebsite(i)} className="neu-button !rounded-full !p-2 text-red-500"><Trash2 size={14}/></button>
+                            </div>
+                        ))}
+                        <button type="button" onClick={addWebsite} className="neu-button px-3 py-1 text-sm flex items-center gap-1"><Plus size={14}/> Add Website</button>
+                    </div>
+                </FormRow>
                 <FormRow><FormLabel>Twitter</FormLabel><FormInput value={formData.links?.twitter || ''} onChange={handleLinkChange('twitter')} /></FormRow>
 
                 <FormSectionHeader>IDO Details</FormSectionHeader>

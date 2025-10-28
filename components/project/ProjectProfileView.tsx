@@ -1,9 +1,10 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Project, Event, User, TeamMember, PerkType, Task, CampaignEvent, NftCollection, DiscordRole, PointTier } from '../../src/types';
+import { Project, Event, User, TeamMember, PerkType, Task, CampaignEvent, NftCollection, DiscordRole, PointTier, LinkItem } from '../../src/types';
 import { getProjects, getUsers } from '../../src/services/dataService';
-import { Globe, Users, Award, FileText, Gem, PackageCheck, Link as LinkIcon, ArrowRight, ClipboardList, Banknote, Flame, Megaphone, Youtube, Edit3, ChevronDown, BrainCircuit, Shield, Linkedin } from 'lucide-react';
+import { Globe, Users, Award, FileText, Gem, PackageCheck, Link as LinkIcon, ArrowRight, ClipboardList, Banknote, Flame, Megaphone, Youtube, Edit3, ChevronDown, BrainCircuit, Shield, Linkedin, Plus } from 'lucide-react';
+
 
 // --- ANIMATION VARIANTS ---
 const animatedTextContainer = {
@@ -125,6 +126,98 @@ const MetricLink: React.FC<{ href: string; icon: React.ReactNode; label: string;
         </motion.a>
     );
 };
+
+const HoverLinkGroup: React.FC<{
+    links?: (LinkItem & { image?: string })[];
+    icon: React.ReactNode;
+    projectLogo?: string;
+    label: string;
+}> = ({ links, icon, projectLogo, label }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    if (!links || links.length === 0) {
+        return null;
+    }
+
+    if (links.length === 1) {
+        const link = links[0];
+        const displayIcon = link.image ? (
+            <img src={link.image} alt={link.label} className="w-full h-full object-cover rounded-full" />
+        ) : projectLogo ? (
+            <img src={projectLogo} alt={label} className="w-5 h-5 rounded-full object-contain" />
+        ) : (
+            icon
+        );
+        return <HeroLink href={link.url} icon={displayIcon} label={link.label} />;
+    }
+
+    const displayIcon = projectLogo ? (
+        <img src={projectLogo} alt={label} className="w-5 h-5 rounded-full object-contain" />
+    ) : (
+        icon
+    );
+
+    return (
+        <div
+            className="relative flex items-center"
+            onMouseEnter={() => setIsOpen(true)}
+            onMouseLeave={() => setIsOpen(false)}
+        >
+            <HeroLink
+                href={links[0].url}
+                icon={displayIcon}
+                label={links[0].label}
+            />
+            <div
+                className="h-10 min-w-10 px-2 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-sm -ml-4 z-10 pointer-events-none"
+                aria-label={`More ${label} links`}
+            >
+                +{links.length - 1}
+            </div>
+
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial="hidden"
+                        animate="visible"
+                        exit="hidden"
+                        variants={{
+                            visible: { transition: { staggerChildren: 0.07, delayChildren: 0.1 } },
+                            hidden: { transition: { staggerChildren: 0.05, staggerDirection: -1 } }
+                        }}
+                        className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+                        style={{ minWidth: '15rem' }}
+                    >
+                        {links.map((link, index) => (
+                            <motion.a
+                                key={index}
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block bg-black/20 backdrop-blur-sm text-white font-semibold text-sm p-2 rounded-lg w-full text-left"
+                                variants={{
+                                    hidden: { y: 20, opacity: 0 },
+                                    visible: { y: 0, opacity: 1 }
+                                }}
+                                whileHover={{ scale: 1.05, backgroundColor: 'rgba(0,0,0,0.4)' }}
+                            >
+                                <div className="flex items-center gap-3">
+                                    {link.image ? (
+                                        <img src={link.image} alt={link.label} className="w-6 h-6 rounded-full object-cover flex-shrink-0" />
+                                    ) : (
+                                        <div className="w-6 h-6 flex items-center justify-center flex-shrink-0">{icon}</div>
+                                    )}
+                                    <span className="truncate">{link.label}</span>
+                                </div>
+                            </motion.a>
+                        ))}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+};
+
 
 
 const Section: React.FC<{ icon: React.ReactNode, title: string, children: React.ReactNode, className?: string, action?: React.ReactNode }> = ({ icon, title, children, className, action }) => (
@@ -424,12 +517,14 @@ const DiscordRoleDropdown: React.FC<{ roles: DiscordRole[] }> = ({ roles }) => {
                             <div className="space-y-3">
                                 {roles.map((role) => (
                                     <div key={role.roleId} className="neu-outset-card p-4 rounded-xl">
-                                        <div className="flex items-start justify-between gap-2">
-                                            <div>
-                                                <p className="font-bold text-on-surface">Role: {role.name}</p>
-                                                <p className="text-sm text-on-surface-variant mt-1">{role.perk!.description}</p>
-                                            </div>
-                                            <PerkTypeBadge type={role.perk!.type} />
+                                        <p className="font-bold text-on-surface mb-2">Role: {role.name}</p>
+                                        <div className="space-y-2">
+                                            {(role.perks || []).map((perk, index) => (
+                                                <div key={index} className="flex items-start justify-between gap-2 text-sm border-t border-border/10 pt-2 first:pt-0 first:border-t-0">
+                                                    <p className="text-on-surface-variant flex-grow">{perk.description}</p>
+                                                    <PerkTypeBadge type={perk.type} />
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
                                 ))}
@@ -448,180 +543,191 @@ interface ProjectProfileViewProps {
     events: Event[];
 }
 
-const ProjectProfileView: React.FC<ProjectProfileViewProps> = ({ project, events }) => {
+const NftCollectionDropdown: React.FC<{
+    collection: NftCollection & { _sourceProject?: Project };
+    project: Project;
+}> = ({ collection, project }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const PerkTypeBadge: React.FC<{ type: PerkType }> = ({ type }) => {
+        const styles: Record<PerkType, string> = {
+            'Airdrop': 'bg-green-500/20 text-green-400',
+            'GTD': 'bg-blue-500/20 text-blue-400',
+            'FCFS': 'bg-amber-800/80 text-amber-100',
+            'Free Mint': 'bg-purple-500/20 text-purple-400',
+        };
+        const style = styles[type] || 'bg-gray-500/20 text-gray-400';
+        return <span className={`px-2 py-0.5 text-xs font-bold rounded-full ${style} flex-shrink-0`}>{type}</span>;
+    };
+
+    const isExternalCollection = collection._sourceProject && collection._sourceProject.id !== project.id;
+
+    return (
+        <div className="p-4">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full flex items-center justify-between text-left group"
+                aria-expanded={isOpen}
+            >
+                <div className="flex items-center gap-4">
+                    <img
+                        src={collection.image}
+                        alt={collection.name}
+                        className="w-16 h-16 rounded-lg object-cover border-2 border-surface shadow-md bg-surface-container"
+                    />
+                    <div className="flex-1 min-w-0">
+                        <h4 className="font-bold font-display text-lg text-on-surface group-hover:text-primary transition-colors truncate">{collection.name}</h4>
+                        {isExternalCollection && collection._sourceProject && (
+                            <ReactRouterDOM.Link to={`/project/${collection._sourceProject.id}`} onClick={(e) => e.stopPropagation()} className="text-xs text-on-surface-variant hover:text-primary flex items-center gap-1">
+                                From {collection._sourceProject.name}
+                            </ReactRouterDOM.Link>
+                        )}
+                        {(collection.link) && (
+                            <a href={collection.link} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs text-on-surface-variant hover:text-primary flex items-center gap-1" aria-label={`View ${collection.name} collection`}>
+                                View Collection <LinkIcon size={12} />
+                            </a>
+                        )}
+                    </div>
+                </div>
+                <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.3 }}>
+                    <ChevronDown size={24} className="text-on-surface-variant group-hover:text-primary" />
+                </motion.div>
+            </button>
+
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                    >
+                        <div className="pt-2 pb-4 px-4">
+                            <div className="space-y-3">
+                                {collection.perks.length > 0 ? (
+                                    collection.perks.map((perk, index) => {
+                                        const requirement = perk.holdingRequirement;
+                                        const sourceProjectName = collection._sourceProject?.name || project.name;
+                                        const isInternalPerkRequirement = !requirement.projectName || requirement.projectName === sourceProjectName;
+                                        
+                                        return (
+                                            <div key={index} className="neu-outset-card p-4 rounded-xl">
+                                                <div className="flex items-start justify-between gap-2">
+                                                    <div>
+                                                        <p className="font-bold text-on-surface text-sm">
+                                                            {isInternalPerkRequirement 
+                                                                ? `Hold ${requirement.count}+ of this collection` 
+                                                                : `Requires: Hold ${requirement.count}+ of ${requirement.collectionName} from ${requirement.projectName}`
+                                                            }
+                                                        </p>
+                                                        <p className="text-sm text-on-surface-variant mt-1">{perk.perk.description}</p>
+                                                    </div>
+                                                    <PerkTypeBadge type={perk.perk.type} />
+                                                </div>
+                                            </div>
+                                        )
+                                    })
+                                ) : (
+                                    <p className="text-sm text-center text-on-surface-variant py-4">No specific perks listed for this collection.</p>
+                                )}
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+};
+
+const PerksAndAirdropsPanel: React.FC<{ project: Project }> = ({ project }) => {
+    const allProjects = useMemo(() => getProjects(), []);
+
+    const displayableCollections = useMemo(() => {
+        const collections = new Map<string, NftCollection & { _sourceProject: Project }>();
+        const projectCollections = project.nftCollections || [];
+
+        // 1. Add native collections
+        projectCollections.forEach(coll => {
+            collections.set(`${project.id}-${coll.id}`, { ...coll, _sourceProject: project });
+        });
+
+        // 2. Add external collections that are required for perks
+        projectCollections.forEach(coll => {
+            coll.perks.forEach(perk => {
+                const req = perk.holdingRequirement;
+                if (req.projectName && req.collectionName && req.projectName !== project.name) {
+                    const externalProject = allProjects.find(p => p.name === req.projectName);
+                    const externalCollection = externalProject?.nftCollections?.find(c => c.name === req.collectionName);
+                    
+                    if (externalProject && externalCollection) {
+                        const key = `${externalProject.id}-${externalCollection.id}`;
+                        if (!collections.has(key)) {
+                            collections.set(key, { ...externalCollection, _sourceProject: externalProject });
+                        }
+                    }
+                }
+            });
+        });
+        
+        return Array.from(collections.values());
+    }, [project, allProjects]);
+
+    const rolePerks = useMemo(() => project.discordRoles?.filter(r => r.perks && r.perks.length > 0) || [], [project.discordRoles]);
+
+    if (rolePerks.length === 0 && displayableCollections.length === 0) {
+        return null;
+    }
+
+    return (
+        <Section icon={<PackageCheck size={24} />} title="Perks & Airdrops">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+                {displayableCollections.length > 0 && (
+                    <div className="space-y-3">
+                        <h3 className="flex items-center gap-2 font-bold font-display text-lg text-on-surface-variant mb-2">
+                            <Gem size={18} />
+                            <span>NFT Holding Perks</span>
+                        </h3>
+                        <div className="divide-y divide-border/10">
+                            {displayableCollections.map((collection) => (
+                                <NftCollectionDropdown key={`${collection._sourceProject.id}-${collection.id}`} collection={collection} project={project} />
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {rolePerks.length > 0 && (
+                    <div className="space-y-3">
+                        <h3 className="flex items-center gap-2 font-bold font-display text-lg text-on-surface-variant mb-2">
+                            <DiscordIcon className="text-on-surface-variant" />
+                            <span>Discord Role Perks</span>
+                        </h3>
+                        <div className="divide-y divide-border/10">
+                             <DiscordRoleDropdown roles={rolePerks} />
+                        </div>
+                    </div>
+                )}
+            </div>
+        </Section>
+    )
+};
+
+
+export const ProjectProfileView: React.FC<ProjectProfileViewProps> = ({ project, events }) => {
     const allUsers = useMemo(() => getUsers(), []);
     const navigate = ReactRouterDOM.useNavigate();
 
-    const NftCollectionDropdown: React.FC<{
-        collection: NftCollection & { _sourceProject?: Project };
-        project: Project;
-    }> = ({ collection, project }) => {
-        const [isOpen, setIsOpen] = useState(false);
-    
-        const PerkTypeBadge: React.FC<{ type: PerkType }> = ({ type }) => {
-            const styles: Record<PerkType, string> = {
-                'Airdrop': 'bg-green-500/20 text-green-400',
-                'GTD': 'bg-blue-500/20 text-blue-400',
-                'FCFS': 'bg-amber-800/80 text-amber-100',
-                'Free Mint': 'bg-purple-500/20 text-purple-400',
-            };
-            const style = styles[type] || 'bg-gray-500/20 text-gray-400';
-            return <span className={`px-2 py-0.5 text-xs font-bold rounded-full ${style} flex-shrink-0`}>{type}</span>;
-        };
-    
-        const isExternalCollection = collection._sourceProject && collection._sourceProject.id !== project.id;
-    
-        return (
-            <div className="p-4">
-                <button
-                    onClick={() => setIsOpen(!isOpen)}
-                    className="w-full flex items-center justify-between text-left group"
-                    aria-expanded={isOpen}
-                >
-                    <div className="flex items-center gap-4">
-                        {collection.image && (
-                            <img
-                                src={collection.image}
-                                alt={collection.name}
-                                className="w-16 h-16 rounded-lg object-cover border-2 border-surface shadow-md"
-                            />
-                        )}
-                        <div className="flex-1 min-w-0">
-                            <h4 className="font-bold font-display text-lg text-on-surface group-hover:text-primary transition-colors truncate">{collection.name}</h4>
-                            {isExternalCollection && collection._sourceProject && (
-                                <ReactRouterDOM.Link to={`/project/${collection._sourceProject.id}`} onClick={(e) => e.stopPropagation()} className="text-xs text-on-surface-variant hover:text-primary flex items-center gap-1">
-                                    From {collection._sourceProject.name}
-                                </ReactRouterDOM.Link>
-                            )}
-                            {(collection.link) && (
-                                <a href={collection.link} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs text-on-surface-variant hover:text-primary flex items-center gap-1" aria-label={`View ${collection.name} collection`}>
-                                    View Collection <LinkIcon size={12} />
-                                </a>
-                            )}
-                        </div>
-                    </div>
-                    <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.3 }}>
-                        <ChevronDown size={24} className="text-on-surface-variant group-hover:text-primary" />
-                    </motion.div>
-                </button>
-    
-                <AnimatePresence>
-                    {isOpen && (
-                        <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.3, ease: "easeInOut" }}
-                            className="overflow-hidden"
-                        >
-                            <div className="pt-2 pb-4 px-4">
-                                <div className="space-y-3">
-                                    {collection.perks.length > 0 ? (
-                                        collection.perks.map((perk, index) => {
-                                            const requirement = perk.holdingRequirement;
-                                            const sourceProjectName = collection._sourceProject?.name || project.name;
-                                            const isInternalPerkRequirement = !requirement.projectName || requirement.projectName === sourceProjectName;
-                                            
-                                            return (
-                                                <div key={index} className="neu-outset-card p-4 rounded-xl">
-                                                    <div className="flex items-start justify-between gap-2">
-                                                        <div>
-                                                            <p className="font-bold text-on-surface text-sm">
-                                                                {isInternalPerkRequirement 
-                                                                    ? `Hold ${requirement.count}+ of this collection` 
-                                                                    : `Requires: Hold ${requirement.count}+ of ${requirement.collectionName} from ${requirement.projectName}`
-                                                                }
-                                                            </p>
-                                                            <p className="text-sm text-on-surface-variant mt-1">{perk.perk.description}</p>
-                                                        </div>
-                                                        <PerkTypeBadge type={perk.perk.type} />
-                                                    </div>
-                                                </div>
-                                            )
-                                        })
-                                    ) : (
-                                        <p className="text-sm text-center text-on-surface-variant py-4">No specific perks listed for this collection.</p>
-                                    )}
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
-        );
-    };
+    const tokenLinks = useMemo(() => (project.coins || []).map(coin => ({
+        label: `${coin.name} (${coin.type === 'meme' ? 'Meme' : 'Ecosystem'})`,
+        url: coin.link,
+        image: coin.image,
+    })), [project.coins]);
 
-    const PerksAndAirdropsPanel: React.FC<{ project: Project }> = ({ project }) => {
-        const allProjects = useMemo(() => getProjects(), []);
-    
-        const displayableCollections = useMemo(() => {
-            const collections = new Map<string, NftCollection & { _sourceProject: Project }>();
-            const projectCollections = project.nftCollections || [];
-    
-            // 1. Add native collections
-            projectCollections.forEach(coll => {
-                collections.set(`${project.id}-${coll.id}`, { ...coll, _sourceProject: project });
-            });
-    
-            // 2. Add external collections that are required for perks
-            projectCollections.forEach(coll => {
-                coll.perks.forEach(perk => {
-                    const req = perk.holdingRequirement;
-                    if (req.projectName && req.collectionName && req.projectName !== project.name) {
-                        const externalProject = allProjects.find(p => p.name === req.projectName);
-                        const externalCollection = externalProject?.nftCollections?.find(c => c.name === req.collectionName);
-                        
-                        if (externalProject && externalCollection) {
-                            const key = `${externalProject.id}-${externalCollection.id}`;
-                            if (!collections.has(key)) {
-                                collections.set(key, { ...externalCollection, _sourceProject: externalProject });
-                            }
-                        }
-                    }
-                });
-            });
-            
-            return Array.from(collections.values());
-        }, [project, allProjects]);
-
-        const rolePerks = useMemo(() => project.discordRoles?.filter(r => r.perk) || [], [project.discordRoles]);
-    
-        if (rolePerks.length === 0 && displayableCollections.length === 0) {
-            return null;
-        }
-    
-        return (
-            <Section icon={<PackageCheck size={24} />} title="Perks & Airdrops">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
-                    {displayableCollections.length > 0 && (
-                        <div className="space-y-3">
-                            <h3 className="flex items-center gap-2 font-bold font-display text-lg text-on-surface-variant mb-2">
-                                <Gem size={18} />
-                                <span>NFT Holding Perks</span>
-                            </h3>
-                            <div className="divide-y divide-border/10">
-                                {displayableCollections.map((collection) => (
-                                    <NftCollectionDropdown key={`${collection._sourceProject.id}-${collection.id}`} collection={collection} project={project} />
-                                ))}
-                            </div>
-                        </div>
-                    )}
-    
-                    {rolePerks.length > 0 && (
-                        <div className="space-y-3">
-                            <h3 className="flex items-center gap-2 font-bold font-display text-lg text-on-surface-variant mb-2">
-                                <DiscordIcon className="text-on-surface-variant" />
-                                <span>Discord Role Perks</span>
-                            </h3>
-                            <div className="divide-y divide-border/10">
-                                 <DiscordRoleDropdown roles={rolePerks} />
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </Section>
-        );
-    };
+    const nftLinks = useMemo(() => (project.nftCollections || []).map(collection => ({
+        label: `${collection.name} (${collection.network})`,
+        url: collection.link,
+        image: collection.image,
+    })), [project.nftCollections]);
 
     return (
         <div className="space-y-8">
@@ -662,17 +768,26 @@ const ProjectProfileView: React.FC<ProjectProfileViewProps> = ({ project, events
                                 {project.category.map(cat => <span key={cat} className="px-2 py-0.5 bg-white/20 rounded-full text-xs font-bold">{cat.toUpperCase()}</span>)}
                             </div>
                             <div className="flex items-center justify-center flex-wrap gap-3 mt-6">
-                                {project.links.website && <HeroLink href={project.links.website} icon={<img src={project.logo} alt={project.name} className="w-full h-full object-cover rounded-full" />} label="Website" />}
+                                <HoverLinkGroup
+                                    links={project.links.websites}
+                                    icon={<Globe size={20} />}
+                                    projectLogo={project.logo}
+                                    label="Websites"
+                                />
                                 {project.links.twitter && <MetricLink href={project.links.twitter} icon={<XSocialIcon />} label="X (Twitter)" metric={project.followersX} metricLabel="Followers" />}
                                 {project.links.discord && <MetricLink href={project.links.discord} icon={<DiscordIcon />} label="Discord" metric={project.membersDiscord} metricLabel="Members" />}
-                                {project.links.whitelistInfo && <HeroLink href={project.links.whitelistInfo} icon={<FileText size={20} />} label="Whitelist Info" />}
                                 
-                                {project.coins?.map(coin => (
-                                    <HeroLink key={coin.id} href={coin.link} icon={coin.type === 'meme' ? <Flame size={20} /> : <Banknote size={20} />} label={`${coin.name} (${coin.type})`} />
-                                ))}
-                                {project.nftCollections?.map(collection => (
-                                    <HeroLink key={collection.id} href={collection.link} icon={<Gem size={20} />} label={`${collection.name} (NFT)`} />
-                                ))}
+                                <HoverLinkGroup
+                                    links={tokenLinks}
+                                    icon={<Banknote size={20} />}
+                                    label="Tokens"
+                                />
+                                
+                                <HoverLinkGroup
+                                    links={nftLinks}
+                                    icon={<Gem size={20} />}
+                                    label="NFTs"
+                                />
 
                                 <ReactRouterDOM.Link
                                     to={`/project/${project.id}/leaderboard`}

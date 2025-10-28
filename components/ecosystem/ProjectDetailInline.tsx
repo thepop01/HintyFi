@@ -12,7 +12,7 @@ const XSocialIcon = () => (
 );
 
 const DiscordIcon = () => (
-    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 fill-current"><title>Discord</title><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4464.8257-.618 1.2295a18.298 18.298 0 00-5.4849 0c-.1716-.4038-.407-.8542-.618-1.2295a.0741.0741 0 00-.0785-.0371 19.7363 19.7363 0 00-4.8851 1.5152.0699.0699 0 00-.0321.027c-3.3757 5.9272-3.3757 11.7582 0 17.6854a.0699.0699 0 00.0321.027c1.5872.4839 3.1632.844 4.8851 1.05.0741.0053.1328-.0213.1593-.0838.2215-.5533.432-1.1281.5937-1.7292a.0741.0741 0 00-.0426-.0891 16.5913 16.5913 0 01-1.4239-.8199.0741.0741 0 01-.0053-.1064c.2057-.2825.401-.5754.578-.8578a.0741.0741 0 01.0991-.0106c.0053.0053.0106.0053.0159.0106 2.3051 1.2825 4.9543 1.2825 7.2594 0 .0053-.0053.0106-.0053.0159-.0106a.0741.0741 0 01.0991.0106c.177.2824.3723.5753.578.8578a.0741.0741 0 01-.0053.1064 16.5913 16.5913 0 01-1.4239.8199.0741.0741 0 00-.0426.0891c.1617.6011.3722 1.1759.5937 1.7292.0266.0625.0852.0891.1593.0838 1.7219-.206 3.2979-.5661 4.8851-1.05a.0699.0699 0 00.0321-.027c3.3757-5.9272-3.3757-11.7582 0-17.6854a.0699.0699 0 00-.0321-.027zm-5.4232 12.336c-1.3813 0-2.5024-1.1636-2.5024-2.5929s1.1211-2.5929 2.5024-2.5929c1.3813 0 2.5024 1.1636 2.5024 2.5929s-1.1211 2.5929-2.5024 2.5929zm-5.3283 0c-1.3813 0-2.5024-1.1636-2.5024-2.5929s1.1211-2.5929 2.5024-2.5929c1.3813 0 2.5024 1.1636 2.5024 2.5929 0 1.4293-1.1211 2.5929-2.5024 2.5929z"/></svg>
+    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 fill-current"><title>Discord</title><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4464.8257-.618 1.2295a18.298 18.298 0 00-5.4849 0c-.1716-.4038-.407-.8542-.618-1.2295a.0741.0741 0 00-.0785-.0371 19.7363 19.7363 0 00-4.8851 1.5152.0699.0699 0 00-.0321.027c-3.3757 5.9272-3.3757 11.7582 0 17.6854a.0699.0699 0 00.0321.027c1.5872.4839 3.1632.844 4.8851 1.05.0741.0053.1328-.0213.1593-.0838.2215-.5533.432-1.1281.5937-1.7292a.0741.0741 0 00-.0426-.0891 16.5913 16.5913 0 01-1.4239-.8199.0741.0741 0 01-.0053-.1064c.2057-.2825.401-.5754.578-.8578a.0741.0741 0 01.0991-.0106c.0053.0053.0106.0053.0159.0106 2.3051 1.2825 4.9543 1.2825 7.2594 0 .0053-.0053.0106-.0053.0159-.0106a.0741.0741 0 01.0991.0106c.177.2824.3723.5753.578.8578a.0741.0741 0 01-.0053.1064 16.5913 16.5913 0 01-1.4239.8199.0741.0741 0 00-.0426.0891c.1617.6011.3722 1.1759.5937 1.7292.0266.0625.0852.0891.1593.0838 1.7219-.206 3.2979-.5661 4.8851-1.05a.0699.0699 0 00.0321-.027c-3.3757-5.9272 3.3757-11.7582 0-17.6854a.0699.0699 0 00-.0321-.027zm-5.4232 12.336c-1.3813 0-2.5024-1.1636-2.5024-2.5929s1.1211-2.5929 2.5024-2.5929c1.3813 0 2.5024 1.1636 2.5024 2.5929s-1.1211 2.5929-2.5024 2.5929zm-5.3283 0c-1.3813 0-2.5024-1.1636-2.5024-2.5929s1.1211-2.5929 2.5024-2.5929c1.3813 0 2.5024 1.1636 2.5024 2.5929 0 1.4293-1.1211 2.5929-2.5024 2.5929z"/></svg>
 );
 
 const ButtonLink: React.FC<{ href?: string; icon?: React.ReactNode; label: string; className?: string }> = ({ href, icon, label, className = '' }) => {
@@ -192,24 +192,77 @@ export const ProjectProfileInline: React.FC<{ project: Project; collection?: Dis
     // Fallback to original layout for other pages (like Ecosystem)
     return (
         <motion.div 
-            className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6"
+            className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-x-6 gap-y-8"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
         >
+            {/* --- ABOUT (FULL WIDTH) --- */}
+             {showAllLinks && showDescription && (
+                <div className="lg:col-span-3">
+                    <h3 className="flex items-center gap-2 font-bold font-display text-base mb-3 text-on-surface-variant">
+                        <FileText size={18} />
+                        <span>About</span>
+                    </h3>
+                    <p className="text-sm text-on-surface-variant leading-relaxed">{project.longDescription}</p>
+                </div>
+            )}
+            
             {/* --- LEFT COLUMN --- */}
             <div className="lg:col-span-2 space-y-6">
-                {showAllLinks && showDescription && (
-                    <div>
-                        <h3 className="flex items-center gap-2 font-bold font-display text-base mb-3 text-on-surface-variant">
-                            <FileText size={18} />
-                            <span>About</span>
-                        </h3>
-                        <p className="text-sm text-on-surface-variant leading-relaxed">{project.longDescription}</p>
+                <div>
+                    <h3 className="flex items-center gap-2 font-bold font-display text-base mb-3 text-on-surface">
+                        <Globe size={18} />
+                        <span>Links</span>
+                    </h3>
+                    <div className="space-y-4">
+                        {showAllLinks && showSocialLinks && (
+                            <div>
+                                <h4 className="flex items-center gap-2 font-bold text-xs text-on-surface-variant uppercase mb-2">
+                                    <ArrowRight size={14} /> Socials
+                                </h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {project.links.websites.map((site, i) => (
+                                         <ButtonLink key={i} href={site.url} icon={<img src={project.logo} alt={project.name} className="w-5 h-5 rounded-full object-contain" />} label={site.label} />
+                                    ))}
+                                    <ButtonLink href={project.links.twitter} icon={<XSocialIcon />} label="X" />
+                                    <ButtonLink href={project.links.discord} icon={<DiscordIcon />} label="Discord" />
+                                </div>
+                            </div>
+                        )}
+
+                        {showAllLinks && (project.coins && project.coins.length > 0) && (
+                            <div>
+                                <h4 className="flex items-center gap-2 font-bold text-xs text-on-surface-variant uppercase mb-2">
+                                    <ArrowRight size={14} /> Coins
+                                </h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {project.coins.map(coin => (
+                                        <ButtonLink key={coin.id} href={coin.link} icon={<Banknote size={18} />} label={`${coin.name} (${coin.network})`} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {(collectionsToShow.length > 0) && (
+                            <div>
+                                <h4 className="flex items-center gap-2 font-bold text-xs text-on-surface-variant uppercase mb-2">
+                                    <ArrowRight size={14} /> NFTs
+                                </h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {collectionsToShow.map(collection => (
+                                        <ButtonLink key={collection.id} href={collection.link} icon={<Gem size={18}/>} label={`${collection.name} (${collection.network})`} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
-                )}
-                
+                </div>
+            </div>
+
+            {/* --- RIGHT COLUMN --- */}
+            <div className="lg:col-span-1 space-y-6">
                 {showPerks && collectionsToShow.length > 0 && (
                     <div>
                         <h3 className="flex items-center gap-2 font-bold font-display text-base mb-3 text-on-surface-variant">
@@ -255,56 +308,6 @@ export const ProjectProfileInline: React.FC<{ project: Project; collection?: Dis
                         </div>
                     </div>
                 )}
-            </div>
-
-            {/* --- RIGHT COLUMN --- */}
-            <div className="lg:col-span-1 space-y-6">
-                 <div>
-                    <h3 className="flex items-center gap-2 font-bold font-display text-base mb-3 text-on-surface">
-                        <Globe size={18} />
-                        <span>Links</span>
-                    </h3>
-                    <div className="space-y-4">
-                        {showAllLinks && showSocialLinks && (
-                            <div>
-                                <h4 className="flex items-center gap-2 font-bold text-xs text-on-surface-variant uppercase mb-2">
-                                    <ArrowRight size={14} /> Socials
-                                </h4>
-                                <div className="flex flex-wrap gap-2">
-                                    <ButtonLink href={project.links.website} icon={<img src={project.logo} alt={project.name} className="w-5 h-5 rounded-full object-contain" />} label="Website" />
-                                    <ButtonLink href={project.links.twitter} icon={<XSocialIcon />} label="X" />
-                                    <ButtonLink href={project.links.discord} icon={<DiscordIcon />} label="Discord" />
-                                </div>
-                            </div>
-                        )}
-
-                        {showAllLinks && (project.coins && project.coins.length > 0) && (
-                            <div>
-                                <h4 className="flex items-center gap-2 font-bold text-xs text-on-surface-variant uppercase mb-2">
-                                    <ArrowRight size={14} /> Coins
-                                </h4>
-                                <div className="flex flex-wrap gap-2">
-                                    {project.coins.map(coin => (
-                                        <ButtonLink key={coin.id} href={coin.link} icon={<Banknote size={18} />} label={`${coin.name} (${coin.network})`} />
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {(collectionsToShow.length > 0) && (
-                            <div>
-                                <h4 className="flex items-center gap-2 font-bold text-xs text-on-surface-variant uppercase mb-2">
-                                    <ArrowRight size={14} /> NFTs
-                                </h4>
-                                <div className="flex flex-wrap gap-2">
-                                    {collectionsToShow.map(collection => (
-                                        <ButtonLink key={collection.id} href={collection.link} icon={<Gem size={18}/>} label={`${collection.name} (${collection.network})`} />
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
             </div>
         </motion.div>
     );

@@ -87,7 +87,7 @@ const NftCollectionsTable: React.FC<NftCollectionsTableProps> = ({
                                         <td className="px-4 py-4 whitespace-nowrap text-sm text-on-surface-variant text-center">{currentPage * pageSize + index + 1}</td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center gap-4">
-                                                <img className="h-12 w-12 rounded-lg bg-surface-container object-contain" src={collection.image} alt={`${collection.name} logo`} loading="lazy" />
+                                                <img className="h-12 w-12 rounded-lg bg-surface-container object-cover" src={collection.image} alt={`${collection.name} logo`} loading="lazy" />
                                                 <div>
                                                     <div className="text-lg font-heading font-medium text-on-surface">{collection.name}</div>
                                                     <ReactRouterDOM.Link

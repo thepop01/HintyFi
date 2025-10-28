@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { Project, DiscordRole, PerkType } from '../../../src/types';
+import { Project, DiscordRole, Perk, PerkType } from '../../../src/types';
 import { useToast } from '../../../context/ToastContext';
 import { addOrUpdateProject } from '../../../src/services/dataService';
 import { uid } from '../../../utils/helpers';
@@ -21,10 +21,18 @@ const FormSectionHeader: React.FC<{ children: React.ReactNode }> = ({ children }
 
 // Role Form Component
 const RoleForm: React.FC<{ role?: Partial<DiscordRole> | null; onSave: (role: DiscordRole) => void; onClose: () => void }> = ({ role, onSave, onClose }) => {
-    const [formData, setFormData] = useState<Partial<DiscordRole>>(role || { name: '', serverId: '', roleId: '', description: '', perk: { type: 'FCFS', description: '' } });
+    const getInitialFormData = (role: Partial<DiscordRole> | null | undefined): Partial<DiscordRole> => ({
+        name: role?.name || '',
+        serverId: role?.serverId || '',
+        roleId: role?.roleId || '',
+        description: role?.description || '',
+        perks: role?.perks && role.perks.length > 0 ? role.perks : [{ type: 'FCFS', description: '' }],
+    });
+
+    const [formData, setFormData] = useState<Partial<DiscordRole>>(getInitialFormData(role));
 
     useEffect(() => {
-        setFormData(role || { name: '', serverId: '', roleId: '', description: '', perk: { type: 'FCFS', description: '' } });
+        setFormData(getInitialFormData(role));
     }, [role]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -32,16 +40,25 @@ const RoleForm: React.FC<{ role?: Partial<DiscordRole> | null; onSave: (role: Di
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handlePerkChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const handlePerkChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>, index: number) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            perk: {
-                ...(prev.perk || { type: 'FCFS', description: '' }),
-                [name]: value,
-            },
-        }));
+        const newPerks = [...(formData.perks || [])];
+        newPerks[index] = { ...newPerks[index], [name]: value } as Perk;
+        setFormData(prev => ({ ...prev, perks: newPerks }));
     };
+
+    const addPerk = () => {
+        // FIX: Explicitly type the new perk to match PerkType and avoid type inference issues with string literals.
+        const newPerk: Perk = { type: 'FCFS', description: '' };
+        const newPerks = [...(formData.perks || []), newPerk];
+        setFormData(prev => ({ ...prev, perks: newPerks }));
+    };
+    
+    const removePerk = (index: number) => {
+        const newPerks = (formData.perks || []).filter((_, i) => i !== index);
+        setFormData(prev => ({ ...prev, perks: newPerks }));
+    };
+
 
     const handleSubmit = () => {
         if (!formData.name || !formData.roleId) {
@@ -61,13 +78,21 @@ const RoleForm: React.FC<{ role?: Partial<DiscordRole> | null; onSave: (role: Di
                 <FormRow><FormLabel>Description</FormLabel><FormField><FormTextArea name="description" value={formData.description} onChange={handleChange} /></FormField></FormRow>
 
                 <FormSectionHeader>Perk Details</FormSectionHeader>
-                <FormRow><FormLabel>Perk Type</FormLabel><FormField><FormSelect name="type" value={formData.perk?.type || 'FCFS'} onChange={handlePerkChange}>
-                    <option value="Airdrop">Airdrop</option>
-                    <option value="GTD">Guaranteed (GTD)</option>
-                    <option value="FCFS">First-Come, First-Served (FCFS)</option>
-                    <option value="Free Mint">Free Mint</option>
-                </FormSelect></FormField></FormRow>
-                <FormRow><FormLabel>Perk Description</FormLabel><FormField><FormTextArea name="description" value={formData.perk?.description || ''} onChange={handlePerkChange} /></FormField></FormRow>
+                <div className="space-y-3">
+                    {(formData.perks || []).map((perk, index) => (
+                        <div key={index} className="p-3 neu-outset-card relative">
+                             <button type="button" onClick={() => removePerk(index)} className="absolute top-2 right-2 p-1 text-red-500 hover:text-red-400"><Trash2 size={16} /></button>
+                             <FormRow><FormLabel>Perk Type</FormLabel><FormField><FormSelect name="type" value={perk.type} onChange={e => handlePerkChange(e, index)}>
+                                <option value="Airdrop">Airdrop</option>
+                                <option value="GTD">Guaranteed (GTD)</option>
+                                <option value="FCFS">First-Come, First-Served (FCFS)</option>
+                                <option value="Free Mint">Free Mint</option>
+                            </FormSelect></FormField></FormRow>
+                            <FormRow><FormLabel>Perk Description</FormLabel><FormField><FormTextArea name="description" value={perk.description} onChange={e => handlePerkChange(e, index)} /></FormField></FormRow>
+                        </div>
+                    ))}
+                </div>
+                 <button type="button" onClick={addPerk} className="neu-button px-3 py-1 text-sm flex items-center gap-1 mt-3"><Plus size={14} /> Add Another Perk</button>
             </div>
             <div className="flex justify-end gap-3 pt-4 mt-4 border-t border-border/20">
                 <button type="button" onClick={onClose} className="neu-button px-4 py-2 font-bold">Cancel</button>
@@ -171,8 +196,8 @@ const AdminProjectDiscordRolesPage: React.FC = () => {
                         <div className="p-3 flex items-center justify-between gap-4">
                             <div className="flex-grow min-w-0">
                                 <p className="font-bold">{role.name}</p>
-                                <p className="text-sm text-on-surface-variant">
-                                    {role.perk?.type}: {role.perk?.description}
+                                <p className="text-sm text-on-surface-variant line-clamp-2">
+                                    {(role.perks || []).map(p => `${p.type}: ${p.description}`).join(' | ')}
                                 </p>
                             </div>
                             <div className="flex items-center gap-2 flex-shrink-0">

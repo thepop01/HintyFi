@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import { Project, NftCollection, Coin } from '../../../src/types';
+import { Project, NftCollection, Coin, Perk, NftPerk } from '../../../src/types';
 import { useToast } from '../../../context/ToastContext';
 import { addOrUpdateProject } from '../../../src/services/dataService';
 import { Plus, Trash2 } from 'lucide-react';
@@ -13,6 +13,7 @@ const FormLabel: React.FC<{ htmlFor?: string; children: React.ReactNode }> = ({ 
 const FormField: React.FC<{ children: React.ReactNode }> = ({ children }) => <div>{children}</div>;
 const inputBaseClasses = "neu-inset-input w-full";
 const FormInput: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = (props) => <input {...props} className={`${inputBaseClasses} ${props.className}`} />;
+const FormTextArea: React.FC<React.TextareaHTMLAttributes<HTMLTextAreaElement>> = (props) => <textarea {...props} className={`${inputBaseClasses}`} rows={props.rows || 1} />;
 const FormSelect: React.FC<React.SelectHTMLAttributes<HTMLSelectElement>> = (props) => <select {...props} className={`${inputBaseClasses} neu-select`}>{props.children}</select>;
 const FormSectionHeader: React.FC<{ children: React.ReactNode }> = ({ children }) => <h3 className="text-lg font-display font-bold text-on-surface mb-3 mt-6 border-b-2 border-primary/20 pb-2">{children}</h3>;
 
@@ -35,6 +36,45 @@ const AdminProjectNftsMemesPage: React.FC = () => {
     const handleCollectionChange = (id: string, field: keyof Omit<NftCollection, 'id' | 'perks'>, value: string) => {
         setFormData(prev => ({...prev, nftCollections: prev.nftCollections?.map(c => c.id === id ? { ...c, [field]: value } : c) }));
     };
+
+    // --- NFT Perk Handlers ---
+    const addPerk = (collectionId: string) => {
+        setFormData(prev => ({
+            ...prev,
+            nftCollections: prev.nftCollections?.map(c => 
+                c.id === collectionId 
+                ? { ...c, perks: [...c.perks, { holdingRequirement: { count: 1 }, perk: { type: 'FCFS', description: '' } }] } 
+                : c
+            )
+        }));
+    };
+    const removePerk = (collectionId: string, perkIndex: number) => {
+         setFormData(prev => ({
+            ...prev,
+            nftCollections: prev.nftCollections?.map(c => 
+                c.id === collectionId 
+                ? { ...c, perks: c.perks.filter((_, i) => i !== perkIndex) } 
+                : c
+            )
+        }));
+    };
+    const handlePerkChange = (collectionId: string, perkIndex: number, field: string, value: string | number) => {
+        setFormData(prev => ({
+            ...prev,
+            nftCollections: prev.nftCollections?.map(c => {
+                if (c.id === collectionId) {
+                    const newPerks = [...c.perks];
+                    const path = field.split('.');
+                    let current: any = newPerks[perkIndex];
+                    path.slice(0, -1).forEach(p => { current = current[p]; });
+                    current[path[path.length - 1]] = value;
+                    return { ...c, perks: newPerks };
+                }
+                return c;
+            })
+        }));
+    };
+
     
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -80,6 +120,30 @@ const AdminProjectNftsMemesPage: React.FC = () => {
                         <FormRow><FormLabel>Supply</FormLabel><FormField><FormInput value={collection.supply || ''} onChange={e => handleCollectionChange(collection.id, 'supply', e.target.value)} /></FormField></FormRow>
                         <FormRow><FormLabel>Mint Price</FormLabel><FormField><FormInput value={collection.mintPrice || ''} onChange={e => handleCollectionChange(collection.id, 'mintPrice', e.target.value)} /></FormField></FormRow>
                         <FormRow><FormLabel>Floor Price</FormLabel><FormField><FormInput value={collection.floorPrice || ''} onChange={e => handleCollectionChange(collection.id, 'floorPrice', e.target.value)} /></FormField></FormRow>
+                        
+                        <div>
+                            <h5 className="font-bold text-on-surface-variant mb-2">Perks for Holding</h5>
+                            <div className="space-y-3">
+                                {(collection.perks || []).map((perk, perkIndex) => (
+                                    <div key={perkIndex} className="neu-inset-card p-3 relative">
+                                         <button type="button" onClick={() => removePerk(collection.id, perkIndex)} className="absolute top-2 right-2 p-1 text-red-500 hover:text-red-400"><Trash2 size={16} /></button>
+                                        <div className="flex items-center gap-2">
+                                            <FormSelect value={perk.perk.type} onChange={e => handlePerkChange(collection.id, perkIndex, 'perk.type', e.target.value)} className="w-1/3">
+                                                <option>Airdrop</option><option>GTD</option><option>FCFS</option><option>Free Mint</option>
+                                            </FormSelect>
+                                            <FormTextArea placeholder="Perk description..." value={perk.perk.description} onChange={e => handlePerkChange(collection.id, perkIndex, 'perk.description', e.target.value)} />
+                                        </div>
+                                         <div className="flex items-center gap-2 mt-2">
+                                            <label className="text-sm font-semibold text-on-surface-variant">Requires holding:</label>
+                                            <FormInput type="number" value={perk.holdingRequirement.count} onChange={e => handlePerkChange(collection.id, perkIndex, 'holdingRequirement.count', parseInt(e.target.value))} className="w-20"/>
+                                            <span className="text-sm">NFT(s)</span>
+                                        </div>
+                                    </div>
+                                ))}
+                                 <button type="button" onClick={() => addPerk(collection.id)} className="neu-button px-3 py-1 text-sm flex items-center gap-1 mt-3"><Plus size={14} /> Add Perk</button>
+                            </div>
+                        </div>
+
                     </div>
                 ))}
             </div>

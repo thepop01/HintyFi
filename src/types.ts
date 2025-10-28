@@ -6,6 +6,11 @@ export type DropStatus = 'ongoing' | 'upcoming' | 'completed';
 export type PerkType = 'Airdrop' | 'GTD' | 'FCFS' | 'Free Mint';
 export type EventCategory = 'community' | 'defi' | 'nft' | 'gaming' | 'art';
 
+export interface LinkItem {
+  label: string;
+  url: string;
+}
+
 // Perks and Collections
 export interface Perk {
   type: PerkType;
@@ -69,7 +74,7 @@ export interface DiscordRole {
     name: string;
     description: string;
     points?: number;
-    perk?: Perk;
+    perks?: Perk[];
 }
 
 // Utility and Coins
@@ -237,10 +242,9 @@ export interface Project {
     description: string;
     longDescription: string;
     links: {
-        website: string;
+        websites: LinkItem[];
         twitter?: string;
         discord?: string;
-        whitelistInfo?: string;
         coinLink?: string;
         magicEden?: { mainnet?: string; testnet?: string; };
         memeCoin?: { mainnet?: string; testnet?: string; };
@@ -342,7 +346,6 @@ export interface Quest {
     entries?: QuestEntry[];
     maxSubmissionsPerUser?: number;
     pointsForSubmission?: number;
-    // FIX: Added missing 'pointsForWinning' property to the Quest interface.
     pointsForWinning?: number;
     identityQuestion?: {
         title: string;

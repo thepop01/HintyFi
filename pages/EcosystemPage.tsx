@@ -2,7 +2,7 @@ import React from 'react';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { Project, ProjectCategory, DropStatus } from '../src/types';
-import { getProjects, voteProject, getProjectById, isCultOwner } from '../src/services/dataService';
+import { getProjects, voteProject, getProjectById } from '../src/services/dataService';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dna, Gem, Gamepad2, Users, Repeat, Building, Layers, Wallet, Search, ChevronRight, ArrowUp, ArrowDown, Cpu, BrainCircuit, Flame, Rocket, ChevronLeft, Star, Crown, History, Loader, Inbox, Sparkles } from 'lucide-react';
 import EcosystemHero from '../components/ecosystem/EcosystemHero';
@@ -68,8 +68,7 @@ const ProjectTable: React.FC<{
     pageSize: number;
     onVote: (projectId: string, vote: 'up' | 'down') => void;
     isLoading: boolean;
-    isVerified: boolean;
-}> = ({ projects, totalProjects, onRowClick, expandedProjectId, requestSort, sortConfig, currentPage, pageSize, onVote, isLoading, isVerified }) => {
+}> = ({ projects, totalProjects, onRowClick, expandedProjectId, requestSort, sortConfig, currentPage, pageSize, onVote, isLoading }) => {
     const { prefetch } = usePrefetch(getProjectById);
 
     const SortableHeader: React.FC<{ sortKey: SortableKeys; children: React.ReactNode; className?: string }> = ({ sortKey, children, className }) => {
@@ -114,28 +113,17 @@ const ProjectTable: React.FC<{
                     ) : projects.length > 0 ? (
                         projects.map((project, index) => {
                             const isExpanded = project.id === expandedProjectId;
-                            const isEarlyAndUnverified = project.stage === 'Early' && !isVerified;
 
                             return (
                             <React.Fragment key={project.id}>
                                 <motion.tr
                                     layout="position"
                                     transition={{ type: 'tween', ease: 'easeInOut', duration: 0.3 }}
-                                    className={`relative border-b border-border/10 transition-colors ${isEarlyAndUnverified ? 'cursor-not-allowed' : 'hover:bg-border/10 cursor-pointer'}`}
-                                    onClick={isEarlyAndUnverified ? undefined : () => onRowClick(project.id)}
-                                    onMouseEnter={isEarlyAndUnverified ? undefined : () => prefetch(project.id)}
+                                    className="relative border-b border-border/10 transition-colors hover:bg-border/10 cursor-pointer"
+                                    onClick={() => onRowClick(project.id)}
+                                    onMouseEnter={() => prefetch(project.id)}
                                     whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
                                 >
-                                    {isEarlyAndUnverified && (
-                                        <td colSpan={7} className="absolute inset-0 backdrop-blur-sm z-10 p-0 rounded-md">
-                                            <div className="w-full h-full flex items-center pl-[21%]">
-                                                <span title="Exclusive" className="flex items-center gap-2 text-base font-semibold px-3 py-1 bg-orange-400/20 text-orange-600 rounded-full border border-orange-500/50">
-                                                    <Crown size={16} /> Exclusive
-                                                </span>
-                                            </div>
-                                        </td>
-                                    )}
-
                                     <td className="px-4 py-4 whitespace-nowrap text-sm text-on-surface-variant text-center">{currentPage * pageSize + index + 1}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center">
@@ -237,7 +225,6 @@ const EcosystemPage: React.FC = () => {
 
   const { currentUser } = useAuth();
   const { addToast } = useToast();
-  const isVerified = isCultOwner(currentUser?.walletAddress);
 
   const handleVote = (projectId: string, vote: 'up' | 'down') => {
       if (!currentUser) {
@@ -647,7 +634,6 @@ const EcosystemPage: React.FC = () => {
                 currentPage={currentPage}
                 pageSize={pageSize}
                 onVote={handleVote}
-                isVerified={isVerified}
             />
             
             {paginatedProjects.length > 0 && (

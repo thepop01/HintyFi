@@ -1,7 +1,5 @@
-
-
 import React, { useState, useMemo, useEffect } from 'react';
-import { getProjects, getUsers, isCultOwner } from '../src/services/dataService';
+import { getProjects, getUsers } from '../src/services/dataService';
 import { Project, ProjectCategory, User } from '../src/types';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -9,7 +7,6 @@ import { Search, Globe, ArrowUp, ArrowDown, Crown } from 'lucide-react';
 import { Dna, Gem, Gamepad2, Users as UsersIcon, Repeat, Building, Layers, Wallet, Cpu, BrainCircuit, Flame, Rocket } from 'lucide-react';
 import { fuzzySearch } from '../utils/helpers';
 import EmptyState from '../components/common/EmptyState';
-import { useAuth } from '../context/AuthContext';
 
 const XSocialIcon: React.FC = () => (
     <div className="bg-black w-full h-full rounded-md flex items-center justify-center p-1.5">
@@ -38,9 +35,6 @@ const categoryConfig: Record<ProjectCategory, { icon: React.ReactElement<{ size?
 };
 
 const EarlyProjectsPage: React.FC = () => {
-    const { currentUser } = useAuth();
-    const isVerified = isCultOwner(currentUser?.walletAddress);
-
     const [projects, setProjects] = useState<Project[]>([]);
     const [allUsers, setAllUsers] = useState<User[]>([]);
     
@@ -134,9 +128,9 @@ const EarlyProjectsPage: React.FC = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.3, delay: index * 0.05 }}
-                                className={!isVerified ? 'blur-md pointer-events-none' : ''}
+                                className=""
                             >
-                                <Link to={!isVerified ? '#' : `/project/${project.id}`} className="block bg-white/50 rounded-xl shadow-md p-4 neu-outset-card hover:!shadow-outset-lg-hover hover:-translate-y-0.5 transition-all duration-200">
+                                <Link to={`/project/${project.id}`} className="block bg-white/50 rounded-xl shadow-md p-4 neu-outset-card hover:!shadow-outset-lg-hover hover:-translate-y-0.5 transition-all duration-200">
                                     <div className="flex flex-col md:flex-row items-start gap-6">
                                         {/* Left Column */}
                                         <div className="flex-shrink-0 w-full md:w-40 text-center flex flex-row md:flex-col items-center gap-4">
@@ -161,7 +155,9 @@ const EarlyProjectsPage: React.FC = () => {
                                             <p className="text-on-surface-variant leading-relaxed">{project.longDescription}</p>
                                             <div className="flex items-center gap-4 mt-4 pt-4 border-t border-black/10">
                                                 <div className="flex items-center gap-2">
-                                                    <a href={project.links.website} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} className="neu-inset-control w-8 h-8 p-1.5 flex items-center justify-center" title="Website"><Globe size={18} /></a>
+                                                    {project.links.websites.map((site, i) => (
+                                                         <a key={i} href={site.url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} className="neu-inset-control w-8 h-8 p-1.5 flex items-center justify-center" title={site.label}><Globe size={18} /></a>
+                                                    ))}
                                                     {project.links.twitter && <a href={project.links.twitter} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} className="neu-inset-control w-8 h-8 p-1 flex items-center justify-center" title="X (Twitter)"><XSocialIcon /></a>}
                                                     {project.links.discord && <a href={project.links.discord} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} className="neu-inset-control w-8 h-8 p-1 flex items-center justify-center" title="Discord"><DiscordIcon /></a>}
                                                 </div>
@@ -182,14 +178,6 @@ const EarlyProjectsPage: React.FC = () => {
                                     </div>
                                 </Link>
                             </motion.div>
-
-                            {!isVerified && (
-                                <div className="absolute inset-0 flex items-center justify-center z-10">
-                                    <span title="Exclusive" className="flex items-center gap-2 text-lg font-bold px-4 py-2 bg-orange-400/30 text-orange-700 rounded-full border-2 border-orange-500/50 backdrop-blur-sm">
-                                        <Crown size={20} /> Exclusive
-                                    </span>
-                                </div>
-                            )}
                         </div>
                     ))
                 ) : (

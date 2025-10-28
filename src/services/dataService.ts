@@ -980,11 +980,16 @@ const seedData = () => {
   ];
 
   const discordRolesPool: DiscordRole[] = [
-    { serverId: '123', roleId: '456', name: 'OG Role', description: "Awarded to the earliest members of the project's community.", points: 1000, perk: { type: 'Airdrop', description: 'Highest tier airdrop.' } },
-    { serverId: '123', roleId: '457', name: 'Alpha Tester', description: "Participated in early-stage testing and provided valuable feedback.", points: 500, perk: { type: 'GTD', description: '1 Guaranteed Mint' } },
-    { serverId: '123', roleId: '458', name: 'Community Contributor', description: "Recognized for significant and consistent contributions to the community.", points: 750, perk: { type: 'Free Mint', description: '1 Free Mint' } },
-    { serverId: '123', roleId: '459', name: 'Early Supporter', description: "Joined and supported the project in its initial phases.", points: 400, perk: { type: 'FCFS', description: 'FCFS mint spot.' } },
-    { serverId: '123', roleId: '460', name: 'Event Winner', description: "Achieved victory in an official community event or competition.", points: 300, perk: { type: 'GTD', description: '1 Guaranteed Mint' } },
+    // FIX: Changed `perk` to `perks` and wrapped the object in an array to match the DiscordRole type.
+    { serverId: '123', roleId: '456', name: 'OG Role', description: "Awarded to the earliest members of the project's community.", points: 1000, perks: [{ type: 'Airdrop', description: 'Highest tier airdrop.' }] },
+    // FIX: Changed `perk` to `perks` and wrapped the object in an array to match the DiscordRole type.
+    { serverId: '123', roleId: '457', name: 'Alpha Tester', description: "Participated in early-stage testing and provided valuable feedback.", points: 500, perks: [{ type: 'GTD', description: '1 Guaranteed Mint' }] },
+    // FIX: Changed `perk` to `perks` and wrapped the object in an array to match the DiscordRole type.
+    { serverId: '123', roleId: '458', name: 'Community Contributor', description: "Recognized for significant and consistent contributions to the community.", points: 750, perks: [{ type: 'Free Mint', description: '1 Free Mint' }] },
+    // FIX: Changed `perk` to `perks` and wrapped the object in an array to match the DiscordRole type.
+    { serverId: '123', roleId: '459', name: 'Early Supporter', description: "Joined and supported the project in its initial phases.", points: 400, perks: [{ type: 'FCFS', description: 'FCFS mint spot.' }] },
+    // FIX: Changed `perk` to `perks` and wrapped the object in an array to match the DiscordRole type.
+    { serverId: '123', roleId: '460', name: 'Event Winner', description: "Achieved victory in an official community event or competition.", points: 300, perks: [{ type: 'GTD', description: '1 Guaranteed Mint' }] },
   ];
 
   const getRandomSubset = <T,>(arr: T[], count: number): T[] => {
@@ -1013,14 +1018,16 @@ const seedData = () => {
     const raiseAmount = Math.random() > 0.3 ? `$${(Math.random() * 15 + 1).toFixed(1)}M` : 'N/A';
     let categories = getRandomSubset(allCategories, Math.floor(Math.random() * 2) + 1);
     
+    // FIX: Corrected 'website' to 'websites' to match the Project['links'] type definition.
     const projectLinks: Project['links'] = {
-        website: '#',
+        websites: [{ label: 'Website', url: '#' }],
         twitter: '#',
         discord: '#',
     };
 
     if (name === "Breath of Estova") {
-        projectLinks.whitelistInfo = '#';
+// FIX: Property 'whitelistInfo' does not exist on type 'Project["links"]'. Adding it as a LinkItem to the 'websites' array instead.
+        projectLinks.websites.push({ label: 'Whitelist Info', url: '#' });
     }
 
     const isNew = i < projectNames.length * 0.2;
@@ -1090,6 +1097,10 @@ const seedData = () => {
       isHot: Math.random() > 0.85,
       isPublished: true,
     };
+
+    if (name === 'Accountable') {
+        projectData.links.websites.push({ label: 'API Docs', url: '#' });
+    }
 
     if (tasksInfo) {
         projectData.tasks = getRandomSubset(mockTasks, tasksInfo.totalTasks);
@@ -1200,7 +1211,7 @@ const seedData = () => {
         projectData.isHot = true;
         projectData.votes = { up: 4, down: 2, voters: [ { userId: 'u_1', vote: 'up' }, { userId: 'u_2', vote: 'up' }, { userId: 'u_5', vote: 'up' }, { userId: 'u_4', vote: 'up' }, { userId: 'u_7', vote: 'down' }, { userId: 'u_3', vote: 'down' }, ] };
         projectData.discordRoles = [
-            { serverId: '876543210', roleId: '001', name: 'Genesis Holder', description: "Holder of a Genesis Card NFT.", points: 500, perk: { type: 'Airdrop', description: 'Airdrop boost' } },
+            { serverId: '876543210', roleId: '001', name: 'Genesis Holder', description: "Holder of a Genesis Card NFT.", points: 500, perks: [{ type: 'Airdrop', description: 'Airdrop boost' }] },
         ];
          projectData.nftCollections = [{
           id: 'nft_opals_1',
@@ -1240,6 +1251,10 @@ const seedData = () => {
         projectData.id = 'proj_7'; // Consistent ID for CULT
         projectData.isCrowned = true;
         projectData.isHot = true;
+        projectData.links.websites.push(
+            { label: 'Documentation', url: '#' },
+            { label: 'Governance Forum', url: '#' }
+        );
         projectData.strategyWalkthrough = [
             "Obtain an 'Initiate Pass' NFT.",
             "Hold the pass for a GTD mint spot on partner projects.",
@@ -1247,9 +1262,9 @@ const seedData = () => {
             "Participate in community logo redesign contests for USDC rewards."
         ];
         projectData.discordRoles = [
-            { serverId: '987654321', roleId: '111', name: 'Cultist', description: "A dedicated and active member of the CULT community.", points: 100, perk: { type: 'FCFS', description: '1 FCFS Mint Spot' } },
-            { serverId: '987654321', roleId: '222', name: 'High Priest', description: "A senior community member with leadership responsibilities.", points: 1500, perk: { type: 'Airdrop', description: 'Eligible for $CULT token airdrop' } },
-            { serverId: '987654321', roleId: '333', name: 'Initiate', description: "A new member who has completed the introductory rites.", points: 250, perk: { type: 'Free Mint', description: 'Eligible for one free mint from partner collections' } },
+            { serverId: '987654321', roleId: '111', name: 'Cultist', description: "A dedicated and active member of the CULT community.", points: 100, perks: [{ type: 'FCFS', description: '1 FCFS Mint Spot' }] },
+            { serverId: '987654321', roleId: '222', name: 'High Priest', description: "A senior community member with leadership responsibilities.", points: 1500, perks: [{ type: 'Airdrop', description: 'Eligible for $CULT token airdrop' }] },
+            { serverId: '987654321', roleId: '333', name: 'Initiate', description: "A new member who has completed the introductory rites.", points: 250, perks: [{ type: 'Free Mint', description: 'Eligible for one free mint from partner collections' }] },
         ];
         projectData.team = [
             { name: 'alice', role: 'Co-Founder', discordUserId: '273462001309384704', discordUsername: 'alice.eth', socials: { twitter: 'https://twitter.com/alice_eth' } },
@@ -1262,47 +1277,96 @@ const seedData = () => {
             { name: 'Heidi', role: 'Partnerships', socials: { twitter: 'https://twitter.com/heidi_connects' } },
             { name: 'Ivan', role: 'Data Scientist', socials: { twitter: 'https://twitter.com/ivan_data' } }
         ];
-         projectData.nftCollections = [{
-          id: 'nft_cult_1',
-          name: 'Initiate Pass',
-          image: 'https://i.ibb.co/3W6q0yg/initiate-pass-cult.png',
-          link: '#',
-          network: 'mainnet',
-          supply: '10,000',
-          mintPrice: '0.01 ETH',
-          floorPrice: '0.03 ETH',
-          perks: [
+         projectData.nftCollections = [
             {
-                holdingRequirement: { count: 1 },
-                perk: { type: 'Free Mint', description: 'Eligible for one free mint from select partner collections.' }
+                id: 'nft_cult_1',
+                name: 'Initiate Pass',
+                image: 'https://i.ibb.co/3W6q0yg/initiate-pass-cult.png',
+                link: '#',
+                network: 'mainnet' as const,
+                supply: '10,000',
+                mintPrice: '0.01 ETH',
+                floorPrice: '0.03 ETH',
+                perks: [
+                    {
+                        holdingRequirement: { count: 1 },
+                        perk: { type: 'Free Mint', description: 'Eligible for one free mint from select partner collections.' }
+                    },
+                    {
+                        holdingRequirement: { count: 1 },
+                        perk: { type: 'GTD', description: 'Guaranteed mint for the "Gorillionaire Tycoons" collection.', grantingProjectName: 'Gorillionaire' }
+                    }
+                ],
+                oneTimePoints: 1500,
+                pointsPerDay: 25,
+                status: 'published' as const,
+                isVisibleOnNftPage: true
             },
             {
-                holdingRequirement: { count: 1 },
-                perk: { type: 'GTD', description: 'Guaranteed mint for the "Gorillionaire Tycoons" collection.', grantingProjectName: 'Gorillionaire' }
+                id: 'nft_cult_2',
+                name: 'Sacred Scroll',
+                image: 'https://images.pexels.com/photos/159862/art-school-of-athens-raphael-italian-painter-159862.jpeg?auto=compress&cs=tinysrgb&w=400',
+                link: '#',
+                network: 'mainnet' as const,
+                supply: '1,000',
+                mintPrice: '0.1 ETH',
+                floorPrice: '0.5 ETH',
+                perks: [
+                    {
+                        holdingRequirement: { count: 1 },
+                        perk: { type: 'GTD', description: 'Guaranteed access to CULT governance votes.' }
+                    }
+                ],
+                oneTimePoints: 2500,
+                status: 'published' as const,
+                isVisibleOnNftPage: true
             }
-          ],
-          oneTimePoints: 1500,
-          pointsPerDay: 25,
-          status: 'published',
-          isVisibleOnNftPage: true
-        }];
+        ];
+        projectData.coins = [
+            {
+                id: uid(),
+                type: 'meme' as const,
+                network: 'mainnet' as const,
+                name: `CULT Leader`,
+                contractAddress: `0x111...`,
+                link: '#',
+                image: 'https://images.pexels.com/photos/163036/mario-luigi-yoschi-figures-163036.jpeg?auto=compress&cs=tinysrgb&w=400',
+                status: 'published' as const,
+                supply: '1,000,000,000',
+                marketPrice: '$0.00001234'
+            },
+            {
+                id: uid(),
+                type: 'ecosystem' as const,
+                network: 'mainnet' as const,
+                name: `CULT Governance`,
+                contractAddress: `0x222...`,
+                link: '#',
+                image: 'https://images.pexels.com/photos/4386321/pexels-photo-4386321.jpeg?auto=compress&cs=tinysrgb&w=400',
+                status: 'published' as const,
+                supply: '100,000,000',
+                marketPrice: '$1.23'
+            }
+        ];
     } else {
         projectData.discordRoles = getRandomSubset(discordRolesPool, Math.floor(Math.random() * 2) + 1);
     }
     
     if (categories.includes('meme') || Math.random() > 0.8) {
-        projectData.coins = [{
-            id: uid(),
-            type: 'meme' as const,
-            network: 'mainnet' as const,
-            name: `${name} Coin`,
-            contractAddress: `0x${[...Array(40)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')}`,
-            link: '#',
-            image: projectData.logo,
-            status: Math.random() > 0.2 ? 'published' : 'draft',
-            supply: (Math.floor(Math.random() * 9000000000) + 1000000000).toLocaleString(),
-            marketPrice: `$${(Math.random() * 0.0001).toFixed(8)}`
-        }];
+        if (!projectData.coins) { // Don't override CULT's coins
+            projectData.coins = [{
+                id: uid(),
+                type: 'meme' as const,
+                network: 'mainnet' as const,
+                name: `${name} Coin`,
+                contractAddress: `0x${[...Array(40)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')}`,
+                link: '#',
+                image: projectData.logo,
+                status: Math.random() > 0.2 ? 'published' : 'draft',
+                supply: (Math.floor(Math.random() * 9000000000) + 1000000000).toLocaleString(),
+                marketPrice: `$${(Math.random() * 0.0001).toFixed(8)}`
+            }];
+        }
     }
 
     if (categories.includes('nft') && Math.random() > 0.3) {
@@ -1320,7 +1384,8 @@ const seedData = () => {
       banner: 'https://picsum.photos/seed/ppa_b/800/200',
       description: 'A revolutionary new DeFi protocol awaiting approval.',
       longDescription: 'This project aims to solve impermanent loss with a novel single-sided liquidity provision mechanism powered by AI.',
-      links: { website: '#' },
+      // FIX: Corrected 'website' to 'websites' to match the Project['links'] type definition.
+      links: { websites: [{ label: "Website", url: "#" }] },
       events: [],
       status: 'beta',
       category: ['defi', 'ai'],

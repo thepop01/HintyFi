@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
-import { Project, ProjectCategory, DropStatus } from '../../src/types';
-import { getProjects, voteProject, getProjectById, getSiteContentSettings } from '../../src/services/dataService';
+import { Project, ProjectCategory, DropStatus } from '../src/types';
+import { getProjects, voteProject, getProjectById, getSiteContentSettings } from '../src/services/dataService';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dna, Gem, Gamepad2, Users, Repeat, Building, Layers, Wallet, Search, ChevronRight, ArrowUp, ArrowDown, Cpu, BrainCircuit, Flame, Rocket, Crown, History, Loader, Inbox } from 'lucide-react';
 import EmptyState from '../components/common/EmptyState';

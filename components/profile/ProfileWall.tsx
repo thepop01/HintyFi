@@ -192,18 +192,13 @@ const ProfileWall: React.FC<ProfileWallProps> = ({ user, isOwnProfile, onEdit })
                     </div>
                     
                     <div className="flex items-center gap-2 mt-auto">
-                        <button 
-                            onClick={handleVouch}
-                            disabled={vouchButtonDisabled}
-                            className={`profile-vouch-button flex-1 ${hasVouched || justVouched ? 'vouched' : 'can-vouch'}`}
-                        >
-                            <ShieldCheck size={20} />
-                            <span>{hasVouched || justVouched ? 'Vouched' : 'Vouch'}</span>
-                        </button>
-                        <ReactRouterDOM.Link 
-                            to={`/profile/points?user=${user.id}`}
-                            className="profile-vouch-button can-vouch flex-1"
-                        >
+                        {!isOwnProfile && (
+                            <button onClick={handleVouch} disabled={vouchButtonDisabled} className={`profile-vouch-button flex-1 ${hasVouched || justVouched ? 'vouched' : 'can-vouch'}`}>
+                                <ShieldCheck size={20} />
+                                <span>{hasVouched || justVouched ? 'Vouched' : 'Vouch'}</span>
+                            </button>
+                        )}
+                        <ReactRouterDOM.Link to={`/profile/points?user=${user.id}`} className="profile-vouch-button can-vouch flex-1">
                             <BarChart size={20} />
                             <span>Points</span>
                         </ReactRouterDOM.Link>

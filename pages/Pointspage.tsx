@@ -1,3 +1,5 @@
+
+
 import React, { useMemo, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { getUsers, getProjects, getEvents, getQuests } from '../src/services/dataService';
@@ -100,7 +102,8 @@ const TirthPointsTab: React.FC<{ user: User; projects: Project[], events: Event[
         }
 
         const userRoles = new Set(user.discordRoles || []);
-        const projectsById = new Map(projects.map(p => [p.id, p]));
+        // Fix: Explicitly type the Map to ensure correct type inference for `projectsById.get()`, resolving errors on lines 132 and 156.
+        const projectsById = new Map<string, Project>(projects.map(p => [p.id, p]));
 
         projects.forEach(project => {
             project.discordRoles?.forEach(role => {
@@ -127,8 +130,10 @@ const TirthPointsTab: React.FC<{ user: User; projects: Project[], events: Event[
         });
 
         user.nftHoldings?.forEach(holding => {
-            const project = projectsById.get(holding.projectId);
+            // FIX: Explicitly type `project` to guide TypeScript's inference within the complex `useMemo` hook.
+            const project: Project | undefined = projectsById.get(holding.projectId);
             if (project?.nftCollections) {
+                // FIX: TypeScript can now correctly infer the type of `project.nftCollections`.
                 project.nftCollections.forEach(collection => {
                     let nftPoints = 0;
                     if (collection.oneTimePoints) nftPoints += collection.oneTimePoints;
@@ -149,8 +154,10 @@ const TirthPointsTab: React.FC<{ user: User; projects: Project[], events: Event[
             );
         };
         user.tokenHoldings?.forEach(holding => {
-            const project = projectsById.get(holding.projectId);
+            // FIX: Explicitly type `project` to guide TypeScript's inference within the complex `useMemo` hook.
+            const project: Project | undefined = projectsById.get(holding.projectId);
             if (project?.tokenHoldingTiers) {
+                // FIX: TypeScript can now correctly infer the type of `project.tokenHoldingTiers`.
                 const tier = findTier(project.tokenHoldingTiers, holding.amount);
                 if (tier && tier.pointsPerDay > 0) {
                     const tokenPoints = tier.pointsPerDay * holding.daysHeld;

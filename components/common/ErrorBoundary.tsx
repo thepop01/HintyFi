@@ -1,3 +1,4 @@
+
 import React, { ErrorInfo, ReactNode } from 'react';
 import { ServerCrash } from 'lucide-react';
 
@@ -10,7 +11,7 @@ interface State {
 }
 
 class ErrorBoundary extends React.Component<Props, State> {
-  // FIX: Reverted to using a constructor for state initialization to resolve `this.props` type issue.
+  // FIX: Switched to using a constructor to explicitly initialize state and ensure 'this.props' is correctly set up on the component instance, resolving the type error.
   constructor(props: Props) {
     super(props);
     this.state = { hasError: false };

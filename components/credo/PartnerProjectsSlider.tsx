@@ -55,7 +55,17 @@ const PartnerProjectsSlider: React.FC = () => {
     const partnerProjects = useMemo(() => {
         const allProjects = getProjects();
         const settings = getCredoSettings();
-        return settings.sliderProjectNames.map(name => allProjects.find(p => p.name === name)).filter((p): p is Project => p !== undefined);
+        
+        // Combine all partner project names and remove duplicates
+        const allPartnerProjectNames = new Set([
+            ...settings.roleBasedPartnerProjectNames,
+            ...settings.nftBasedPartnerProjectNames,
+            ...settings.tokenBasedPartnerProjectNames,
+        ]);
+
+        return Array.from(allPartnerProjectNames)
+            .map(name => allProjects.find(p => p.name === name))
+            .filter((p): p is Project => p !== undefined);
     }, []);
 
     const containerRef = useRef<HTMLDivElement>(null);

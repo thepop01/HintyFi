@@ -1,9 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { User, Project, UserTokenHolding } from '../../src/types';
-import { getProjects } from '../../src/services/dataService';
+import { getProjects, getCredoSettings } from '../../src/services/dataService';
 import { Link } from 'react-router-dom';
-import { Banknote } from 'lucide-react';
+import { Banknote, Star, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -22,30 +24,97 @@ interface TokenHoldingsProps {
     user: User;
 }
 
-interface DisplayTokenHolding extends UserTokenHolding {
+const TokenPointCard: React.FC<{
     project: Project;
-}
+    holding?: UserTokenHolding;
+}> = ({ project, holding }) => {
+    const isHeld = !!holding;
+
+    const pointsInfo = useMemo(() => {
+        if (!project.tokenHoldingTiers || project.tokenHoldingTiers.length === 0) {
+            return null;
+        }
+
+        if (isHeld && holding) {
+            const tier = project.tokenHoldingTiers.find(t => 
+                holding.amount >= t.minAmount && (t.maxAmount === null || holding.amount <= t.maxAmount)
+            );
+            return tier ? `${tier.pointsPerDay}/day` : '0/day';
+        } else {
+            const maxPoints = Math.max(...project.tokenHoldingTiers.map(t => t.pointsPerDay));
+            return `Up to ${maxPoints}/day`;
+        }
+    }, [project, holding, isHeld]);
+    
+    return (
+        <Link to={`/project/${project.id}`} className="token-card">
+            <img src={project.logo} alt={project.name} className="token-card-logo" loading="lazy" decoding="async" />
+            <div className="token-card-details">
+                <h3 className="token-card-project-name">{project.name}</h3>
+                {isHeld && holding ? (
+                    <>
+                        <p className="token-card-amount">{holding.amount.toLocaleString()}</p>
+                        <p className="token-card-token-name">{project.tokenHoldingSettings?.name || project.token || ''}</p>
+                    </>
+                ) : (
+                    <div className="mt-2 text-xs bg-surface-container rounded-full px-3 py-1 font-semibold">Opportunity</div>
+                )}
+            </div>
+             {pointsInfo && (
+                <div className="mt-2 text-xs font-bold text-amber-400 bg-black/50 rounded-full px-2 py-1.5 flex items-center gap-1">
+                    <Star size={12} className="fill-current" />
+                    <span>{pointsInfo}</span>
+                </div>
+            )}
+        </Link>
+    );
+};
 
 const TokenHoldings: React.FC<TokenHoldingsProps> = ({ user }) => {
-    const userHoldings = useMemo(() => {
-        if (!user.tokenHoldings || user.tokenHoldings.length === 0) {
-            return [];
-        }
+    const { currentUser } = useAuth();
+    const { addToast } = useToast();
+    const isOwnProfile = currentUser?.id === user.id;
+    const [refreshKey, setRefreshKey] = useState(0);
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
+    const { heldTokens, unheldTokens } = useMemo(() => {
         const allProjects = getProjects();
-        const projectsById = new Map<string, Project>(allProjects.map(p => [p.id, p]));
+        const settings = getCredoSettings();
+         const partnerProjectNames = new Set([
+            ...settings.roleBasedPartnerProjectNames,
+            ...settings.nftBasedPartnerProjectNames,
+            ...settings.tokenBasedPartnerProjectNames,
+        ]);
 
-        const holdings: DisplayTokenHolding[] = [];
-        
-        user.tokenHoldings.forEach(holding => {
-            const project = projectsById.get(holding.projectId);
-            if (project) {
-                holdings.push({ ...holding, project });
-            }
-        });
-        return holdings;
-    }, [user.tokenHoldings]);
+        const tokenOpportunities = allProjects.filter(p => 
+            partnerProjectNames.has(p.name) && p.tokenHoldingTiers && p.tokenHoldingTiers.length > 0
+        );
 
-    if (userHoldings.length === 0) {
+        const userHeldProjectIds = new Set((user.tokenHoldings || []).map(h => h.projectId));
+
+        const held = tokenOpportunities.filter(p => userHeldProjectIds.has(p.id));
+        const unheld = tokenOpportunities.filter(p => !userHeldProjectIds.has(p.id));
+
+        return { heldTokens: held, unheldTokens: unheld };
+    }, [user.tokenHoldings, refreshKey]);
+
+    const userHoldingsMap = useMemo(() => 
+        new Map((user.tokenHoldings || []).map(h => [h.projectId, h])),
+        [user.tokenHoldings, refreshKey]
+    );
+    
+    const handleRefresh = () => {
+        if (isRefreshing) return;
+        setIsRefreshing(true);
+        addToast('Refreshing token holdings...', 'info');
+        setTimeout(() => {
+            setRefreshKey(prev => prev + 1);
+            addToast('Token holdings updated!', 'success');
+            setIsRefreshing(false);
+        }, 1500);
+    };
+
+    if (heldTokens.length === 0 && unheldTokens.length === 0) {
         return null; 
     }
 
@@ -56,26 +125,59 @@ const TokenHoldings: React.FC<TokenHoldingsProps> = ({ user }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.5 }}
         >
-            <h2 className="token-holdings-title"><Banknote /> Token Holdings</h2>
-            <motion.div 
-                className="token-holdings-grid"
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-            >
-                {userHoldings.map(holding => (
-                    <motion.div key={holding.project.id} variants={itemVariants}>
-                        <Link to={`/project/${holding.project.id}`} className="token-card">
-                            <img src={holding.project.logo} alt={holding.project.name} className="token-card-logo" loading="lazy" decoding="async" />
-                            <div className="token-card-details">
-                                <h3 className="token-card-project-name">{holding.project.name}</h3>
-                                <p className="token-card-amount">{holding.amount.toLocaleString()}</p>
-                                <p className="token-card-token-name">{holding.project.tokenHoldingSettings?.name || holding.project.token || ''}</p>
-                            </div>
-                        </Link>
+             <div className="flex justify-between items-center mb-6">
+                <h2 className="token-holdings-title !mb-0"><Banknote /> Token Holdings</h2>
+                {isOwnProfile && (
+                    <button
+                        onClick={handleRefresh}
+                        disabled={isRefreshing}
+                        className="neu-button text-sm px-4 py-2 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                        <RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />
+                        Refresh Holdings
+                    </button>
+                )}
+            </div>
+            
+            {heldTokens.length > 0 && (
+                <div className="mb-8">
+                    <h3 className="text-xl font-bold text-on-surface-variant mb-4">My Holdings</h3>
+                    <motion.div 
+                        className="token-holdings-grid"
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                    >
+                        {heldTokens.map(project => (
+                            <motion.div key={project.id} variants={itemVariants}>
+                                <TokenPointCard project={project} holding={userHoldingsMap.get(project.id)} />
+                            </motion.div>
+                        ))}
                     </motion.div>
-                ))}
-            </motion.div>
+                </div>
+            )}
+
+            {unheldTokens.length > 0 && (
+                 <div>
+                    <h3 className="text-xl font-bold text-on-surface-variant mb-4">Opportunities</h3>
+                    <motion.div 
+                        className="token-holdings-grid"
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                    >
+                        {unheldTokens.map(project => (
+                            <motion.div key={project.id} variants={itemVariants}>
+                                <TokenPointCard project={project} />
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                </div>
+            )}
+
+            {heldTokens.length === 0 && unheldTokens.length > 0 && (
+                 <p className="text-center text-on-surface-variant italic mb-6">You are not currently holding any point-earning tokens.</p>
+            )}
         </motion.div>
     );
 };

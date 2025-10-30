@@ -4,11 +4,29 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TIRTH</title>
+    <title>HintyFi</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;700;800&family=Poppins:wght@400;500;600;700;800&family=Silkscreen:wght@400;700&family=Bebas+Neue&family=Bangers&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;700;800&family=Poppins:wght@400;500;600;700;800&family=Silkscreen:wght@400;700&family=Bebas+Neue&family=Bangers&family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            boxShadow: {
+              'outset-xs': 'var(--neu-shadow-outset-xs)',
+              'outset-sm': 'var(--neu-shadow-outset-sm)',
+              'outset-md': 'var(--neu-shadow-outset-md)',
+              'outset-lg': 'var(--neu-shadow-outset-lg)',
+              'inset-xs': 'var(--neu-shadow-inset-xs)',
+              'inset-sm': 'var(--neu-shadow-inset-sm)',
+              'inset-md': 'var(--neu-shadow-inset-md)',
+              'inset-lg': 'var(--neu-shadow-inset-lg)',
+            }
+          }
+        }
+      }
+    </script>
     <style>
 :root {
   /* Light theme palette based on user request */
@@ -40,14 +58,17 @@
   --neu-light-shadow-color: #ffffff;
   
   /* Unified shadow sizes */
-  --neu-shadow-inset-xs: inset 3px 3px 2px var(--neu-dark-shadow-color), inset -3px -3px 2px var(--neu-light-shadow-color);
-  --neu-shadow-outset-xs: 3px 3px 2px var(--neu-dark-shadow-color), -3px -3px 2px var(--neu-light-shadow-color);
-  --neu-shadow-inset-sm: inset 4px 4px 8px var(--neu-dark-shadow-color), inset -4px -4px 8px var(--neu-light-shadow-color);
+  --neu-shadow-outset-xs: 3px 3px 6px var(--neu-dark-shadow-color), -3px -3px 6px var(--neu-light-shadow-color);
+  --neu-shadow-inset-xs: inset 3px 3px 6px var(--neu-dark-shadow-color), inset -3px -3px 6px var(--neu-light-shadow-color);
+  
   --neu-shadow-outset-sm: 4px 4px 8px var(--neu-dark-shadow-color), -4px -4px 8px var(--neu-light-shadow-color);
-  --neu-shadow-inset-md: inset 6px 6px 12px var(--neu-dark-shadow-color), inset -6px -6px 12px var(--neu-light-shadow-color);
+  --neu-shadow-inset-sm: inset 4px 4px 8px var(--neu-dark-shadow-color), inset -4px -4px 8px var(--neu-light-shadow-color);
+
   --neu-shadow-outset-md: 6px 6px 12px var(--neu-dark-shadow-color), -6px -6px 12px var(--neu-light-shadow-color);
-  --neu-shadow-inset-lg: inset 8px 8px 16px var(--neu-dark-shadow-color), inset -8px -8px 16px var(--neu-light-shadow-color);
+  --neu-shadow-inset-md: inset 6px 6px 12px var(--neu-dark-shadow-color), inset -6px -6px 12px var(--neu-light-shadow-color);
+
   --neu-shadow-outset-lg: 8px 8px 16px var(--neu-dark-shadow-color), -8px -8px 16px var(--neu-light-shadow-color);
+  --neu-shadow-inset-lg: inset 8px 8px 16px var(--neu-dark-shadow-color), inset -8px -8px 16px var(--neu-light-shadow-color);
 }
 body {
     background-color: rgb(var(--color-background));
@@ -60,7 +81,7 @@ body {
 .font-body { font-family: 'Poppins', sans-serif; }
 
 .logo-text {
-    font-family: 'Anton', sans-serif;
+    font-family: 'Lora', sans-serif;
     color: rgb(var(--color-on-background));
 }
 .app-container {
@@ -74,7 +95,7 @@ body {
 .neu-card {
     background: rgb(var(--color-background));
     border-radius: 20px;
-    box-shadow: 8px 8px 16px var(--neu-dark-shadow-color), -8px -8px 16px var(--neu-light-shadow-color);
+    box-shadow: var(--neu-shadow-outset-lg);
     transition: box-shadow 0.2s ease-out;
 }
 .neu-outset-card {
@@ -679,6 +700,5 @@ body {
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-  <script type="module" src="/index.tsx"></script>
 </body>
 </html>

@@ -40,7 +40,7 @@ const AdminProjectDiscordRolesPage = lazy(() => import('./pages/admin/project/Ad
 // Super Admin Pages & Layout
 const SuperAdminLayout = lazy(() => import('./pages/SuperAdminPage'));
 const UserManagementTab = lazy(() => import('./components/admin/UserManagementTab'));
-const CredoPointsTab = lazy(() => import('./components/admin/CredoPointsTab'));
+const ManageProjectDetail = lazy(() => import('./components/admin/manageprojectdetail'));
 const ContentManagementTab = lazy(() => import('./components/admin/ContentManagementTab'));
 const ManageQuestsTab = lazy(() => import('./components/admin/ManageQuestsTab'));
 const ManageNftTab = lazy(() => import('./components/admin/ManageNftTab'));
@@ -50,6 +50,7 @@ const ManageMemeTab = lazy(() => import('./components/admin/ManageMemeTab'));
 const AddMemePage = lazy(() => import('./components/admin/AddMemePage'));
 const ManageIdoTab = lazy(() => import('./components/admin/ManageIdoTab'));
 const AddIdoPage = lazy(() => import('./pages/admin/AddIdoPage'));
+const ManageThisWeekTab = lazy(() => import('./pages/admin/superadmin/ManageThisWeekTab'));
 
 
 // Super Admin Project Management Pages & Layout
@@ -100,7 +101,7 @@ const AppRoutes = () => (
                     <ReactRouterDOM.Route index element={<ReactRouterDOM.Navigate to="users" replace />} />
                     <ReactRouterDOM.Route path="users" element={<UserManagementTab />} />
                     <ReactRouterDOM.Route path="project-detail/add" element={<AddProjectPage />} />
-                    <ReactRouterDOM.Route path="project-detail" element={<CredoPointsTab />} />
+                    <ReactRouterDOM.Route path="project-detail" element={<ManageProjectDetail />} />
                     <ReactRouterDOM.Route path="content" element={<ContentManagementTab />} />
                     <ReactRouterDOM.Route path="quests" element={<ManageQuestsTab />} />
                     <ReactRouterDOM.Route path="nfts" element={<ManageNftTab />} />
@@ -110,6 +111,7 @@ const AppRoutes = () => (
                     <ReactRouterDOM.Route path="memes/add" element={<AddMemePage />} />
                     <ReactRouterDOM.Route path="idos" element={<ManageIdoTab />} />
                     <ReactRouterDOM.Route path="idos/add" element={<AddIdoPage />} />
+                    <ReactRouterDOM.Route path="this-week" element={<ManageThisWeekTab />} />
                     <ReactRouterDOM.Route path="project-management/:id" element={<SuperAdminProjectLayout />}>
                         <ReactRouterDOM.Route index element={<ReactRouterDOM.Navigate to="points" replace />} />
                         <ReactRouterDOM.Route path="points" element={<ProjectPointsSettingsTab />} />

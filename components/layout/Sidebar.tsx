@@ -260,6 +260,12 @@ const Sidebar: React.FC = () => {
                   icon={<Rocket size={16} />} 
                   isActive={location.pathname === '/super-admin/idos'} 
               />
+              <SubNavLink
+                  to="/super-admin/this-week"
+                  label="Manage This Week"
+                  icon={<CalendarDays size={16} />}
+                  isActive={location.pathname === '/super-admin/this-week'}
+              />
             </CollapsibleMenu>
         </nav>
       </div>

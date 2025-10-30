@@ -12,6 +12,7 @@ const eventTypeConfig: Record<WeeklyDiscordEvent['type'], { icon: React.ReactNod
     mint: { icon: <Gem size={16} />, color: 'bg-sky-500/80', label: 'Mint' },
     ama: { icon: <Mic size={16} />, color: 'bg-purple-500/80', label: 'AMA' },
     creative: { icon: <Brush size={16} />, color: 'bg-orange-500/80', label: 'Creative' },
+    other: { icon: <Calendar size={16} />, color: 'bg-gray-500/80', label: 'Event' },
 };
 
 // --- Gradient Backgrounds for each day ---
@@ -94,10 +95,11 @@ const HighlightEvent: React.FC<{ event: (WeeklyDiscordEvent & { project?: Projec
     }
     
     const typeConfig = eventTypeConfig[event.type];
+    const displayLabel = event.type === 'other' && event.customTypeLabel ? event.customTypeLabel : typeConfig.label;
     
     return (
         <div className="neu-outset-card mb-8 rounded-2xl relative overflow-hidden text-white p-6 sm:p-8 min-h-[300px] flex flex-col justify-end">
-            <img src={event.project?.banner || event.project?.logo || "https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"} alt={event.name} className="absolute inset-0 w-full h-full object-cover" />
+            <img src={event.image || event.project?.banner || event.project?.logo || "https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"} alt={event.name} className="absolute inset-0 w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent z-10" />
             
             <div className="relative z-20">
@@ -106,7 +108,7 @@ const HighlightEvent: React.FC<{ event: (WeeklyDiscordEvent & { project?: Projec
                     <div className="text-left">
                         <div className={`flex items-center gap-2 text-sm font-bold px-2 py-1 rounded-full ${typeConfig.color} mb-2 w-fit`}>
                             {typeConfig.icon}
-                            <span>{typeConfig.label}</span>
+                            <span>{displayLabel}</span>
                         </div>
                         <h1 className="text-3xl sm:text-4xl font-display font-bold text-white drop-shadow-lg">
                             {event.name}
@@ -135,6 +137,7 @@ const HighlightEvent: React.FC<{ event: (WeeklyDiscordEvent & { project?: Projec
 const EventStrip: React.FC<{ event: WeeklyDiscordEvent & { project?: Project } }> = ({ event }) => {
     const time = new Date(event.dateTime).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
     const typeConfig = eventTypeConfig[event.type];
+    const displayLabel = event.type === 'other' && event.customTypeLabel ? event.customTypeLabel : typeConfig.label;
 
     return (
         <div className="neu-outset-card p-3 flex items-center gap-4 w-full">
@@ -145,7 +148,7 @@ const EventStrip: React.FC<{ event: WeeklyDiscordEvent & { project?: Project } }
             
             {/* Icons */}
             <div className="flex items-center -space-x-2 flex-shrink-0">
-                <div className={`w-8 h-8 rounded-full text-white flex items-center justify-center ${typeConfig.color} z-10 neu-shadow-outset-xs`}>
+                <div title={displayLabel} className={`w-8 h-8 rounded-full text-white flex items-center justify-center ${typeConfig.color} z-10 neu-shadow-outset-xs`}>
                     {typeConfig.icon}
                 </div>
                 {event.project && (

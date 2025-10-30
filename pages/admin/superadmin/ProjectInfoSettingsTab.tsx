@@ -202,21 +202,6 @@ export const ProjectInfoSettingsTab: React.FC = () => {
         });
     };
 
-    const handleNestedLinkChange = (field: 'magicEden' | 'memeCoin', subField: 'mainnet' | 'testnet') => (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            links: {
-                ...prev.links,
-                websites: prev.links?.websites || [],
-                [field]: {
-                    ...(prev.links[field] || {}),
-                    [subField]: value,
-                },
-            },
-        }));
-    };
-
     const handleStrategyChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => { setFormData(prev => ({ ...prev, strategyWalkthrough: e.target.value.split('\n') })); };
     
     const addTeamMember = () => setFormData(p => ({ ...p, team: [...(p.team || []), { name: '', role: '' }] }));
@@ -276,6 +261,17 @@ export const ProjectInfoSettingsTab: React.FC = () => {
             <FormRow><FormLabel>Long Desc</FormLabel><FormField><FormTextArea name="longDescription" value={formData.longDescription} onChange={handleChange} rows={5} /></FormField></FormRow>
             <FormRow><FormLabel>Logo</FormLabel><FormField><ImageUploadInput value={formData.logo} onChange={val => handleImageChange('logo', val)} /></FormField></FormRow>
             <FormRow><FormLabel>Banner</FormLabel><FormField><ImageUploadInput value={formData.banner} onChange={val => handleImageChange('banner', val)} /></FormField></FormRow>
+            <FormRow>
+                <FormLabel>Stage</FormLabel>
+                <FormField>
+                    <FormSelect name="stage" value={formData.stage} onChange={handleChange}>
+                        <option value="Private">Private</option>
+                        <option value="Early">Early</option>
+                        <option value="Pre-Launch">Pre-Launch</option>
+                        <option value="Launched">Launched</option>
+                    </FormSelect>
+                </FormField>
+            </FormRow>
             <FormRow><FormLabel>Category</FormLabel><FormField><div className="grid grid-cols-2 sm:grid-cols-3 gap-2">{['defi', 'nft', 'gaming', 'socialfi', 'dex', 'rwa', 'infrastructure', 'wallet', 'depin', 'ai', 'meme', 'launchpad'].map(cat => (<FormCheckbox key={cat} label={cat} value={cat} checked={formData.category?.includes(cat as ProjectCategory)} onChange={handleCategoryChange} />))}</div></FormField></FormRow>
             <FormRow><FormLabel>Strategy Walkthrough</FormLabel><FormField><FormTextArea value={formData.strategyWalkthrough?.join('\n') || ''} onChange={handleStrategyChange} rows={5} placeholder="One step per line" /></FormField></FormRow>
             
@@ -305,10 +301,6 @@ export const ProjectInfoSettingsTab: React.FC = () => {
             </FormRow>
             <FormRow><FormLabel>Twitter</FormLabel><FormField><FormInput value={formData.links?.twitter || ''} onChange={handleLinkChange('twitter')} /></FormField></FormRow>
             <FormRow><FormLabel>Discord</FormLabel><FormField><FormInput value={formData.links?.discord || ''} onChange={handleLinkChange('discord')} /></FormField></FormRow>
-            <FormRow><FormLabel>Magic Eden (Mainnet)</FormLabel><FormField><FormInput value={formData.links.magicEden?.mainnet || ''} onChange={handleNestedLinkChange('magicEden', 'mainnet')} /></FormField></FormRow>
-            <FormRow><FormLabel>Magic Eden (Testnet)</FormLabel><FormField><FormInput value={formData.links.magicEden?.testnet || ''} onChange={handleNestedLinkChange('magicEden', 'testnet')} /></FormField></FormRow>
-            <FormRow><FormLabel>Meme Coin (Mainnet)</FormLabel><FormField><FormInput value={formData.links.memeCoin?.mainnet || ''} onChange={handleNestedLinkChange('memeCoin', 'mainnet')} /></FormField></FormRow>
-            <FormRow><FormLabel>Meme Coin (Testnet)</FormLabel><FormField><FormInput value={formData.links.memeCoin?.testnet || ''} onChange={handleNestedLinkChange('memeCoin', 'testnet')} /></FormField></FormRow>
 
             <FormSectionHeader>Team</FormSectionHeader>
             <div className="space-y-4">

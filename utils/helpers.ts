@@ -26,7 +26,7 @@ export const fuzzySearch = (query: string, text: string): boolean => {
 };
 
 
-const STORAGE_KEY = 'tirth_completedTasks_v1';
+const STORAGE_KEY = 'hintyfi_completedTasks_v1';
 type CompletedTasksState = Record<string, string[]>;
 
 export function useCompletedTasks() {

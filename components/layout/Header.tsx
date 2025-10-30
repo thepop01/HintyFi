@@ -56,12 +56,12 @@ const Header: React.FC = () => {
         <ReactRouterDOM.Link to="/" className="flex items-center gap-3">
             <motion.img 
                 src="https://res.cloudinary.com/dizoez2x9/image/upload/v1760456318/trends_vtetaz.png"
-                alt="TIRTH Logo" 
+                alt="HintyFi Logo" 
                 className="h-10 w-10 rounded-full"
                 whileHover={{ rotate: 360 }}
                 transition={{ duration: 0.5 }}
             />
-            <span className="font-display font-bold text-3xl logo-text hidden sm:block">TIRTH</span>
+            <span className="font-display font-bold text-3xl logo-text hidden sm:block">HintyFi</span>
         </ReactRouterDOM.Link>
         
         <div className="flex items-center gap-4">

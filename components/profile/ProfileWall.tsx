@@ -45,7 +45,8 @@ const ProfileWall: React.FC<ProfileWallProps> = ({ user, isOwnProfile, onEdit })
         id,
         name,
         profilePic,
-        tirthPoints,
+        // FIX: Replaced `tirthPoints` with `hintPoints` to match the User type definition.
+        hintPoints,
         discordRoles = [],
         projectsBuilding = [],
     } = user;
@@ -64,9 +65,13 @@ const ProfileWall: React.FC<ProfileWallProps> = ({ user, isOwnProfile, onEdit })
         const isTeamMember = teamMemberNames.has(user.name.toLowerCase());
 
         if (isBuilder || isTeamMember) {
-            return user.manualCredoPoints || 0;
+            // Only show a score if it's been manually set to a value greater than 0
+            if (user.manualCredoPoints && user.manualCredoPoints > 0) {
+                return user.manualCredoPoints;
+            }
         }
         
+        // For all other cases, default to N/A
         return 'N/A';
     }, [user, allProjects]);
 
@@ -161,7 +166,7 @@ const ProfileWall: React.FC<ProfileWallProps> = ({ user, isOwnProfile, onEdit })
                             <h2 className="profile-badge-name">{name}</h2>
                             <p className="profile-badge-userid">USER ID: {id}</p>
                             <p className="profile-badge-score">
-                                SCORE: {typeof credoPoints === 'number' ? credoPoints.toLocaleString() : credoPoints}
+                                CREDO SCORE: {typeof credoPoints === 'number' ? credoPoints.toLocaleString() : credoPoints}
                             </p>
                         </div>
                     </div>

@@ -1,3 +1,4 @@
+
 // This file contains type definitions for the application.
 
 // General
@@ -129,7 +130,7 @@ export interface UserTokenHolding {
     daysHeld: number;
 }
 
-export interface ManualTirthAdjustment {
+export interface ManualHintAdjustment {
     points: number;
     reason: string;
     timestamp: number;
@@ -149,9 +150,9 @@ export interface User {
         discord?: string;
         github?: string;
     };
-    tirthPoints?: number;
+    hintPoints?: number;
     manualCredoPoints?: number;
-    manualTirthAdjustments?: ManualTirthAdjustment[];
+    manualHintAdjustments?: ManualHintAdjustment[];
     votedProjectIds?: string[];
     votedCampaignEntryIds?: string[];
     vouchedFor?: string[];
@@ -373,7 +374,9 @@ export interface WeeklyDiscordEvent {
     reward: string;
     serverName: string;
     partnerServerName?: string;
-    type: 'gaming' | 'community' | 'mint' | 'ama' | 'creative';
+    type: 'gaming' | 'community' | 'mint' | 'ama' | 'creative' | 'other';
+    customTypeLabel?: string;
+    image?: string;
     discordEventLink: string;
 }
 

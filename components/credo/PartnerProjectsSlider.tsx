@@ -8,23 +8,19 @@ const ProjectSliderCard: React.FC<{ project: Project }> = ({ project }) => {
     const pointsSummary = useMemo(() => {
         const summaries: string[] = [];
 
-        if (project.discordRoles && project.discordRoles.length > 0) {
-            summaries.push(`Points for roles`);
+        if (project.discordRoles?.some(r => (r.points ?? 0) > 0)) {
+            summaries.push(`Hint Points for Roles`);
         }
 
-        if (project.nftCollections && project.nftCollections.length > 0) {
-            const totalPoints = project.nftCollections.reduce((sum, coll) => sum + (coll.pointsPerDay || 0), 0);
-            if (totalPoints > 0) {
-                summaries.push(`NFT Holding: Up to ${totalPoints}pt/day`);
-            }
+        if (project.nftCollections?.some(c => (c.oneTimePoints ?? 0) > 0 || (c.pointsPerDay ?? 0) > 0)) {
+            summaries.push(`Hint Points for NFT Holding`);
         }
 
-        if (project.tokenHoldingTiers && project.tokenHoldingTiers.length > 0) {
-            const maxPts = Math.max(...project.tokenHoldingTiers.map(t => t.pointsPerDay));
-            summaries.push(`Holding: Up to ${maxPts}pt/day`);
+        if (project.tokenHoldingTiers?.some(t => t.pointsPerDay > 0)) {
+            summaries.push(`Hint Points for Token Holding`);
         }
 
-        return summaries.slice(0, 2); // Show top 2 opportunities for brevity
+        return summaries.slice(0, 2);
     }, [project]);
 
     return (

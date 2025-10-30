@@ -50,7 +50,7 @@ export const ProfileDropdown: React.FC = () => {
                     <div className="flex-grow text-left overflow-hidden pr-1">
                         <p className="text-sm font-semibold text-on-surface truncate">{currentUser.name}</p>
                         <p className="text-xs text-on-surface-variant font-bold">
-                           {(currentUser.tirthPoints || 0).toLocaleString()} Tirth Points
+                           {(currentUser.hintPoints || 0).toLocaleString()} Hint Points
                         </p>
                     </div>
                      <ChevronDown size={20} className={`text-on-surface-variant transition-transform mr-2 ${isOpen ? 'rotate-180' : ''}`} />

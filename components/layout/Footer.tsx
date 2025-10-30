@@ -47,10 +47,10 @@ const Footer: React.FC = () => {
                      <Link to="/" className="flex items-center gap-3 mb-4">
                         <img 
                             src="https://res.cloudinary.com/dizoez2x9/image/upload/v1760456318/trends_vtetaz.png"
-                            alt="TIRTH Logo" 
+                            alt="HintyFi Logo" 
                             className="h-12 w-12 rounded-full"
                         />
-                        <span className="font-display font-bold text-3xl logo-text">TIRTH</span>
+                        <span className="font-display font-bold text-3xl logo-text">HintyFi</span>
                     </Link>
                     <p className="text-center md:text-left max-w-xs">The central hub for our crypto ecosystem. Discover, participate, and build your reputation.</p>
                     <div className="flex items-center gap-4 mt-6">
@@ -90,7 +90,7 @@ const Footer: React.FC = () => {
                 </div>
             </div>
             <div className="text-center mt-12 pt-8 border-t border-border/10 text-sm">
-                <p>&copy; {new Date().getFullYear()} TIRTH. All rights reserved.</p>
+                <p>&copy; {new Date().getFullYear()} HintyFi. All rights reserved.</p>
             </div>
         </footer>
     );

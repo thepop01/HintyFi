@@ -38,12 +38,10 @@ const CommunitySheet: React.FC = () => {
                 const isBuilder = buildingProjects.length > 0;
                 const isTeamMember = teamMemberNames.has(user.name.toLowerCase());
                 
-                let credoPoints: number | 'N/A';
+                let credoPoints: number | 'N/A' = 'N/A'; // Default to N/A
 
-                if (isBuilder || isTeamMember) {
-                    credoPoints = user.manualCredoPoints || 0;
-                } else {
-                    credoPoints = 'N/A';
+                if ((isBuilder || isTeamMember) && user.manualCredoPoints && user.manualCredoPoints > 0) {
+                    credoPoints = user.manualCredoPoints;
                 }
 
                 return {
@@ -52,8 +50,8 @@ const CommunitySheet: React.FC = () => {
                     buildingProjects: buildingProjects
                 };
             })
-            // Sort by Tirth points as Credo score is mixed type
-            .sort((a, b) => (b.tirthPoints || 0) - (a.tirthPoints || 0));
+            // Sort by Hint points as Credo score is mixed type
+            .sort((a, b) => (b.hintPoints || 0) - (a.hintPoints || 0));
 
     }, [users, projects]);
 
@@ -81,7 +79,7 @@ const CommunitySheet: React.FC = () => {
                             <th className="px-6 py-3 text-sm font-display font-bold text-on-surface-variant">Name</th>
                             <th className="px-6 py-3 text-sm font-display font-bold text-on-surface-variant">Role</th>
                             <th className="px-6 py-3 text-sm font-display font-bold text-on-surface-variant">Credo Points</th>
-                            <th className="px-6 py-3 text-sm font-display font-bold text-on-surface-variant">Tirth Points</th>
+                            <th className="px-6 py-3 text-sm font-display font-bold text-on-surface-variant">Hint Points</th>
                             <th className="px-6 py-3 text-sm font-display font-bold text-on-surface-variant">Building</th>
                         </tr>
                     </thead>
@@ -110,7 +108,7 @@ const CommunitySheet: React.FC = () => {
                                     <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-primary">
                                         {typeof member.score === 'number' ? member.score.toLocaleString() : member.score}
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-accent">{member.tirthPoints?.toLocaleString() || 'N/A'}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-accent">{member.hintPoints?.toLocaleString() || 'N/A'}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         {member.buildingProjects && member.buildingProjects.length > 0 ? (
                                             <div className="flex items-center">

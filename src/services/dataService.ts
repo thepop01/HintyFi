@@ -1,3 +1,5 @@
+
+
 // This file contains all the mock data and data access functions for the application.
 // In a real application, this would be replaced with API calls to a backend service.
 
@@ -85,7 +87,7 @@ const seedData = () => {
       },
       projectsBuilding: ['Opals', 'CULT', 'Monadata AI'],
       discordRoles: ['Community Contributor', 'Artist', 'Cultist', 'Initiate', 'Genesis Holder'],
-      tirthPoints: 12345,
+      hintPoints: 12345,
       manualCredoPoints: 0,
       votedProjectIds: [],
       votedCampaignEntryIds: [],
@@ -109,7 +111,7 @@ const seedData = () => {
       },
       projectsBuilding: [],
       discordRoles: ['Animator', 'High Priest', 'with full access'],
-      tirthPoints: 9870,
+      hintPoints: 9870,
       manualCredoPoints: 0,
       votedProjectIds: [],
       votedCampaignEntryIds: [],
@@ -129,7 +131,7 @@ const seedData = () => {
       socials: { twitter: "CynthiaGamer" },
       projectsBuilding: ['Valor Quest', 'Showdown'],
       discordRoles: ['Gamer Guild'],
-      tirthPoints: 8400,
+      hintPoints: 8400,
       manualCredoPoints: 0,
       votedProjectIds: [],
       votedCampaignEntryIds: [],
@@ -142,7 +144,7 @@ const seedData = () => {
       discordId: '273462001309384707',
       socials: { twitter: "David_DeFi" },
       discordRoles: ['Early Supporter'],
-      tirthPoints: 7650,
+      hintPoints: 7650,
       manualCredoPoints: 0,
       votedProjectIds: [],
       votedCampaignEntryIds: [],
@@ -161,7 +163,7 @@ const seedData = () => {
       discordId: '273462001309384708',
       projectsBuilding: ['Kizzy'],
       discordRoles: ['Community Contributor'],
-      tirthPoints: 10500,
+      hintPoints: 10500,
       manualCredoPoints: 0,
       votedProjectIds: [],
       votedCampaignEntryIds: [],
@@ -174,7 +176,7 @@ const seedData = () => {
       discordId: '273462001309384709',
       socials: { twitter: "FrankieMemes" },
       discordRoles: ['Meme Lord'],
-      tirthPoints: 6320,
+      hintPoints: 6320,
       manualCredoPoints: 0,
       votedProjectIds: [],
       votedCampaignEntryIds: [],
@@ -188,7 +190,7 @@ const seedData = () => {
       socials: { twitter: "Grace3D" },
       projectsBuilding: ['Sunscreen'],
       discordRoles: ['3D Modeler'],
-      tirthPoints: 11200,
+      hintPoints: 11200,
       manualCredoPoints: 0,
       votedProjectIds: [],
       votedCampaignEntryIds: [],
@@ -980,15 +982,10 @@ const seedData = () => {
   ];
 
   const discordRolesPool: DiscordRole[] = [
-    // FIX: Changed `perk` to `perks` and wrapped the object in an array to match the DiscordRole type.
     { serverId: '123', roleId: '456', name: 'OG Role', description: "Awarded to the earliest members of the project's community.", points: 1000, perks: [{ type: 'Airdrop', description: 'Highest tier airdrop.' }] },
-    // FIX: Changed `perk` to `perks` and wrapped the object in an array to match the DiscordRole type.
     { serverId: '123', roleId: '457', name: 'Alpha Tester', description: "Participated in early-stage testing and provided valuable feedback.", points: 500, perks: [{ type: 'GTD', description: '1 Guaranteed Mint' }] },
-    // FIX: Changed `perk` to `perks` and wrapped the object in an array to match the DiscordRole type.
     { serverId: '123', roleId: '458', name: 'Community Contributor', description: "Recognized for significant and consistent contributions to the community.", points: 750, perks: [{ type: 'Free Mint', description: '1 Free Mint' }] },
-    // FIX: Changed `perk` to `perks` and wrapped the object in an array to match the DiscordRole type.
     { serverId: '123', roleId: '459', name: 'Early Supporter', description: "Joined and supported the project in its initial phases.", points: 400, perks: [{ type: 'FCFS', description: 'FCFS mint spot.' }] },
-    // FIX: Changed `perk` to `perks` and wrapped the object in an array to match the DiscordRole type.
     { serverId: '123', roleId: '460', name: 'Event Winner', description: "Achieved victory in an official community event or competition.", points: 300, perks: [{ type: 'GTD', description: '1 Guaranteed Mint' }] },
   ];
 
@@ -1018,7 +1015,6 @@ const seedData = () => {
     const raiseAmount = Math.random() > 0.3 ? `$${(Math.random() * 15 + 1).toFixed(1)}M` : 'N/A';
     let categories = getRandomSubset(allCategories, Math.floor(Math.random() * 2) + 1);
     
-    // FIX: Corrected 'website' to 'websites' to match the Project['links'] type definition.
     const projectLinks: Project['links'] = {
         websites: [{ label: 'Website', url: '#' }],
         twitter: '#',
@@ -1026,7 +1022,6 @@ const seedData = () => {
     };
 
     if (name === "Breath of Estova") {
-// FIX: Property 'whitelistInfo' does not exist on type 'Project["links"]'. Adding it as a LinkItem to the 'websites' array instead.
         projectLinks.websites.push({ label: 'Whitelist Info', url: '#' });
     }
 
@@ -1384,7 +1379,6 @@ const seedData = () => {
       banner: 'https://picsum.photos/seed/ppa_b/800/200',
       description: 'A revolutionary new DeFi protocol awaiting approval.',
       longDescription: 'This project aims to solve impermanent loss with a novel single-sided liquidity provision mechanism powered by AI.',
-      // FIX: Corrected 'website' to 'websites' to match the Project['links'] type definition.
       links: { websites: [{ label: "Website", url: "#" }] },
       events: [],
       status: 'beta',
@@ -1602,8 +1596,8 @@ export const submitIdentityAnswer = (questId: string, userId: string, answer: st
         timestamp: Date.now(),
     };
     
-    // Award Tirth point
-    users[userIndex].tirthPoints = (users[userIndex].tirthPoints || 0) + 1;
+    // Award Hint point
+    users[userIndex].hintPoints = (users[userIndex].hintPoints || 0) + 1;
 
     quest.identityQuestion.answers.push(newAnswer);
     save('quests', quests);
@@ -1644,8 +1638,8 @@ export const submitMultipleChoiceAnswer = (questId: string, userId: string, answ
         timestamp: Date.now(),
     };
     
-    // Award Tirth point
-    users[userIndex].tirthPoints = (users[userIndex].tirthPoints || 0) + 1;
+    // Award Hint point
+    users[userIndex].hintPoints = (users[userIndex].hintPoints || 0) + 1;
 
     quest.multipleChoiceQuestion.answers.push(newAnswer);
     save('quests', quests);
@@ -1710,7 +1704,7 @@ export const enterCampaign = (campaignId: string, user: User, link: string): { s
     
     const userIndex = users.findIndex(u => u.id === user.id);
     if (userIndex !== -1) {
-        users[userIndex].tirthPoints = (users[userIndex].tirthPoints || 0) + 1;
+        users[userIndex].hintPoints = (users[userIndex].hintPoints || 0) + 1;
     }
 
     campaign.entries.push(newEntry);
@@ -1736,7 +1730,7 @@ export const voteCampaignEntry = (campaignId: string, entryId: string, user: Use
         const currentUser = users[userIndex];
         if (!currentUser.votedCampaignEntryIds) currentUser.votedCampaignEntryIds = [];
         if (!currentUser.votedCampaignEntryIds.includes(entryId)) {
-            currentUser.tirthPoints = (currentUser.tirthPoints || 0) + 1;
+            currentUser.hintPoints = (currentUser.hintPoints || 0) + 1;
             currentUser.votedCampaignEntryIds.push(entryId);
         }
     }
@@ -1778,7 +1772,7 @@ export const voteProject = (projectId: string, user: User, vote: 'up' | 'down'):
         if (!currentUser.votedProjectIds) currentUser.votedProjectIds = [];
 
         if (!currentUser.votedProjectIds.includes(projectId)) {
-            currentUser.tirthPoints = (currentUser.tirthPoints || 0) + 1;
+            currentUser.hintPoints = (currentUser.hintPoints || 0) + 1;
             currentUser.votedProjectIds.push(projectId);
         }
     }
@@ -1842,7 +1836,7 @@ export const addOrUpdateProject = (project: Project): boolean => {
     }
 }
 
-export const deleteItem = (key: 'projects' | 'events' | 'quests', id: string): boolean => {
+export const deleteItem = (key: 'projects' | 'events' | 'quests' | 'weeklyDiscordEvents', id: string): boolean => {
      try {
         let items: any[] = load(key, []);
         const initialLength = items.length;
@@ -1907,20 +1901,20 @@ export const addOrUpdateQuest = (quest: Quest): boolean => {
 
 // --- SUPER ADMIN FUNCTIONS ---
 
-export const updateUserTirthPoints = (userId: string, pointDelta: number): boolean => {
+export const updateUserHintPoints = (userId: string, pointDelta: number): boolean => {
     try {
         const users = getUsers();
         const userIndex = users.findIndex(u => u.id === userId);
         if (userIndex === -1) return false;
 
         const user = users[userIndex];
-        user.tirthPoints = (user.tirthPoints || 0) + pointDelta;
+        user.hintPoints = (user.hintPoints || 0) + pointDelta;
         users[userIndex] = user;
 
         save('users', users);
         return true;
     } catch(e) {
-        console.error("Failed to update tirth points", e);
+        console.error("Failed to update hint points", e);
         return false;
     }
 };
@@ -1952,7 +1946,7 @@ export const selectCampaignWinners = (campaignId: string): { success: boolean; m
 
         users.forEach(user => {
             if (winnerUserIds.includes(user.id)) {
-                user.tirthPoints = (user.tirthPoints || 0) + 5;
+                user.hintPoints = (user.hintPoints || 0) + 5;
             }
         });
 
@@ -1960,7 +1954,7 @@ export const selectCampaignWinners = (campaignId: string): { success: boolean; m
         save('events', events);
         save('users', users);
 
-        return { success: true, message: `Selected ${winners.length} winners and awarded 5 Tirth points each!` };
+        return { success: true, message: `Selected ${winners.length} winners and awarded 5 Hint points each!` };
     } catch (e) {
         console.error("Failed to select campaign winners", e);
         return { success: false, message: "An unexpected error occurred." };
@@ -1987,6 +1981,25 @@ export const updateCredoSettings = (settings: CredoSettings): boolean => {
 };
 
 export const getWeeklyDiscordEvents = (): WeeklyDiscordEvent[] => load('weeklyDiscordEvents', []);
+
+export const addOrUpdateWeeklyDiscordEvent = (event: WeeklyDiscordEvent): boolean => {
+    try {
+        const events = getWeeklyDiscordEvents();
+        const index = events.findIndex(e => e.id === event.id);
+        if (index > -1) {
+            events[index] = event;
+        } else {
+            events.unshift(event);
+        }
+        // sort by date before saving
+        events.sort((a,b) => a.dateTime - b.dateTime);
+        save('weeklyDiscordEvents', events);
+        return true;
+    } catch (e) {
+        console.error("Failed to save weekly event", e);
+        return false;
+    }
+};
 
 export const getSiteContentSettings = (): SiteContentSettings => {
     const fallback: SiteContentSettings = {
@@ -2046,7 +2059,7 @@ export const updateProjectStatus = (projectId: string, status: 'approved' | 'rej
     }
 }
 
-export const addPointsToUser = (userId: string, points: { credo?: number }, tirthAdjustment?: { points: number, category: 'tasks' | 'wins' | 'rewards', reason: string }): boolean => {
+export const addPointsToUser = (userId: string, points: { credo?: number }, hintAdjustment?: { points: number, category: 'tasks' | 'wins' | 'rewards', reason: string }): boolean => {
     try {
         const users = getUsers();
         const userIndex = users.findIndex(u => u.id === userId);
@@ -2057,14 +2070,14 @@ export const addPointsToUser = (userId: string, points: { credo?: number }, tirt
         if (points.credo) {
             user.manualCredoPoints = (user.manualCredoPoints || 0) + points.credo;
         }
-        if (tirthAdjustment && tirthAdjustment.points !== 0) {
-            if (!user.manualTirthAdjustments) {
-                user.manualTirthAdjustments = [];
+        if (hintAdjustment && hintAdjustment.points !== 0) {
+            if (!user.manualHintAdjustments) {
+                user.manualHintAdjustments = [];
             }
-            user.manualTirthAdjustments.push({
-                points: tirthAdjustment.points,
-                category: tirthAdjustment.category,
-                reason: tirthAdjustment.reason,
+            user.manualHintAdjustments.push({
+                points: hintAdjustment.points,
+                category: hintAdjustment.category,
+                reason: hintAdjustment.reason,
                 timestamp: Date.now()
             });
         }
@@ -2078,7 +2091,7 @@ export const addPointsToUser = (userId: string, points: { credo?: number }, tirt
     }
 };
 
-export const removePointsFromUser = (userId: string, points: { credo?: number }, tirthAdjustment?: { points: number, category: 'tasks' | 'wins' | 'rewards', reason: string }): boolean => {
+export const removePointsFromUser = (userId: string, points: { credo?: number }, hintAdjustment?: { points: number, category: 'tasks' | 'wins' | 'rewards', reason: string }): boolean => {
     try {
         const users = getUsers();
         const userIndex = users.findIndex(u => u.id === userId);
@@ -2089,14 +2102,14 @@ export const removePointsFromUser = (userId: string, points: { credo?: number },
         if (points.credo) {
             user.manualCredoPoints = (user.manualCredoPoints || 0) - points.credo;
         }
-        if (tirthAdjustment && tirthAdjustment.points !== 0) {
-            if (!user.manualTirthAdjustments) {
-                user.manualTirthAdjustments = [];
+        if (hintAdjustment && hintAdjustment.points !== 0) {
+            if (!user.manualHintAdjustments) {
+                user.manualHintAdjustments = [];
             }
-            user.manualTirthAdjustments.push({
-                points: -tirthAdjustment.points,
-                category: tirthAdjustment.category,
-                reason: tirthAdjustment.reason,
+            user.manualHintAdjustments.push({
+                points: -hintAdjustment.points,
+                category: hintAdjustment.category,
+                reason: hintAdjustment.reason,
                 timestamp: Date.now()
             });
         }

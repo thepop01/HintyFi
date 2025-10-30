@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import PaginationControls from '../components/common/PaginationControls';
 
 // Copied from utils/helpers.ts to read localStorage directly
-const COMPLETED_TASKS_STORAGE_KEY = 'trndz_completedTasks_v1';
+const COMPLETED_TASKS_STORAGE_KEY = 'hintyfi_completedTasks_v1';
 type CompletedTasksState = Record<string, string[]>;
 
 const ProjectLeaderboardPage: React.FC = () => {

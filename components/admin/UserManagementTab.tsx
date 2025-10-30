@@ -53,9 +53,9 @@ const UserManagementTab: React.FC = () => {
     useClickOutside(userSearchWrapperRef, () => setIsUserSearchFocused(false));
 
     const [userForRemovePoints, setUserForRemovePoints] = useState<User | null>(null);
-    const [pointsToRemove, setPointsToRemove] = useState({ credo: 0, tirth: 0, tirthCategory: 'rewards', tirthReason: '' });
+    const [pointsToRemove, setPointsToRemove] = useState({ credo: 0, hint: 0, hintCategory: 'rewards', hintReason: '' });
     const [userForAddPoints, setUserForAddPoints] = useState<User | null>(null);
-    const [pointsToAdd, setPointsToAdd] = useState({ credo: 0, tirth: 0, tirthCategory: 'rewards', tirthReason: '' });
+    const [pointsToAdd, setPointsToAdd] = useState({ credo: 0, hint: 0, hintCategory: 'rewards', hintReason: '' });
 
 
     const debouncedProjectSearchTerm = useDebounce(projectSearchTerm, 300);
@@ -96,17 +96,17 @@ const UserManagementTab: React.FC = () => {
     
     const handleOpenRemovePointsModal = (user: User) => {
         setUserForRemovePoints(user);
-        setPointsToRemove({ credo: 0, tirth: 0, tirthCategory: 'rewards', tirthReason: '' });
+        setPointsToRemove({ credo: 0, hint: 0, hintCategory: 'rewards', hintReason: '' });
     };
     
     const handleOpenAddPointsModal = (user: User) => {
         setUserForAddPoints(user);
-        setPointsToAdd({ credo: 0, tirth: 0, tirthCategory: 'rewards', tirthReason: '' });
+        setPointsToAdd({ credo: 0, hint: 0, hintCategory: 'rewards', hintReason: '' });
     };
 
     const handlePointsChange = (setter: React.Dispatch<React.SetStateAction<any>>) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setter(prev => ({ ...prev, [name]: (name === 'credo' || name === 'tirth') ? parseInt(value, 10) || 0 : value }));
+        setter(prev => ({ ...prev, [name]: (name === 'credo' || name === 'hint') ? parseInt(value, 10) || 0 : value }));
     };
 
     const handleRemovePoints = () => {
@@ -114,7 +114,7 @@ const UserManagementTab: React.FC = () => {
         const success = removePointsFromUser(
             userForRemovePoints.id,
             { credo: pointsToRemove.credo },
-            { points: pointsToRemove.tirth, category: pointsToRemove.tirthCategory as any, reason: pointsToRemove.tirthReason }
+            { points: pointsToRemove.hint, category: pointsToRemove.hintCategory as any, reason: pointsToRemove.hintReason }
         );
         if (success) {
             addToast(`Points removed from ${userForRemovePoints.name}`, 'success');
@@ -130,7 +130,7 @@ const UserManagementTab: React.FC = () => {
         const success = addPointsToUser(
             userForAddPoints.id,
             { credo: pointsToAdd.credo },
-            { points: pointsToAdd.tirth, category: pointsToAdd.tirthCategory as any, reason: pointsToAdd.tirthReason }
+            { points: pointsToAdd.hint, category: pointsToAdd.hintCategory as any, reason: pointsToAdd.hintReason }
         );
         if (success) {
             addToast(`Points added to ${userForAddPoints.name}`, 'success');
@@ -304,14 +304,14 @@ const UserManagementTab: React.FC = () => {
                         <FormInput type="number" name="credo" value={pointsToAdd.credo} onChange={handlePointsChange(setPointsToAdd)} />
                     </div>
                     <div className="p-3 border rounded-md border-border/20 space-y-3">
-                        <h4 className="font-bold">Tirth Points Adjustment</h4>
+                        <h4 className="font-bold">Hint Points Adjustment</h4>
                         <div>
                             <label className="font-semibold text-on-surface-variant text-sm mb-1 block">Points to Add</label>
-                            <FormInput type="number" name="tirth" value={pointsToAdd.tirth} onChange={handlePointsChange(setPointsToAdd)} />
+                            <FormInput type="number" name="hint" value={pointsToAdd.hint} onChange={handlePointsChange(setPointsToAdd)} />
                         </div>
                         <div>
                             <label className="font-semibold text-on-surface-variant text-sm mb-1 block">Category</label>
-                            <FormSelect name="tirthCategory" value={pointsToAdd.tirthCategory} onChange={handlePointsChange(setPointsToAdd)}>
+                            <FormSelect name="hintCategory" value={pointsToAdd.hintCategory} onChange={handlePointsChange(setPointsToAdd)}>
                                 <option value="rewards">Rewards</option>
                                 <option value="wins">Campaign Wins</option>
                                 <option value="tasks">Task Completion</option>
@@ -319,7 +319,7 @@ const UserManagementTab: React.FC = () => {
                         </div>
                         <div>
                             <label className="font-semibold text-on-surface-variant text-sm mb-1 block">Reason (Optional)</label>
-                            <FormInput name="tirthReason" value={pointsToAdd.tirthReason} onChange={handlePointsChange(setPointsToAdd)} />
+                            <FormInput name="hintReason" value={pointsToAdd.hintReason} onChange={handlePointsChange(setPointsToAdd)} />
                         </div>
                     </div>
                     <div className="flex justify-end gap-3 pt-4">
@@ -340,14 +340,14 @@ const UserManagementTab: React.FC = () => {
                         <FormInput type="number" name="credo" value={pointsToRemove.credo} onChange={handlePointsChange(setPointsToRemove)} />
                     </div>
                     <div className="p-3 border rounded-md border-border/20 space-y-3">
-                        <h4 className="font-bold">Tirth Points Adjustment</h4>
+                        <h4 className="font-bold">Hint Points Adjustment</h4>
                         <div>
                             <label className="font-semibold text-on-surface-variant text-sm mb-1 block">Points to Remove</label>
-                            <FormInput type="number" name="tirth" value={pointsToRemove.tirth} onChange={handlePointsChange(setPointsToRemove)} />
+                            <FormInput type="number" name="hint" value={pointsToRemove.hint} onChange={handlePointsChange(setPointsToRemove)} />
                         </div>
                         <div>
                             <label className="font-semibold text-on-surface-variant text-sm mb-1 block">Category</label>
-                            <FormSelect name="tirthCategory" value={pointsToRemove.tirthCategory} onChange={handlePointsChange(setPointsToRemove)}>
+                            <FormSelect name="hintCategory" value={pointsToRemove.hintCategory} onChange={handlePointsChange(setPointsToRemove)}>
                                 <option value="rewards">Rewards</option>
                                 <option value="wins">Campaign Wins</option>
                                 <option value="tasks">Task Completion</option>
@@ -355,7 +355,7 @@ const UserManagementTab: React.FC = () => {
                         </div>
                         <div>
                             <label className="font-semibold text-on-surface-variant text-sm mb-1 block">Reason (Optional)</label>
-                            <FormInput name="tirthReason" value={pointsToRemove.tirthReason} onChange={handlePointsChange(setPointsToRemove)} />
+                            <FormInput name="hintReason" value={pointsToRemove.hintReason} onChange={handlePointsChange(setPointsToRemove)} />
                         </div>
                     </div>
                     <div className="flex justify-end gap-3 pt-4">

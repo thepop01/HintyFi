@@ -413,9 +413,9 @@ const TeamPanel: React.FC<{ team: TeamMember[]; allUsers: User[] }> = ({ team, a
     );
 };
 
-const CredoPointsPanel: React.FC<{ project: Project }> = ({ project }) => {
+const HintPointsPanel: React.FC<{ project: Project }> = ({ project }) => {
     const hasRolePoints = project.discordRoles?.some(r => r.points && r.points > 0);
-    const hasNftPoints = project.nftCollections?.some(c => c.pointsPerDay && c.pointsPerDay > 0);
+    const hasNftPoints = project.nftCollections?.some(c => (c.pointsPerDay && c.pointsPerDay > 0) || (c.oneTimePoints && c.oneTimePoints > 0));
     const hasTokenPoints = project.tokenHoldingTiers && project.tokenHoldingTiers.length > 0;
 
     if (!hasRolePoints && !hasNftPoints && !hasTokenPoints) {
@@ -423,7 +423,7 @@ const CredoPointsPanel: React.FC<{ project: Project }> = ({ project }) => {
     }
 
     return (
-        <Section icon={<Award size={24} />} title="Credo Points">
+        <Section icon={<Award size={24} />} title="Hint Points">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {hasRolePoints && (
                     <div>
@@ -442,10 +442,14 @@ const CredoPointsPanel: React.FC<{ project: Project }> = ({ project }) => {
                      <div>
                         <h3 className="font-bold text-on-surface-variant mb-2 flex items-center gap-2"><Gem size={18} /> NFT Holding</h3>
                         <ul className="space-y-1 text-sm">
-                            {project.nftCollections?.filter(c => c.pointsPerDay).map(collection => (
+                            {project.nftCollections?.filter(c => c.pointsPerDay || c.oneTimePoints).map(collection => (
                                 <li key={collection.id} className="flex justify-between">
                                     <span>{collection.name}</span>
-                                    <span className="font-semibold text-primary">{collection.pointsPerDay} pts/day</span>
+                                    <span className="font-semibold text-primary">
+                                        {collection.oneTimePoints ? `${collection.oneTimePoints} pts` : ''}
+                                        {collection.oneTimePoints && collection.pointsPerDay ? ' + ' : ''}
+                                        {collection.pointsPerDay ? `${collection.pointsPerDay} pts/day` : ''}
+                                    </span>
                                 </li>
                             ))}
                         </ul>
@@ -815,10 +819,10 @@ export const ProjectProfileView: React.FC<ProjectProfileViewProps> = ({ project,
                     <StrategyWalkthrough steps={project.strategyWalkthrough} />
                 )}
                 
-                <EngagementPanel project={project} events={events} />
+                {/* <EngagementPanel project={project} events={events} /> */}
                 <TeamPanel team={project.team || []} allUsers={allUsers} />
                 <PerksAndAirdropsPanel project={project} />
-                <CredoPointsPanel project={project} />
+                <HintPointsPanel project={project} />
             </main>
         </div>
     );

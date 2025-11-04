@@ -20,6 +20,7 @@ const ProfilePage: React.FC = () => {
     useEffect(() => {
         const fetchUser = async () => {
             const allUsers = await getUsers();
+            console.log('All Users:', allUsers); // Temporary log to find user IDs
             if (id) {
                 setUser(allUsers.find(u => u.id === id) || null);
             } else if (currentUser) {

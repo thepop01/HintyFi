@@ -187,10 +187,10 @@ const ProfileWall: React.FC<ProfileWallProps> = ({ user, isOwnProfile }) => {
                                 <XIcon size={16} />
                             </a>
                         )}
-                        {user.discordUsername && (
-                            <button onClick={() => handleCopy(user.discordUsername!, 'Discord username copied!')} title="Copy Discord ID" className="neu-button !rounded-full !w-10 !h-10 flex items-center justify-center p-0">
+                        {user.socials?.discord && (
+                            <ReactRouterDOM.Link to={user.socials.discord} title="View Profile" className="neu-button !rounded-full !w-10 !h-10 flex items-center justify-center p-0">
                                 <DiscordIcon size={18} />
-                            </button>
+                            </ReactRouterDOM.Link>
                         )}
                         {wallet_address && (
                             <button onClick={() => handleCopy(wallet_address!, 'Wallet address copied!')} title="Copy Wallet Address" className="neu-button !rounded-full !w-10 !h-10 flex items-center justify-center p-0">

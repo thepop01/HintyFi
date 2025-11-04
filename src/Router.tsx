@@ -153,40 +153,45 @@ export default function Router() {
                                     <ReactRouterDOM.Route path="project" element={<ReactRouterDOM.Navigate to="/ecosystem" replace />} />
 
                                     {/* Super Admin Routes */}
-                                    <ReactRouterDOM.Route path="super-admin" element={<SuperAdminLayout />}>
-                                        <ReactRouterDOM.Route index element={<ReactRouterDOM.Navigate to="users" replace />} />
-                                        <ReactRouterDOM.Route path="users" element={<UserManagementTab />} />
-                                        <ReactRouterDOM.Route path="project-detail/add" element={<AddProjectPage />} />
-                                        <ReactRouterDOM.Route path="project-detail" element={<ManageProjectDetail />} />
-                                        <ReactRouterDOM.Route path="content" element={<ContentManagementTab />} />
-                                        <ReactRouterDOM.Route path="quests" element={<ManageQuestsTab />} />
-                                        <ReactRouterDOM.Route path="nfts" element={<ManageNftTab />} />
-                                        <ReactRouterDOM.Route path="nfts/add" element={<AddNftCollectionPage />} />
-                                        <ReactRouterDOM.Route path="nfts/edit/:projectId/:collectionId" element={<EditNftCollectionPage />} />
-                                        <ReactRouterDOM.Route path="memes" element={<ManageMemeTab />} />
-                                        <ReactRouterDOM.Route path="memes/add" element={<AddMemePage />} />
-                                        <ReactRouterDOM.Route path="idos" element={<ManageIdoTab />} />
-                                        <ReactRouterDOM.Route path="idos/add" element={<AddIdoPage />} />
-                                        <ReactRouterDOM.Route path="this-week" element={<ManageThisWeekTab />} />
-                                        <ReactRouterDOM.Route path="project-management/:id" element={<SuperAdminProjectLayout />}>
-                                            <ReactRouterDOM.Route index element={<ReactRouterDOM.Navigate to="points" replace />} />
-                                            <ReactRouterDOM.Route path="points" element={<ProjectPointsSettingsTab />} />
-                                            <ReactRouterDOM.Route path="info" element={<ProjectInfoSettingsTab />} />
-                                            <ReactRouterDOM.Route path="status" element={<ProjectStatusSettingsTab />} />
-                                            <ReactRouterDOM.Route path="campaigns" element={<ProjectCampaignsVerificationTab />} />
-                                            <ReactRouterDOM.Route path="tasks" element={<ProjectTasksVerificationTab />} />
+                                    {/* Super Admin Routes */}
+                                    <ReactRouterDOM.Route element={<ProtectedRoute roles={['super_admin']} />}>
+                                        <ReactRouterDOM.Route path="super-admin" element={<SuperAdminLayout />}>
+                                            <ReactRouterDOM.Route index element={<ReactRouterDOM.Navigate to="users" replace />} />
+                                            <ReactRouterDOM.Route path="users" element={<UserManagementTab />} />
+                                            <ReactRouterDOM.Route path="project-detail/add" element={<AddProjectPage />} />
+                                            <ReactRouterDOM.Route path="project-detail" element={<ManageProjectDetail />} />
+                                            <ReactRouterDOM.Route path="content" element={<ContentManagementTab />} />
+                                            <ReactRouterDOM.Route path="quests" element={<ManageQuestsTab />} />
+                                            <ReactRouterDOM.Route path="nfts" element={<ManageNftTab />} />
+                                            <ReactRouterDOM.Route path="nfts/add" element={<AddNftCollectionPage />} />
+                                            <ReactRouterDOM.Route path="nfts/edit/:projectId/:collectionId" element={<EditNftCollectionPage />} />
+                                            <ReactRouterDOM.Route path="memes" element={<ManageMemeTab />} />
+                                            <ReactRouterDOM.Route path="memes/add" element={<AddMemePage />} />
+                                            <ReactRouterDOM.Route path="idos" element={<ManageIdoTab />} />
+                                            <ReactRouterDOM.Route path="idos/add" element={<AddIdoPage />} />
+                                            <ReactRouterDOM.Route path="this-week" element={<ManageThisWeekTab />} />
+                                            <ReactRouterDOM.Route path="project-management/:id" element={<SuperAdminProjectLayout />}>
+                                                <ReactRouterDOM.Route index element={<ReactRouterDOM.Navigate to="points" replace />} />
+                                                <ReactRouterDOM.Route path="points" element={<ProjectPointsSettingsTab />} />
+                                                <ReactRouterDOM.Route path="info" element={<ProjectInfoSettingsTab />} />
+                                                <ReactRouterDOM.Route path="status" element={<ProjectStatusSettingsTab />} />
+                                                <ReactRouterDOM.Route path="campaigns" element={<ProjectCampaignsVerificationTab />} />
+                                                <ReactRouterDOM.Route path="tasks" element={<ProjectTasksVerificationTab />} />
+                                            </ReactRouterDOM.Route>
                                         </ReactRouterDOM.Route>
                                     </ReactRouterDOM.Route>
 
-                                    {/* Admin Routes - Now nested inside main Layout */}
-                                    <ReactRouterDOM.Route path="admin" element={<AdminProjectSelectionPage />} />
-                                    <ReactRouterDOM.Route path="admin/project/:id" element={<ProjectAdminLayout />}>
-                                        <ReactRouterDOM.Route index element={<ReactRouterDOM.Navigate to="edit" replace />} />
-                                        <ReactRouterDOM.Route path="edit" element={<AdminEditProjectPage />} />
-                                        <ReactRouterDOM.Route path="campaigns" element={<AdminProjectCampaignsPage />} />
-                                        <ReactRouterDOM.Route path="tasks" element={<AdminProjectTasksPage />} />
-                                        <ReactRouterDOM.Route path="nfts-memes" element={<AdminProjectNftsMemesPage />} />
-                                        <ReactRouterDOM.Route path="discord-roles" element={<AdminProjectDiscordRolesPage />} />
+                                    {/* Admin Routes */}
+                                    <ReactRouterDOM.Route element={<ProtectedRoute roles={['project_admin', 'super_admin']} />}>
+                                        <ReactRouterDOM.Route path="admin" element={<AdminProjectSelectionPage />} />
+                                        <ReactRouterDOM.Route path="admin/project/:id" element={<ProjectAdminLayout />}>
+                                            <ReactRouterDOM.Route index element={<ReactRouterDOM.Navigate to="edit" replace />} />
+                                            <ReactRouterDOM.Route path="edit" element={<AdminEditProjectPage />} />
+                                            <ReactRouterDOM.Route path="campaigns" element={<AdminProjectCampaignsPage />} />
+                                            <ReactRouterDOM.Route path="tasks" element={<AdminProjectTasksPage />} />
+                                            <ReactRouterDOM.Route path="nfts-memes" element={<AdminProjectNftsMemesPage />} />
+                                            <ReactRouterDOM.Route path="discord-roles" element={<AdminProjectDiscordRolesPage />} />
+                                        </ReactRouterDOM.Route>
                                     </ReactRouterDOM.Route>
                                 </ReactRouterDOM.Route>
                             </ReactRouterDOM.Routes>

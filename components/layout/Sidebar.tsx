@@ -167,24 +167,37 @@ const Sidebar: React.FC = () => {
               <SubNavLink to="/" label="Ecosystem" icon={<Users size={16} />} isActive={location.pathname === '/'} />
               <SubNavLink to="/nft" label="NFT" icon={<Gem size={16} />} isActive={location.pathname === '/nft'} />
               <SubNavLink to="/meme" label="Meme" icon={<Flame size={16} />} isActive={location.pathname === '/meme'} />
-              <SubNavLink to="/ido" label="IDO/ICO" icon={<Sparkles size={16} />} isActive={location.pathname === '/ido'} />
+              <div className="relative">
+                <SubNavLink to="#" label="IDO/ICO" icon={<Sparkles size={16} />} isActive={location.pathname === '/ido'} />
+                <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-white bg-black/50 px-2 py-1 rounded-full">
+                  Soon
+                </span>
+              </div>
               <SubNavLink to="/early-projects" label="Early Projects" icon={<Sparkles size={16} />} isActive={location.pathname === '/early-projects'} />
             </CollapsibleMenu>
             
             <CollapsibleMenu icon={<Calendar size={24} />} label="Events" isExpanded={isExpanded} isParentActive={isEventsPathActive}>
-               <SubNavLink to="/campaigns" label="Campaigns" icon={<Sparkles size={16} />} isActive={location.pathname === '/campaigns'} />
+               <div className="relative">
+                <SubNavLink to="#" label="Campaigns" icon={<Sparkles size={16} />} isActive={location.pathname === '/campaigns'} />
+                <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-white bg-black/50 px-2 py-1 rounded-full">
+                  Soon
+                </span>
+               </div>
                <SubNavLink to="/tasks" label="Tasks" icon={<Sparkles size={16} />} isActive={location.pathname === '/tasks'} />
                <SubNavLink to="/this-week" label="This Week" icon={<CalendarDays size={16} />} isActive={location.pathname.startsWith('/this-week')} />
             </CollapsibleMenu>
             
             <NavLink to="/ledger" icon={<ScrollText size={24} />} label="Ledger" isExpanded={isExpanded} isActive={isLedgerActive} />
             
-            <NavLink to="/admin" icon={<Shield size={24} />} label="Admin Dashboard" isExpanded={isExpanded} isActive={isAdminsActive} />
-
-            <CollapsibleMenu icon={<Shield size={24} />} label="Super Admin" isExpanded={isExpanded} isParentActive={isSuperAdminActive}>
-              <SubNavLink 
-                  to="/super-admin/users" 
-                  label="Users" 
+            {(currentUser?.role === 'project_admin' || currentUser?.role === 'super_admin') && (
+              <NavLink to="/admin" icon={<Shield size={24} />} label="Admin Dashboard" isExpanded={isExpanded} isActive={isAdminsActive} />
+            )}
+            
+            {currentUser?.role === 'super_admin' && (
+              <CollapsibleMenu icon={<Shield size={24} />} label="Super Admin" isExpanded={isExpanded} isParentActive={isSuperAdminActive}>
+                <SubNavLink
+                    to="/super-admin/users"
+                    label="Users"
                   icon={<Users size={16} />} 
                   isActive={location.pathname === '/super-admin/users' || location.pathname === '/super-admin'} 
               />
@@ -230,7 +243,8 @@ const Sidebar: React.FC = () => {
                   icon={<CalendarDays size={16} />}
                   isActive={location.pathname === '/super-admin/this-week'}
               />
-            </CollapsibleMenu>
+              </CollapsibleMenu>
+            )}
         </nav>
       </div>
     </motion.aside>

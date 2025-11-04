@@ -60,7 +60,45 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
     }
 
     if (userProfile) {
-      setCurrentUser(userProfile);
+      // Check and correct profile picture URL for existing users
+      const correctAvatarUrl = session.user.user_metadata.avatar_url;
+      if (userProfile.profile_pic_url !== correctAvatarUrl) {
+        const { data: updatedUser } = await supabase
+          .from('users')
+          .update({ profile_pic_url: correctAvatarUrl })
+          .eq('id', userProfile.id)
+          .select()
+          .single();
+        setCurrentUser(updatedUser || userProfile);
+      } else {
+        setCurrentUser(userProfile);
+      }
+
+      // Ensure existing users have the correct discord profile link
+      if (!userProfile.socials?.discord) {
+        const { data: updatedUserWithSocials } = await supabase
+          .from('users')
+          .update({ socials: { ...userProfile.socials, discord: `/ledger/${userProfile.id}` } })
+          .eq('id', userProfile.id)
+          .select()
+          .single();
+        if (updatedUserWithSocials) {
+          setCurrentUser(updatedUserWithSocials);
+        }
+      }
+
+      // Temporary logic to assign super_admin role
+      const superAdminDiscordId = '1172958200455245827';
+      if (userProfile.platform_user_id === superAdminDiscordId && userProfile.role !== 'super_admin') {
+        const { data: updatedUser } = await supabase
+          .from('users')
+          .update({ role: 'super_admin' })
+          .eq('id', userProfile.id)
+          .select()
+          .single();
+        setCurrentUser(updatedUser || userProfile);
+      }
+      
       // Auto-connect wallet if user has one stored in DB
       if (userProfile.wallet_address) {
         // The wallet reconnection will be handled by WalletContext
@@ -73,7 +111,10 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
         email: session.user.email,
         platform_user_id: session.user.user_metadata.provider_id,
         platform_username: session.user.user_metadata.full_name,
-        profile_pic_url: session.user.user_metadata.avatar_url,
+        profile_pic_url: session.user.user_metadata.avatar_url, // Use the URL directly
+        socials: {
+          discord: `/ledger/${session.user.id}`
+        }
       };
       
       const { data: createdUser, error: insertError } = await supabase

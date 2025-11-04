@@ -167,12 +167,22 @@ const Sidebar: React.FC = () => {
               <SubNavLink to="/ecosystem" label="Ecosystem" icon={<Users size={16} />} isActive={location.pathname === '/ecosystem'} />
               <SubNavLink to="/ecosystem/nft" label="NFT" icon={<Gem size={16} />} isActive={location.pathname === '/ecosystem/nft'} />
               <SubNavLink to="/ecosystem/meme" label="Meme" icon={<Flame size={16} />} isActive={location.pathname === '/ecosystem/meme'} />
-              <SubNavLink to="/ido" label="IDO/ICO" icon={<Sparkles size={16} />} isActive={location.pathname === '/ido'} />
+              <div className="relative">
+                <SubNavLink to="#" label="IDO/ICO" icon={<Sparkles size={16} />} isActive={location.pathname === '/ido'} />
+                <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-white bg-black/50 px-2 py-1 rounded-full">
+                  Soon
+                </span>
+              </div>
               <SubNavLink to="/early-projects" label="Early Projects" icon={<Sparkles size={16} />} isActive={location.pathname === '/early-projects'} />
             </CollapsibleMenu>
             
             <CollapsibleMenu icon={<Calendar size={24} />} label="Events" isExpanded={isExpanded} isParentActive={isEventsPathActive}>
-               <SubNavLink to="/campaigns" label="Campaigns" icon={<Sparkles size={16} />} isActive={location.pathname === '/campaigns'} />
+               <div className="relative">
+                <SubNavLink to="#" label="Campaigns" icon={<Sparkles size={16} />} isActive={location.pathname === '/campaigns'} />
+                <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-white bg-black/50 px-2 py-1 rounded-full">
+                  Soon
+                </span>
+               </div>
                <SubNavLink to="/tasks" label="Tasks" icon={<Sparkles size={16} />} isActive={location.pathname === '/tasks'} />
                <SubNavLink to="/this-week" label="This Week" icon={<CalendarDays size={16} />} isActive={location.pathname.startsWith('/this-week')} />
             </CollapsibleMenu>

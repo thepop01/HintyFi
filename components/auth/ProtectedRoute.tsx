@@ -3,14 +3,22 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Loader from '../common/Loader';
 
-const ProtectedRoute: React.FC = () => {
+interface ProtectedRouteProps {
+  roles: string[];
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ roles }) => {
     const { currentUser, loading } = useAuth();
 
     if (loading) {
         return <Loader />;
     }
 
-    return currentUser ? <Outlet /> : <Navigate to="/" replace />;
+    if (!currentUser || !roles.includes(currentUser.role)) {
+        return <Navigate to="/" replace />;
+    }
+
+    return <Outlet />;
 };
 
 export default ProtectedRoute;

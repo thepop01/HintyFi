@@ -1,0 +1,57 @@
+/* Custom styles for RainbowKit */
+
+/* Override all RainbowKit button styles to match neu-button design */
+[data-rk] button,
+[data-rk] [role="button"],
+.wallet-connect-button [data-rk] button,
+.wallet-connect-button [data-rk] [role="button"] {
+  border-radius: 9999px !important;
+  background: rgb(var(--color-background)) !important;
+  border: 2px solid transparent !important;
+  color: rgb(var(--color-on-background-variant)) !important;
+  font-weight: 600 !important;
+  font-size: 0.75rem !important;
+  padding: 0.5rem 0.625rem !important;
+  height: 45px !important;
+  display: flex !important;
+  align-items: center !important;
+  box-shadow: var(--neu-shadow-outset-sm) !important;
+  transition: all 0.15s ease-out !important;
+  text-decoration: none !important;
+}
+
+[data-rk] button:hover,
+[data-rk] [role="button"]:hover,
+.wallet-connect-button [data-rk] button:hover,
+.wallet-connect-button [data-rk] [role="button"]:hover {
+  box-shadow: var(--neu-shadow-outset-xs) !important;
+  color: rgb(var(--color-primary)) !important;
+  background: rgb(var(--color-background)) !important;
+}
+
+[data-rk] button:active,
+[data-rk] [role="button"]:active,
+.wallet-connect-button [data-rk] button:active,
+.wallet-connect-button [data-rk] [role="button"]:active {
+  box-shadow: var(--neu-shadow-inset-sm) !important;
+  color: rgb(var(--color-primary)) !important;
+  border-color: rgba(var(--color-primary), 0.2) !important;
+  background: rgb(var(--color-background)) !important;
+}
+
+/* Style the connected account button */
+[data-rk] button[data-rk-button-position="middle"],
+.wallet-connect-button [data-rk] button[data-rk-button-position="middle"] {
+  background: rgba(var(--color-primary), 0.1) !important;
+  border-color: rgba(var(--color-primary), 0.3) !important;
+  color: rgb(var(--color-primary)) !important;
+}
+
+/* Override any inline styles that RainbowKit might apply */
+[data-rk] button[style],
+[data-rk] [role="button"][style] {
+  background: rgb(var(--color-background)) !important;
+  border: 2px solid transparent !important;
+  border-radius: 9999px !important;
+  box-shadow: var(--neu-shadow-outset-sm) !important;
+}

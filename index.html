@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HintyFi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;700;800&family=Poppins:wght@400;500;600;700;800&family=Silkscreen:wght@400;700&family=Bebas+Neue&family=Bangers&family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            boxShadow: {
+              'outset-xs': 'var(--neu-shadow-outset-xs)',
+              'outset-sm': 'var(--neu-shadow-outset-sm)',
+              'outset-md': 'var(--neu-shadow-outset-md)',
+              'outset-lg': 'var(--neu-shadow-outset-lg)',
+              'inset-xs': 'var(--neu-shadow-inset-xs)',
+              'inset-sm': 'var(--neu-shadow-inset-sm)',
+              'inset-md': 'var(--neu-shadow-inset-md)',
+              'inset-lg': 'var(--neu-shadow-inset-lg)',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+:root {
+  /* Light theme palette based on user request */
+  --color-background: 222 214 255;  /* #ded6ff */
+  --color-primary: 230 0 122;        /* #E6007A Magenta/Pink */
+  --color-accent: 75 0 130;         /* #4B0082 Deep Purple */
+  --color-secondary: 147 112 219;    /* #9370DB Light Violet */
+
+  /* Surfaces are light */
+  --color-surface: 250 248 255;      /* #faf8ff Almost white lavender */
+  --color-surface-container: 245 240 255; /* #f5f0ff Lighter lavender */
+  --color-card-surface: 255 255 255;  /* #FFFFFF White */
+
+  /* Text colors are dark for readability on light backgrounds */
+  --color-on-primary: 0 0 0;   /* #000000 Black */
+  --color-on-surface: 0 0 0;        /* #000000 Black */
+  --color-on-surface-variant: 0 0 0; /* #000000 Black */
+  --color-on-background: 0 0 0;     /* #000000 Black */
+  --color-on-background-variant: 0 0 0; /* #000000 Black */
+  
+  --color-border: 0 0 0;            /* #000000 Black for borders, used with alpha */
+  
+  /* Mapped old colors to new palette */
+  --color-info-box-purple: 147 112 219; /* #9370DB Light Violet */
+  --color-royal-purple: 147 112 219; /* #9370DB Light Violet */
+
+  /* Neumorphism Shadow Settings: 3px offset, 2px blur */
+  --neu-dark-shadow-color: #a8a8b4;
+  --neu-light-shadow-color: #ffffff;
+  
+  /* Unified shadow sizes */
+  --neu-shadow-outset-xs: 3px 3px 6px var(--neu-dark-shadow-color), -3px -3px 6px var(--neu-light-shadow-color);
+  --neu-shadow-inset-xs: inset 3px 3px 6px var(--neu-dark-shadow-color), inset -3px -3px 6px var(--neu-light-shadow-color);
+  
+  --neu-shadow-outset-sm: 4px 4px 8px var(--neu-dark-shadow-color), -4px -4px 8px var(--neu-light-shadow-color);
+  --neu-shadow-inset-sm: inset 4px 4px 8px var(--neu-dark-shadow-color), inset -4px -4px 8px var(--neu-light-shadow-color);
+
+  --neu-shadow-outset-md: 6px 6px 12px var(--neu-dark-shadow-color), -6px -6px 12px var(--neu-light-shadow-color);
+  --neu-shadow-inset-md: inset 6px 6px 12px var(--neu-dark-shadow-color), inset -6px -6px 12px var(--neu-light-shadow-color);
+
+  --neu-shadow-outset-lg: 8px 8px 16px var(--neu-dark-shadow-color), -8px -8px 16px var(--neu-light-shadow-color);
+  --neu-shadow-inset-lg: inset 8px 8px 16px var(--neu-dark-shadow-color), inset -8px -8px 16px var(--neu-light-shadow-color);
+}
+body {
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-on-background));
+}
+
+.font-display { font-family: 'Oswald', sans-serif; }
+.font-heading { font-family: 'Poppins', sans-serif; }
+.font-subheading { font-family: 'Poppins', sans-serif; }
+.font-body { font-family: 'Poppins', sans-serif; }
+
+.logo-text {
+    font-family: 'Lora', sans-serif;
+    color: rgb(var(--color-on-background));
+}
+.app-container {
+    background-color: rgb(var(--color-background));
+}
+.card {
+    background-color: rgb(var(--color-card-surface));
+    border: 1px solid rgba(var(--color-border), 0.1);
+}
+
+.neu-card {
+    background: rgb(var(--color-background));
+    border-radius: 20px;
+    box-shadow: var(--neu-shadow-outset-lg);
+    transition: box-shadow 0.2s ease-out;
+}
+.neu-outset-card {
+    background: rgb(var(--color-background));
+    border-radius: 12px;
+    box-shadow: var(--neu-shadow-outset-md);
+    transition: all 0.2s ease-out;
+}
+.neu-outset-card:hover, .neu-outset-card.active {
+    box-shadow: var(--neu-shadow-outset-sm);
+}
+
+.neu-inset-panel {
+    background: rgb(var(--color-background));
+    border-radius: 20px;
+    box-shadow: var(--neu-shadow-inset-lg);
+}
+
+.neu-button {
+    background: rgb(var(--color-background));
+    border-radius: 9999px;
+    box-shadow: var(--neu-shadow-outset-sm);
+    transition: all 0.15s ease-out;
+    border: 2px solid transparent;
+    color: rgb(var(--color-on-background-variant));
+    font-weight: 600;
+}
+.neu-button:hover {
+    box-shadow: var(--neu-shadow-outset-xs);
+    color: rgb(var(--color-primary));
+}
+.neu-button:active, .neu-button.active {
+    box-shadow: var(--neu-shadow-inset-sm);
+    color: rgb(var(--color-primary));
+    border-color: rgba(var(--color-primary), 0.2);
+}
+.neu-control {
+    background: rgb(var(--color-background));
+    border-radius: 8px;
+    box-shadow: var(--neu-shadow-outset-xs);
+    transition: all 0.15s ease-out;
+    border: 1px solid transparent;
+    color: rgb(var(--color-on-background-variant));
+}
+.neu-control:hover {
+    box-shadow: none;
+    border-color: rgba(var(--color-primary), 0.5);
+}
+.neu-control:active, .neu-control.active {
+    box-shadow: var(--neu-shadow-inset-xs);
+    border-color: rgba(var(--color-primary), 0.2);
+}
+
+.neu-inset-control {
+    background: rgb(var(--color-background));
+    border-radius: 8px;
+    box-shadow: var(--neu-shadow-inset-sm);
+    border: 1px solid transparent;
+    transition: all 0.15s ease-out;
+    outline: none;
+}
+
+.neu-inset-control:focus, .neu-inset-input:focus {
+    box-shadow: var(--neu-shadow-inset-xs), 0 0 0 2px rgba(var(--color-primary), 0.4);
+}
+
+.neu-inset-input {
+    background: rgb(var(--color-background));
+    border-radius: 8px;
+    box-shadow: var(--neu-shadow-inset-sm);
+    border: 1px solid transparent;
+    transition: all 0.15s ease-out;
+    outline: none;
+    padding: 0.5rem 1rem;
+}
+.neu-select { appearance: none; }
+
+.neu-tab-button {
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  border-radius: 8px 8px 0 0;
+  color: rgb(var(--color-on-surface-variant));
+  transition: all 0.2s ease-out;
+  border: 2px solid transparent;
+  border-bottom: none;
+}
+.neu-tab-button:hover {
+  background: rgba(var(--color-primary), 0.05);
+  color: rgb(var(--color-primary));
+}
+.neu-tab-button.active {
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-primary));
+  box-shadow: var(--neu-shadow-outset-sm);
+  transform: translateY(4px); /* A bit less */
+  border-color: rgba(var(--color-primary), 0.2);
+  border-bottom: 2px solid rgb(var(--color-background));
+  margin-bottom: -4px; /* A bit less */
+}
+.neu-nav-item {
+    border-radius: 12px;
+    box-shadow: var(--neu-shadow-outset-sm);
+    transition: all 0.15s ease-out;
+}
+.neu-nav-item.active, .neu-nav-item:active {
+    box-shadow: var(--neu-shadow-inset-sm);
+    color: rgb(var(--color-primary));
+}
+
+.skeu-button-wrapper {
+  display: inline-block;
+  position: relative;
+}
+.skeu-button-input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.skeu-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #E0E5EC;
+  border-radius: 8px;
+  box-shadow: 3px 3px 6px #B8BCC6, -3px -3px 6px #FFFFFF;
+  color: #555;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+.skeu-button-input:checked + .skeu-button {
+  color: rgb(var(--color-primary));
+  box-shadow: inset 3px 3px 6px #B8BCC6, inset -3px -3px 6px #FFFFFF;
+}
+.skeu-button-input:focus-visible + .skeu-button {
+  outline: 2px solid rgb(var(--color-primary));
+  outline-offset: 2px;
+}
+
+.quest-countdown-item {
+    background: rgba(0,0,0,0.1);
+    backdrop-filter: blur(5px);
+}
+.quest-entry-card {
+    position: relative;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    border-radius: 0.5rem;
+}
+.quest-entry-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.marquee {
+  animation: marquee 30s linear infinite;
+}
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Profile Page specific styles */
+.profile-wall-container {
+  min-height: 500px;
+  padding: 30px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.profile-content-wrapper {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
+  position: relative;
+  z-index: 10;
+  flex-wrap: wrap;
+}
+
+.profile-panels-group {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.profile-badge {
+  width: 300px;
+  background: rgb(var(--color-card-surface));
+  border-radius: 20px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* Changed */
+  justify-content: flex-start;
+  gap: 1rem;
+  box-shadow:  6px 6px 4px #5a5866, -6px -6px 4px #ffffff;
+  flex-shrink: 0;
+}
+
+.profile-identity-block {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profile-badge-photo {
+  width: 100px;
+  height: 100px;
+  border-radius: 16px; /* Squircle */
+  object-fit: cover;
+  border: 4px solid #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  flex-shrink: 0;
+}
+
+.profile-identity-text {
+  flex-grow: 1;
+}
+
+.profile-badge-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: rgb(var(--color-on-surface));
+  letter-spacing: 1px;
+  line-height: 1.2;
+}
+
+.profile-badge-userid {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8rem;
+    color: rgb(var(--color-on-surface-variant));
+    opacity: 0.8;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+
+.profile-badge-score {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.3rem;
+  color: rgb(var(--color-primary));
+  letter-spacing: 2px;
+  margin-top: 0.25rem;
+}
+
+.profile-badge-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(var(--color-border), 0.1);
+}
+
+.profile-socials-block {
+  width: 100%;
+  padding: 0 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.profile-badge-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: rgb(var(--color-on-surface-variant));
+  font-weight: 500;
+}
+
+.profile-badge-detail-item.clickable {
+  cursor: pointer;
+  transition: background-color 0.2s ease-out;
+  border-radius: 6px;
+  padding: 4px;
+  margin: -4px;
+}
+.profile-badge-detail-item.clickable:hover {
+  background-color: rgba(var(--color-primary), 0.05);
+  color: rgb(var(--color-primary));
+}
+
+
+.profile-badge-detail-item svg {
+  flex-shrink: 0;
+}
+
+.profile-badge-detail-item span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-vouch-button {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    transition: all 0.2s ease-out;
+    border: 2px solid transparent;
+}
+
+.profile-vouch-button.can-vouch {
+    background: rgb(var(--color-background));
+    box-shadow: var(--neu-shadow-outset-sm);
+    color: rgb(var(--color-on-surface-variant));
+}
+.profile-vouch-button.can-vouch:hover {
+    box-shadow: var(--neu-shadow-outset-xs);
+    color: rgb(var(--color-primary));
+}
+
+.profile-vouch-button.vouched {
+    background: rgba(var(--color-primary), 0.1);
+    color: rgb(var(--color-primary));
+    box-shadow: var(--neu-shadow-inset-xs);
+}
+
+.profile-vouch-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+    background: rgba(var(--color-border), 0.05);
+}
+
+
+.profile-side-panel {
+  width: 250px;
+  padding: 1.5rem;
+  background: rgb(var(--color-background));
+  border-radius: 12px;
+  box-shadow: var(--neu-shadow-outset-md);
+}
+.profile-side-panel h3 {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.5rem;
+  color: rgb(var(--color-on-surface));
+  border-bottom: 2px solid rgb(var(--color-primary));
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+}
+.profile-side-panel ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.profile-project-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  color: rgb(var(--color-on-surface-variant));
+  font-size: 0.9rem;
+}
+.profile-project-logo {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.profile-role-item {
+  font-weight: 600;
+  background: rgba(var(--color-primary), 0.1);
+  color: rgb(var(--color-on-surface));
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  display: inline-block;
+  font-size: 0.8rem;
+  align-self: flex-start;
+}
+
+/* Achievements Section */
+.achievements-section {
+  background: rgb(var(--color-surface-container));
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: var(--neu-shadow-inset-lg);
+}
+.recent-activity-title {
+  font-family: 'Bangers', cursive;
+  font-size: 3rem;
+  text-align: center;
+  color: rgb(var(--color-on-surface));
+  letter-spacing: 2px;
+  margin-bottom: 1rem;
+}
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+.achievement-card {
+    background: rgb(var(--color-background));
+    border-radius: 16px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    box-shadow: var(--neu-shadow-outset-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s ease-out;
+}
+.achievement-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--neu-shadow-outset-lg);
+}
+.achievement-card.achieved {
+    position: relative;
+    overflow: hidden;
+}
+.achievement-card.achieved::after {
+    content: '★';
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 1.5rem;
+    color: rgb(var(--color-accent));
+    opacity: 0.8;
+}
+
+.total-achievement-score {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px dashed rgba(var(--color-border), 0.1);
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: rgb(var(--color-on-surface-variant));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+/* NFT Holdings Section */
+.nft-holdings-section {
+  background: rgb(var(--color-surface-container));
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: var(--neu-shadow-inset-lg);
+}
+.nft-holdings-title {
+  font-family: 'Bangers', cursive;
+  font-size: 3rem;
+  text-align: center;
+  color: rgb(var(--color-on-surface));
+  letter-spacing: 2px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.nft-holdings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+}
+.nft-card {
+  position: relative;
+  aspect-ratio: 1/1;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--neu-shadow-outset-md);
+  transition: all 0.2s ease-out;
+}
+.nft-card:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: var(--neu-shadow-outset-lg);
+}
+.nft-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.nft-card-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.75rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  color: white;
+}
+.nft-card-title {
+  font-weight: 700;
+  font-size: 1rem;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+}
+.nft-card-project {
+  font-size: 0.75rem;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+/* Token Holdings Section */
+.token-holdings-section {
+  background: rgb(var(--color-surface-container));
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: var(--neu-shadow-inset-lg);
+}
+
+/* Glassmorphic styles */
+.glassmorphic {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+.glassmorphic-strong {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
+}
+.token-holdings-title {
+  font-family: 'Bangers', cursive;
+  font-size: 3rem;
+  text-align: center;
+  color: rgb(var(--color-on-surface));
+  letter-spacing: 2px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.token-holdings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+.token-card {
+  background: rgb(var(--color-background));
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--neu-shadow-outset-md);
+  transition: all 0.2s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.token-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--neu-shadow-outset-lg);
+}
+.token-card-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+.token-card-details {
+  text-align: center;
+}
+.token-card-project-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: rgb(var(--color-on-surface));
+}
+.token-card-amount {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 2rem;
+  color: rgb(var(--color-primary));
+  letter-spacing: 1px;
+}
+.token-card-token-name {
+  font-size: 0.9rem;
+  color: rgb(var(--color-on-surface-variant));
+  font-weight: 500;
+}
+
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.4",
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.24",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.546.0",
+    "path": "https://aistudiocdn.com/path@^0.12.7",
+    "vite": "https://aistudiocdn.com/vite@^7.1.12",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.0",
+    "url": "https://aistudiocdn.com/url@^0.11.4"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>

@@ -29,14 +29,19 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
-          if (session) {
-            await handleAuthSession(session);
+        try {
+          if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
+            if (session) {
+              await handleAuthSession(session);
+            }
+          } else if (event === 'SIGNED_OUT') {
+            setCurrentUser(null);
           }
-        } else if (event === 'SIGNED_OUT') {
-          setCurrentUser(null);
+        } catch (error) {
+          console.error("Error in onAuthStateChange handler:", error);
+        } finally {
+          setLoading(false);
         }
-        setLoading(false);
       }
     );
 
@@ -137,7 +142,7 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'discord',
         options: {
-          redirectTo: `${import.meta.env.VITE_SITE_URL || window.location.origin}`
+          redirectTo: `${import.meta.env.VITE_SITE_URL || window.location.origin}/#/ecosystem`
         }
       });
       

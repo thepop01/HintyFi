@@ -137,7 +137,7 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'discord',
         options: {
-          redirectTo: `${window.location.origin}`
+          redirectTo: `${import.meta.env.VITE_SITE_URL || window.location.origin}`
         }
       });
       

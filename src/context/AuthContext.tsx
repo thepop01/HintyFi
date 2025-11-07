@@ -14,32 +14,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // 1️⃣ Check for session manually (important for hash routers)
-    const initSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user || null);
-      setLoading(false);
+    // Fetch initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+      setLoading(false)
+    })
 
-      // Clean up messy hash from Discord login redirect
-      if (window.location.hash.includes('access_token')) {
-        window.history.replaceState({}, document.title, '/#/ecosystem');
-      }
-    };
+    // Listen for changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
 
-    initSession();
-
-    // 2️⃣ Listen for login/logout
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user || null);
-
-      // optional cleanup on login
-      if (session && window.location.hash.includes('access_token')) {
-        window.history.replaceState({}, document.title, '/#/ecosystem');
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => subscription.unsubscribe()
+  }, [])
 
   return (
     <AuthContext.Provider value={{ user, loading }}>

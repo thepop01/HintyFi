@@ -22,6 +22,13 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+
+  // Do not intercept the auth callback.
+  if (url.pathname.includes('/auth/callback')) {
+    return;
+  }
+  
   // Skip caching for data requests to ensure fresh data
   if (event.request.url.includes('/api/') || event.request.url.includes('localhost:3000') && !event.request.url.includes('.')) {
     return fetch(event.request);

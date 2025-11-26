@@ -97,12 +97,12 @@ const Login = () => {
 
 
 export default function Router() {
-    const { user, loading } = useAuth()
+    const { currentUser, loading } = useAuth()
 
     if (loading) return <div className="text-center mt-10">Loading...</div>
 
     return (
-        <ReactRouterDOM.HashRouter>
+        <ReactRouterDOM.BrowserRouter>
             <>
                 <ScrollToTop />
                 <div className="max-w-[1920px] mx-auto app-container">
@@ -199,6 +199,6 @@ export default function Router() {
                     </div>
                 </div>
             </>
-        </ReactRouterDOM.HashRouter>
+        </ReactRouterDOM.BrowserRouter>
     )
 }

@@ -1,32 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { User as UserIcon, LogOut, Wallet, ChevronDown, HelpCircle } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../src/context/AuthContext';
 import { useWallet } from '../../context/WalletContext';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import * as ReactRouterDOM from 'react-router-dom';
-import { supabase } from '../../src/services/supabaseClient';
 
 export const ProfileDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { currentUser } = useAuth();
+  const { currentUser, signInWithDiscord, signOut } = useAuth();
   const { isWalletConnected, walletAddress, disconnectWallet } = useWallet();
   const navigate = ReactRouterDOM.useNavigate();
-
-  const signInWithDiscord = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'discord',
-      options: {
-        redirectTo: `${window.location.origin}`
-      }
-    });
-  };
-
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    localStorage.removeItem('supabase.auth.token');
-    window.location.reload();
-  };
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -164,7 +148,7 @@ export const ProfileDropdown: React.FC = () => {
 
                                             return (
                                                 <button onClick={openAccountModal} type="button" className="flex items-center justify-between w-full px-4 py-2 text-base text-on-surface-variant neu-button hover:text-primary">
-                                                    <span>Wallet</span>
+                                                    <span>Logout Wallet</span>
                                                     <span className="text-sm">{account.displayName}</span>
                                                 </button>
                                             );
@@ -192,7 +176,7 @@ export const ProfileDropdown: React.FC = () => {
                                     className="flex items-center gap-3 w-full px-4 py-2 text-base text-on-surface-variant hover:text-red-400 neu-button m-2"
                                 >
                                     <LogOut size={18} />
-                                    <span>Sign Out</span>
+                                    <span>Logout Discord</span>
                                 </button>
                             </div>
                         </div>
@@ -232,7 +216,7 @@ export const ProfileDropdown: React.FC = () => {
                                     className="flex items-center justify-center gap-3 w-full px-4 py-3 text-base font-semibold text-on-surface bg-surface-container-high rounded-full neu-button"
                                 >
                                     <img src="/discord-logo.svg" alt="Discord" className="w-6 h-6" />
-                                    <span>Discord</span>
+                                    <span>Login Discord</span>
                                 </button>
                                 <div className="neu-button rounded-full">
                                     <ConnectButton.Custom>
@@ -268,7 +252,7 @@ export const ProfileDropdown: React.FC = () => {
                                                 return (
                                                     <button onClick={openConnectModal} type="button" className="flex items-center justify-center gap-3 w-full px-4 py-3 text-base font-semibold text-on-surface bg-surface-container-high rounded-full">
                                                         <Wallet size={24} />
-                                                        Wallets
+                                                        Login Wallet
                                                     </button>
                                                 );
                                             }

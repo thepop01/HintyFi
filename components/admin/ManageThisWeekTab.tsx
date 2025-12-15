@@ -1,13 +1,13 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { WeeklyDiscordEvent, Project } from '../../../src/types';
-import { useSuperAdminContext } from '../../../context/SuperAdminContext';
-import { useToast } from '../../../context/ToastContext';
-import { addOrUpdateWeeklyDiscordEvent, deleteItem, getWeeklyDiscordEvents } from '../../../src/services/dataService';
-import { uid } from '../../../utils/helpers';
+import { WeeklyDiscordEvent, Project } from '../../src/types';
+import { useSuperAdminContext } from '../../context/SuperAdminContext';
+import { useToast } from '../../context/ToastContext';
+import { addOrUpdateWeeklyDiscordEvent, deleteItem, getWeeklyDiscordEvents } from '../../src/services/dataService';
+import { uid } from '../../utils/helpers';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Edit, Trash2, Save, X } from 'lucide-react';
-import ImageUploadInput from '../../../components/common/ImageUploadInput';
-import ConfirmationModal from '../../../components/common/ConfirmationModal';
+import ImageUploadInput from '../common/ImageUploadInput';
+import ConfirmationModal from '../common/ConfirmationModal';
 
 // Form Component
 const EventForm: React.FC<{
@@ -30,7 +30,7 @@ const EventForm: React.FC<{
     const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData(prev => ({ ...prev, dateTime: new Date(e.target.value).getTime() }));
     };
-    
+
     const handleSubmit = () => {
         if (!formData.name || !formData.serverName || !formData.type || !formData.discordEventLink) {
             alert('Please fill out Name, Link, Project, and Type.');
@@ -54,7 +54,7 @@ const EventForm: React.FC<{
                 <input name="name" value={formData.name || ''} onChange={handleChange} placeholder="Event Name" className="neu-inset-input w-full" />
                 <input name="discordEventLink" value={formData.discordEventLink || ''} onChange={handleChange} placeholder="Discord Event Link" className="neu-inset-input w-full" />
                 <input type="datetime-local" value={toDateTimeLocal(formData.dateTime)} onChange={handleDateChange} className="neu-inset-input w-full" />
-                <ImageUploadInput value={formData.image || ''} onChange={val => setFormData(p => ({...p, image: val}))} />
+                <ImageUploadInput value={formData.image || ''} onChange={val => setFormData(p => ({ ...p, image: val }))} />
                 <select name="serverName" value={formData.serverName || ''} onChange={handleChange} className="neu-inset-input neu-select w-full">
                     <option value="">Select Project...</option>
                     {allProjects.map(p => <option key={p.id} value={p.name}>{p.name}</option>)}
@@ -73,7 +73,7 @@ const EventForm: React.FC<{
                 )}
                 <textarea name="reward" value={formData.reward || ''} onChange={handleChange} placeholder="Reward details..." className="neu-inset-input w-full" rows={2} />
             </div>
-             <div className="flex justify-end gap-3 pt-4 mt-4 border-t border-border/20">
+            <div className="flex justify-end gap-3 pt-4 mt-4 border-t border-border/20">
                 <button type="button" onClick={onClose} className="neu-button px-4 py-2 font-bold"><X size={16} /></button>
                 <button type="button" onClick={handleSubmit} className="neu-button active px-4 py-2 font-bold flex items-center gap-2"><Save size={16} /> Save</button>
             </div>
@@ -117,7 +117,7 @@ const ManageThisWeekTab: React.FC = () => {
 
     const confirmDelete = async () => {
         if (!eventToDelete) return;
-        if (await deleteItem('user_discord_roles', eventToDelete.id)) {
+        if (await deleteItem('weekly_discord_events', eventToDelete.id)) {
             addToast('Event deleted.', 'success');
             refreshData();
         } else {
@@ -146,8 +146,8 @@ const ManageThisWeekTab: React.FC = () => {
             </div>
             <AnimatePresence>
                 {(isCreating || editingEvent) && (
-                     <motion.div layout initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
-                        <EventForm 
+                    <motion.div layout initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+                        <EventForm
                             eventToEdit={editingEvent}
                             onSave={handleSave}
                             onClose={closeForms}
@@ -160,8 +160,8 @@ const ManageThisWeekTab: React.FC = () => {
                 {events.map(event => (
                     <div key={event.id} className="neu-outset-card p-3 flex items-center justify-between gap-2">
                         <div className="flex items-center gap-3">
-                             <img src={event.image || allProjects.find(p=>p.name === event.serverName)?.logo || ''} alt={event.name} className="w-10 h-10 rounded-md object-cover bg-surface" />
-                             <div>
+                            <img src={event.image || allProjects.find(p => p.name === event.serverName)?.logo || ''} alt={event.name} className="w-10 h-10 rounded-md object-cover bg-surface" />
+                            <div>
                                 <p className="font-bold">{event.name}</p>
                                 <p className="text-sm text-on-surface-variant">
                                     {new Date(event.dateTime).toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })} - {event.serverName}

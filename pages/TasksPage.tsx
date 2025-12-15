@@ -22,10 +22,10 @@ interface TasksTableProps {
 const TasksTable: React.FC<TasksTableProps> = ({ projects, sortConfig, requestSort, getCompletedCount }) => {
     const navigate = useNavigate();
 
-    const SortableHeader: React.FC<{ sortKey: SortableKeys; children: React.ReactNode; className?: string }> = ({ sortKey, children, className }) => {
+    const SortableHeader: React.FC<{ sortKey: SortableKeys; children: React.ReactNode; className?: string; style?: React.CSSProperties }> = ({ sortKey, children, className, style }) => {
         const isSorted = sortConfig.key === sortKey;
         return (
-            <th className={`px-6 py-3 text-left text-lg font-display font-bold text-on-surface-variant cursor-pointer hover:text-on-surface transition-colors ${className}`} onClick={() => requestSort(sortKey)}>
+            <th className={`px-1 py-2 text-left text-sm font-display font-bold text-on-surface-variant cursor-pointer hover:text-on-surface transition-colors ${className}`} onClick={() => requestSort(sortKey)} style={style}>
                 <div className="flex items-center gap-1">
                     {children}
                     {isSorted && (sortConfig.direction === 'ascending' ? <ArrowUp size={14} /> : <ArrowDown size={14} />)}
@@ -35,16 +35,16 @@ const TasksTable: React.FC<TasksTableProps> = ({ projects, sortConfig, requestSo
     };
 
     return (
-        <div className="bg-[#faf0ff] rounded-xl shadow-lg overflow-x-auto text-on-surface border border-border/5">
-            <table className="w-full min-w-[900px]">
+        <div className="bg-[#faf0ff] rounded-xl shadow-lg overflow-x-auto text-on-surface border border-border/5 mobile-table-container">
+            <table className="w-full min-w-[600px]" style={{tableLayout: 'fixed'}}>
                 <thead className="border-b border-border/10">
                     <tr>
-                        <SortableHeader sortKey="name">Project</SortableHeader>
-                        <SortableHeader sortKey="totalTasks">Total Tasks</SortableHeader>
-                        <SortableHeader sortKey="cost">Cost</SortableHeader>
-                        <SortableHeader sortKey="rewardType">Reward</SortableHeader>
-                        <SortableHeader sortKey="progress">Your Progress</SortableHeader>
-                        <th className="px-4 py-3 w-40"></th>
+                        <SortableHeader sortKey="name" style={{width: "30%"}}>Project</SortableHeader>
+                        <SortableHeader sortKey="totalTasks" style={{width: "15%"}}>Total Tasks</SortableHeader>
+                        <SortableHeader sortKey="cost" style={{width: "12%"}}>Cost</SortableHeader>
+                        <SortableHeader sortKey="rewardType" style={{width: "15%"}}>Reward</SortableHeader>
+                        <SortableHeader sortKey="progress" style={{width: "20%"}}>Your Progress</SortableHeader>
+                        <th className="px-1 py-2" style={{width: "8%"}}></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -223,7 +223,7 @@ const TasksPage = () => {
     }
 
     return (
-        <div className="max-w-[84rem] mx-auto w-full space-y-8">
+        <div className="max-w-[84rem] mx-auto w-full space-y-8 px-4 sm:px-6">
             <div className="neu-inset-panel mb-8 p-6 sm:p-8 rounded-2xl flex flex-col sm:flex-row items-center gap-8">
                 <div className="flex-shrink-0 w-full sm:w-1/3 text-center sm:text-left">
                     <h1 className="text-4xl sm:text-5xl font-display font-bold text-on-surface">

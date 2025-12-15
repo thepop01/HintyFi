@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from '../App.tsx';
 import { AuthProvider } from '../context/AuthContext.tsx';
 import './styles/rainbowkit-custom.css';
+import './styles/responsive.css';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

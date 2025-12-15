@@ -78,7 +78,7 @@ const CommunitySheet: React.FC = () => {
     return (
         <Card className="p-4 overflow-hidden bg-[#f5f0ff]">
             <div className="overflow-x-auto">
-                <table className="w-full min-w-[800px] text-left">
+                <table className="w-full min-w-[800px] text-left community-sheet-table">
                     <thead className="bg-surface/30">
                         <tr>
                             <th className="px-4 py-3 text-sm font-display font-bold text-on-surface-variant text-center w-12">#</th>
@@ -95,8 +95,8 @@ const CommunitySheet: React.FC = () => {
                             // const isOwner = isCultOwner(member.wallet_address);
                             return (
                                 <tr key={member.id} className="hover:bg-border/10 transition-colors">
-                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-on-surface-variant text-center font-semibold">{rank}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
+                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-on-surface-variant text-center font-semibold" data-label="#">{rank}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap" data-label="Name">
                                         <div className="flex items-center gap-3">
                                             <img className="h-8 w-8 rounded-full bg-surface-container" src={member.profile_pic_url || `https://i.pravatar.cc/32?u=${member.id}`} alt={member.platform_username} />
                                             <ReactRouterDOM.Link to={`/ledger/${member.id}`} className="font-semibold text-base text-on-surface hover:underline">
@@ -104,12 +104,12 @@ const CommunitySheet: React.FC = () => {
                                             </ReactRouterDOM.Link>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-base text-on-surface-variant capitalize">{member.role}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-primary">
+                                    <td className="px-6 py-4 whitespace-nowrap text-base text-on-surface-variant capitalize" data-label="Role">{member.role}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-primary" data-label="Credo Points">
                                         {typeof member.score === 'number' ? member.score.toLocaleString() : member.score}
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-accent">{member.hint_points?.toLocaleString() || 'N/A'}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
+                                    <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-accent" data-label="Hint Points">{member.hint_points?.toLocaleString() || 'N/A'}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap" data-label="Building">
                                         {member.buildingProjects && member.buildingProjects.length > 0 ? (
                                             <div className="flex items-center">
                                                 {member.buildingProjects.slice(0, 2).map((project, index) => (

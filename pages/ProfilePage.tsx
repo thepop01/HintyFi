@@ -49,14 +49,14 @@ const ProfilePage: React.FC = () => {
     const isOwnProfile = currentUser?.id === user.id;
 
     return (
-        <div>
+        <div className="max-w-[84rem] mx-auto">
             <div className="neu-inset-panel p-4 sm:p-6 lg:p-8">
                 <ProfileWall
                     user={user}
                     isOwnProfile={isOwnProfile}
                 />
             </div>
-            <div className="my-12 px-4 max-w-[84rem] mx-auto space-y-12">
+            <div className="my-12 px-4 space-y-12">
                 <Achievements user={user} />
                 <NftHoldings user={user} />
                 <TokenHoldings user={user} />

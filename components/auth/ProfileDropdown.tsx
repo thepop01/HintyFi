@@ -46,15 +46,15 @@ export const ProfileDropdown: React.FC = () => {
             <>
                 <button
                     onClick={() => setIsOpen(!isOpen)}
-                    className="flex items-center gap-2 w-full p-1 rounded-full neu-button text-left"
+                    className="flex items-center gap-1 sm:gap-2 w-full p-1 rounded-full neu-button text-left"
                     aria-haspopup="true"
                     aria-expanded={isOpen}
                 >
-                    <img src={currentUser.profile_pic_url || `https://i.pravatar.cc/40?u=${currentUser.id}`} alt={currentUser.platform_username} className="w-10 h-10 rounded-full flex-shrink-0" />
-                    <div className="flex-grow text-left overflow-hidden pr-1">
-                        <p className="text-sm font-semibold text-on-surface truncate">{currentUser.platform_username}</p>
+                    <img src={currentUser.profile_pic_url || `https://i.pravatar.cc/40?u=${currentUser.id}`} alt={currentUser.platform_username} className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-full flex-shrink-0" />
+                    <div className="flex-grow text-left overflow-hidden pr-1 hidden sm:block">
+                        <p className="text-xs sm:text-sm font-semibold text-on-surface truncate">{currentUser.platform_username}</p>
                     </div>
-                     <ChevronDown size={20} className={`text-on-surface-variant transition-transform mr-2 ${isOpen ? 'rotate-180' : ''}`} />
+                     <ChevronDown size={16} className={`text-on-surface-variant transition-transform mr-1 sm:mr-2 sm:w-5 sm:h-5 ${isOpen ? 'rotate-180' : ''}`} />
                 </button>
                 <AnimatePresence>
                     {isOpen && (
@@ -64,14 +64,14 @@ export const ProfileDropdown: React.FC = () => {
                         animate="visible"
                         exit="hidden"
                         transition={{ duration: 0.15, ease: 'easeOut' }}
-                        className="absolute right-0 top-full mt-2 w-64 origin-top-right glassmorphic p-0 focus:outline-none z-[9999]"
+                        className="absolute right-0 top-full mt-2 w-48 sm:w-56 md:w-64 origin-top-right glassmorphic p-0 focus:outline-none z-[9999]"
                     >
                         <div className="py-1 px-1 flex flex-col items-center">
-                            <div className="px-4 py-3 border-b border-border/10 flex items-center gap-3">
-                                <img src={currentUser.profile_pic_url || `https://i.pravatar.cc/40?u=${currentUser.id}`} alt={currentUser.platform_username} className="w-10 h-10 rounded-full flex-shrink-0" />
+                            <div className="px-2 sm:px-4 py-3 border-b border-border/10 flex items-center gap-2 sm:gap-3">
+                                <img src={currentUser.profile_pic_url || `https://i.pravatar.cc/40?u=${currentUser.id}`} alt={currentUser.platform_username} className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex-shrink-0" />
                                 <div className="flex flex-col">
-                                    <p className="text-base font-bold text-on-surface truncate">{currentUser.platform_username}</p>
-                                    <p className="text-sm text-on-surface-variant font-bold">{currentUser.hint_points || 0} Hint Points</p>
+                                    <p className="text-sm sm:text-base font-bold text-on-surface truncate">{currentUser.platform_username}</p>
+                                    <p className="text-xs sm:text-sm text-on-surface-variant font-bold">{currentUser.hint_points || 0} Hint Points</p>
                                 </div>
                             </div>
                             <div className="py-1 px-1">
@@ -188,10 +188,10 @@ export const ProfileDropdown: React.FC = () => {
             <div className="relative">
                 <button
                     onClick={() => setIsOpen(!isOpen)}
-                    className="flex items-center gap-2 w-full p-1 rounded-full neu-button text-left justify-center"
+                    className="flex items-center gap-1 sm:gap-2 w-full p-1 rounded-full neu-button text-left justify-center"
                 >
-                    <span className="text-xs">Profile</span>
-                    <ChevronDown size={16} className={`text-on-surface-variant transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                    <span className="text-xs sm:text-sm">Profile</span>
+                    <ChevronDown size={14} className={`text-on-surface-variant transition-transform sm:w-4 sm:h-4 ${isOpen ? 'rotate-180' : ''}`} />
                 </button>
                 
                 <AnimatePresence>
@@ -202,11 +202,11 @@ export const ProfileDropdown: React.FC = () => {
                         animate="visible"
                         exit="hidden"
                         transition={{ duration: 0.15, ease: 'easeOut' }}
-                        className="absolute right-0 top-full mt-2 w-64 origin-top-right glassmorphic p-0 focus:outline-none z-[9999]"
+                        className="absolute right-0 top-full mt-2 w-48 sm:w-56 md:w-64 origin-top-right glassmorphic p-0 focus:outline-none z-[9999]"
                     >
-                        <div className="text-center p-4">
-                            <h2 className="text-2xl font-bold text-on-surface">Get the Hint</h2>
-                            <p className="text-sm text-on-surface-variant mb-6">Stay Updated</p>
+                        <div className="text-center p-2 sm:p-4">
+                            <h2 className="text-lg sm:text-2xl font-bold text-on-surface">Get the Hint</h2>
+                            <p className="text-xs sm:text-sm text-on-surface-variant mb-4 sm:mb-6">Stay Updated</p>
                             <div className="space-y-3">
                                 <button
                                     onClick={() => {

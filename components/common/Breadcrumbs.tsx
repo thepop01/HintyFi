@@ -1,8 +1,7 @@
-
 import React, { useMemo, useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-import { getProjectById, getQuestById, getUserById, getUsers } from '../../src/services/dataService';
+import { getProjectById, getQuestById, getUserById, getCollabBySlug } from '../../src/services/dataService';
 import { useAuth } from '../../context/AuthContext';
 
 const capitalize = (s: string) => {
@@ -29,9 +28,7 @@ const Breadcrumbs: React.FC = () => {
 
             const crumbs = [{ name: 'Home', to: '/' }];
 
-            const first = pathnames[0];
-            const second = pathnames[1];
-            const third = pathnames[2];
+            const [first, second, third, fourth] = pathnames;
 
             // Handle profile pages specifically
             if (first === 'ledger' && second) {
@@ -58,18 +55,32 @@ const Breadcrumbs: React.FC = () => {
                 'admin': 'Admin Dashboard',
                 'super-admin': 'Super Admin',
                 'early-projects': 'Early',
+                'collabs': 'Collabs',
             };
 
-            if (pathnames.length === 1 && singlePathMap[first]) {
+            if (pathnames.length === 1 && first && singlePathMap[first]) {
                 crumbs.push({ name: singlePathMap[first], to: location.pathname });
                 setBreadcrumbs(crumbs);
                 return;
             }
 
-            // Handle NFT, IDO, and Meme pages
+            // Handle NFT, IDO, Meme, and Collaboration pages
             if (first === 'nft' || first === 'ido' || first === 'meme') {
                 const name = capitalize(first);
                 crumbs.push({ name, to: location.pathname });
+                setBreadcrumbs(crumbs);
+                return;
+            }
+
+            // Handle collaboration pages
+            if (first === 'collabs' && second) {
+                crumbs.push({ name: 'Collabs', to: '/collabs' });
+                const collaboration = await getCollabBySlug(second);
+                if (collaboration) {
+                    crumbs.push({ name: collaboration.title, to: `/collabs/${collaboration.slug}` });
+                } else {
+                    crumbs.push({ name: 'Collaboration', to: location.pathname });
+                }
                 setBreadcrumbs(crumbs);
                 return;
             }
@@ -113,8 +124,8 @@ const Breadcrumbs: React.FC = () => {
                 const project = await getProjectById(third);
                 if (project) crumbs.push({ name: project.name, to: `/admin/project/${project.name.toLowerCase()}` });
 
-                if (pathnames[3]) {
-                    const tab = pathnames[3];
+                if (fourth) {
+                    const tab = fourth;
                     const tabMap: Record<string, string> = {
                         'edit': 'Edit Project',
                         'campaigns': 'Campaigns',
@@ -134,13 +145,12 @@ const Breadcrumbs: React.FC = () => {
                 
                 const tabMap: Record<string, string> = {
                     'users': 'Users',
-                    'project-detail': 'Project Detail',
                     'content': 'Manage Content',
                     'quests': 'Manage Quests',
                     'nfts': 'Manage NFT',
                     'memes': 'Manage Meme',
                     'idos': 'Manage IDO',
-                    'project-management': 'Project Management',
+                    'project-detail': 'Project Detail',
                 };
 
                 if (second && tabMap[second]) {
@@ -148,19 +158,27 @@ const Breadcrumbs: React.FC = () => {
                     crumbs.push({ name: tabMap[second], to: path });
                 }
 
-                if (second === 'project-management' && third) {
-                    const project = await getProjectById(third);
-                    if (project) crumbs.push({ name: project.name, to: `/super-admin/project-management/${third}` });
-                    if (pathnames[3]) {
-                        const subTab = pathnames[3];
-                        const subTabMap: Record<string, string> = {
-                            'points': 'Points Settings',
-                            'info': 'Info Settings',
-                            'status': 'Status',
-                            'campaigns': 'Campaign Verification',
-                            'tasks': 'Task Verification',
-                        };
-                        if(subTabMap[subTab]) crumbs.push({ name: subTabMap[subTab], to: location.pathname });
+                if (second === 'project-detail') {
+                    if (third === 'manage') {
+                        crumbs.push({ name: 'Manage', to: location.pathname });
+                    } else if (third) {
+                        const project = await getProjectById(third);
+                        if (project) {
+                            crumbs.push({ name: project.name, to: `/super-admin/project-detail/${third}` });
+                        }
+                        if (fourth) {
+                            const subTab = fourth;
+                            const subTabMap: Record<string, string> = {
+                                'points': 'Points Settings',
+                                'info': 'Info Settings',
+                                'status': 'Status',
+                                'campaigns': 'Campaign Verification',
+                                'tasks': 'Task Verification',
+                            };
+                            if (subTabMap[subTab]) {
+                                crumbs.push({ name: subTabMap[subTab], to: location.pathname });
+                            }
+                        }
                     }
                 }
                 

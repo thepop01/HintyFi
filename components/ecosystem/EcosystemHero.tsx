@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Project, ProjectCategory } from '../../src/types';
-import { ArrowLeft, ArrowRight, Dna, Gem, Gamepad2, Users, Repeat, Building, Layers, Wallet, Cpu, BrainCircuit, Flame, Rocket, TrendingUp, MessageCircle, Wrench, Shield, Code, Eye, Package, Dice6, Vote, BarChart3, Gamepad, UserCheck } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Dna, Gem, Gamepad2, Repeat, Building, Layers, Wallet, Cpu, BrainCircuit, Flame, Rocket, TrendingUp, MessageCircle, Wrench, Shield, Code, Eye, Package, Dice6, Vote, BarChart3, Gamepad, UserCheck } from 'lucide-react';
 
 const categoryConfig: Record<ProjectCategory, { icon: React.ReactElement<{ size?: number | string; className?: string }>; label: string, color: string }> = {
   defi: { icon: <Dna size={12} />, label: 'DeFi', color: 'text-purple-500' },
@@ -165,30 +165,18 @@ const EcosystemHero: React.FC<EcosystemHeroProps> = ({ projects, activeCategory 
     }
   };
   
-  // This is for the mobile view, which remains a static grid.
-  const mobileCollageProjects = useMemo(() => {
-    const needed = 15; // Show 15 on mobile
-    if (sortedProjects.length === 0) return [];
-    
-    let result: Project[] = [];
-    while (result.length < needed) {
-      result = result.concat(sortedProjects);
-    }
-    
-    // Assign unique animationId for React's key prop, preserving original project id.
-    return result.slice(0, needed).map((p, i) => ({ ...p, animationId: `${p.id}-${i}` }));
-  }, [sortedProjects]);
+
   
 
   return (
     <div className="w-full">
-      {/* Desktop Layout */}
-      <div className="hidden md:block relative w-full h-[60vh] min-h-[500px]">
+      {/* Hero Layout - Always Desktop Style */}
+      <div className="relative w-[75vw] h-[clamp(80px,30vw,500px)] ecosystem-hero-container mx-auto">
         
         <AnimatePresence>
           {hoveredProject && (
             <motion.div
-              className="absolute left-[-0.5%] top-[51%] -translate-y-1/2 z-10 text-on-background pointer-events-none max-w-xs"
+              className="absolute left-[-10.5%] top-[51%] -translate-y-1/2 z-10 text-on-background pointer-events-none max-w-xs hidden sm:block"
               style={{ textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -218,45 +206,22 @@ const EcosystemHero: React.FC<EcosystemHeroProps> = ({ projects, activeCategory 
         </AnimatePresence>
         
         <motion.div
-          className="absolute -left-[15%] top-[11%] h-[100%] w-auto select-none z-0"
+          className="absolute -left-[20%] top-[11%] h-full w-auto select-none z-0"
           initial={{ x: '-50%', opacity: 0 }}
-          animate={{ x: '-15%', opacity: 1 }}
+          animate={{ x: '-20%', opacity: 1 }}
           transition={{ duration: 1, ease: 'easeOut' }}
         >
             <div className="relative h-full w-full flex items-center justify-center">
                 <img
                     src="https://iili.io/KwdzLZb.png"
                     alt="Monad Logo"
-                    className="h-full w-auto object-contain opacity-100 pointer-events-none [filter:drop-shadow(7px_7px_6px_#6c6c6c)_drop-shadow(-7px_-7px_6px_#ffffff)]"
+                    className="h-full w-full object-contain opacity-100 pointer-events-none [filter:drop-shadow(7px_7px_6px_#6c6c6c)_drop-shadow(-7px_-7px_6px_#ffffff)]"
                     decoding="async"
                 />
             </div>
         </motion.div>
 
         <div className="absolute top-0 right-0 w-[85%] h-full">
-            {/* Navigation Arrows */}
-            {totalPages > 1 && (
-                <div className="absolute top-[57%] -translate-y-1/2 left-[-5%] xl:left-[-2%] z-30 flex flex-row gap-2 sm:gap-4 mt-2">
-                    <motion.button 
-                        onClick={handlePrev} 
-                        aria-label="Previous projects"
-                        className="w-10 h-10 flex items-center justify-center rounded-full bg-background text-on-background transition-shadow duration-200 shadow-[4px_4px_8px_rgb(var(--color-primary)/0.4),_-4px_-4px_8px_rgb(var(--color-secondary)/0.4)] active:shadow-[inset_4px_4px_8px_rgb(var(--color-primary)/0.4),inset_-4px_-4px_8px_rgb(var(--color-secondary)/0.4)]"
-                        whileHover={{ scale: 1.1, rotate: -5 }}
-                        whileTap={{ scale: 0.9 }}
-                    >
-                        <ArrowLeft size={20} strokeWidth={3} />
-                    </motion.button>
-                    <motion.button 
-                        onClick={handleNext}
-                        aria-label="Next projects"
-                        className="w-10 h-10 flex items-center justify-center rounded-full bg-background text-on-background transition-shadow duration-200 shadow-[4px_4px_8px_rgb(var(--color-primary)/0.4),_-4px_-4px_8px_rgb(var(--color-secondary)/0.4)] active:shadow-[inset_4px_4px_8px_rgb(var(--color-primary)/0.4),inset_-4px_-4px_8px_rgb(var(--color-secondary)/0.4)]"
-                        whileHover={{ scale: 1.1, rotate: 5 }}
-                        whileTap={{ scale: 0.9 }}
-                    >
-                        <ArrowRight size={20} strokeWidth={3} />
-                    </motion.button>
-                </div>
-            )}
             <div className="relative w-full h-full">
             <AnimatePresence>
                 {desktopCollageProjects.map((project, index) => {
@@ -264,7 +229,7 @@ const EcosystemHero: React.FC<EcosystemHeroProps> = ({ projects, activeCategory 
                     return (
                         <motion.div
                           key={project.animationId}
-                          className="absolute bg-surface/10 rounded-lg md:rounded-xl shadow-xl shadow-black/50 p-2 origin-center"
+                          className="absolute bg-surface/10 rounded-lg shadow-xl shadow-black/50 p-1 sm:p-2 origin-center"
                           style={{
                               top: config.top,
                               left: config.left,
@@ -288,7 +253,7 @@ const EcosystemHero: React.FC<EcosystemHeroProps> = ({ projects, activeCategory 
                             <img
                                 src={project.logo}
                                 alt={project.name}
-                                className="w-full h-full object-contain"
+                                className="w-full h-full object-contain hero-logo"
                                 loading="lazy"
                                 decoding="async"
                             />
@@ -300,36 +265,29 @@ const EcosystemHero: React.FC<EcosystemHeroProps> = ({ projects, activeCategory 
             </div>
         </div>
       </div>
-
-      {/* Mobile Layout */}
-      <div className="md:hidden relative flex flex-col items-start text-left py-4">
-        <div className="absolute -left-1/4 top-16 w-full h-auto select-none pointer-events-none">
-          <img
-            src="https://iili.io/KwdzLZb.png"
-            alt="Monad Logo"
-            className="h-full w-auto object-contain opacity-100 [filter:drop-shadow(7px_7px_6px_#6c6c6c)_drop-shadow(-7px_-7px_6px_#ffffff)]"
-            decoding="async"
-          />
+      {/* Navigation Arrows */}
+      {totalPages > 1 && (
+        <div className="hero-navigation-container mt-8 sm:mt-12">
+          <motion.button
+            onClick={handlePrev}
+            aria-label="Previous projects"
+            className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-background text-on-background transition-shadow duration-200 shadow-[4px_4px_8px_rgb(var(--color-primary)/0.4),_-4px_-4px_8px_rgb(var(--color-secondary)/0.4)] active:shadow-[inset_4px_4px_8px_rgb(var(--color-primary)/0.4),inset_-4px_-4px_8px_rgb(var(--color-secondary)/0.4)]"
+            whileHover={{ scale: 1.1, rotate: -5 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 hero-arrow" />
+          </motion.button>
+          <motion.button
+            onClick={handleNext}
+            aria-label="Next projects"
+            className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-background text-on-background transition-shadow duration-200 shadow-[4px_4px_8px_rgb(var(--color-primary)/0.4),_-4px_-4px_8px_rgb(var(--color-secondary)/0.4)] active:shadow-[inset_4px_4px_8px_rgb(var(--color-primary)/0.4),inset_-4px_-4px_8px_rgb(var(--color-secondary)/0.4)]"
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 hero-arrow" />
+          </motion.button>
         </div>
-        
-        <div className="relative grid grid-cols-2 sm:grid-cols-3 gap-4 w-full z-10">
-          {mobileCollageProjects.map((project) => (
-            <ReactRouterDOM.Link
-              to={`/${project.name.toLowerCase()}`}
-              key={project.animationId}
-              className="block bg-surface/10 rounded-lg shadow-xl shadow-black/50 p-2 aspect-square"
-            >
-              <img
-                src={project.logo}
-                alt={project.name}
-                className="w-full h-full object-contain"
-                loading="lazy"
-                decoding="async"
-              />
-            </ReactRouterDOM.Link>
-          ))}
-        </div>
-      </div>
+      )}
     </div>
   );
 };

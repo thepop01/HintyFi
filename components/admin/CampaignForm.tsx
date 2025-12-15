@@ -21,12 +21,22 @@ interface CampaignFormProps {
     campaign?: Partial<Event> | null;
     onSave: (event: Partial<Event>) => void;
     onClose: () => void;
-    projectName: string;
+    projectName?: string;
+    projects?: { id: string; name: string }[];
 }
 
-const CampaignForm: React.FC<CampaignFormProps> = ({ campaign, onSave, onClose, projectName }) => {
-    const defaultCampaign: Partial<Event> = { name: '', description: '', banner_url: '', start_date: new Date().toISOString(), end_date: new Date(Date.now() + 86400000).toISOString(), total_rewards: 0, project_id: projectName, is_active: false };
-    
+const CampaignForm: React.FC<CampaignFormProps> = ({ campaign, onSave, onClose, projectName, projects }) => {
+    const defaultCampaign: Partial<Event> = {
+        name: '',
+        description: '',
+        banner_url: '',
+        start_date: new Date().toISOString(),
+        end_date: new Date(Date.now() + 86400000).toISOString(),
+        total_rewards: 0,
+        project_id: projectName || (projects && projects.length > 0 ? projects[0].id : ''),
+        is_active: false
+    };
+
     const [formData, setFormData] = useState<Partial<Event>>(campaign || defaultCampaign);
     const [dateError, setDateError] = useState<string | null>(null);
 
@@ -36,26 +46,39 @@ const CampaignForm: React.FC<CampaignFormProps> = ({ campaign, onSave, onClose, 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
-        if (type === 'checkbox') { setFormData(prev => ({ ...prev, [name]: (e.target as HTMLInputElement).checked })); } 
-        else if (name === 'start_date' || name === 'end_date') { setFormData(prev => ({...prev, [name]: new Date(value).toISOString() })); }
-        else if (type === 'number') { setFormData(prev => ({...prev, [name]: parseInt(value, 10) || 0 }))}
+        if (type === 'checkbox') { setFormData(prev => ({ ...prev, [name]: (e.target as HTMLInputElement).checked })); }
+        else if (name === 'start_date' || name === 'end_date') { setFormData(prev => ({ ...prev, [name]: new Date(value).toISOString() })); }
+        else if (type === 'number') { setFormData(prev => ({ ...prev, [name]: parseInt(value, 10) || 0 })) }
+        else if (name === 'project_id' && projects) {
+            setFormData(prev => ({ ...prev, project_id: value }));
+        }
         else { setFormData(prev => ({ ...prev, [name]: value })); }
     };
-    
+
     const handleSubmit = () => {
         if (dateError) { return; };
         onSave(formData);
     };
-    
+
     const toDateTimeLocal = (timestamp: number) => new Date(timestamp - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
 
     return (
         <form onSubmit={(e) => e.preventDefault()}>
             <h3 className="text-xl font-display font-bold text-on-surface mb-4">{campaign ? 'Edit Campaign' : 'Create New Campaign'}</h3>
             <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2">
+                {projects && (
+                    <FormRow>
+                        <FormLabel>Project</FormLabel>
+                        <FormField>
+                            <FormSelect name="project_id" value={formData.project_id || ''} onChange={handleChange}>
+                                {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                            </FormSelect>
+                        </FormField>
+                    </FormRow>
+                )}
                 <FormRow><FormLabel>Title</FormLabel><FormField><FormInput name="name" value={formData.name} onChange={handleChange} required /></FormField></FormRow>
                 <FormRow><FormLabel>Description</FormLabel><FormField><FormTextArea name="description" value={formData.description || ''} onChange={handleChange} /></FormField></FormRow>
-                <FormRow><FormLabel>Image</FormLabel><FormField><ImageUploadInput value={formData.banner_url || ''} onChange={val => setFormData(p => ({...p, banner_url: val}))} /></FormField></FormRow>
+                <FormRow><FormLabel>Image</FormLabel><FormField><ImageUploadInput value={formData.banner_url || ''} onChange={val => setFormData(p => ({ ...p, banner_url: val }))} /></FormField></FormRow>
                 <FormRow><FormLabel>Active</FormLabel><FormField><FormCheckbox label="Activate this campaign" name="is_active" checked={formData.is_active || false} onChange={handleChange} /></FormField></FormRow>
                 <FormRow><FormLabel>Start Time</FormLabel><FormField><FormInput name="start_date" type="datetime-local" value={toDateTimeLocal(new Date(formData.start_date || '').getTime())} onChange={handleChange} /></FormField></FormRow>
                 <FormRow><FormLabel>End Time</FormLabel><FormField><FormInput name="end_date" type="datetime-local" value={toDateTimeLocal(new Date(formData.end_date || '').getTime())} onChange={handleChange} /></FormField></FormRow>

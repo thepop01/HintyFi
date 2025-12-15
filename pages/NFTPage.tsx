@@ -183,6 +183,7 @@ const NFTPage: React.FC = () => {
     
     const [settings, setSettings] = useState<any>(null);
     const [projects, setProjects] = useState<Project[]>([]);
+    const [nftProjects, setNftProjects] = useState<Project[]>([]);
 
     useEffect(() => {
         getProjects().then(setProjects);
@@ -192,10 +193,10 @@ const NFTPage: React.FC = () => {
     const featuredProjects = useMemo(() => {
         if (!settings) return [];
         const featuredIds = new Set(settings.featuredProjectIds);
-        return projects
+        return nftProjects
             .filter(p => featuredIds.has(p.id))
             .slice(0, 8); // Max 8 items
-    }, [projects, settings]);
+    }, [nftProjects, settings]);
 
     useEffect(() => {
         const fetchCollections = async () => {
@@ -203,11 +204,31 @@ const NFTPage: React.FC = () => {
             setError(null);
             try {
                 const allProjects = await getProjects();
-                const projectMap = new Map<string, Project>(allProjects.map(p => [p.name, p]));
+                const filteredNftProjects = allProjects.filter(p => p.category && Array.isArray(p.category) && p.category.includes('nft'));
+                setNftProjects(filteredNftProjects);
+                
+                // Debug logging
+                console.log('=== NFT Page Debug ===');
+                console.log('Total projects:', allProjects.length);
+                console.log('Projects with NFT category:', filteredNftProjects.length);
+                filteredNftProjects.forEach(p => {
+                    console.log(`  - ${p.name}: ${p.nftCollections?.length || 0} collections`);
+                    if (p.nftCollections && p.nftCollections.length > 0) {
+                        p.nftCollections.forEach(c => {
+                            console.log(`    * ${c.name} (status: ${c.status}, visible: ${c.isVisibleOnNftPage})`);
+                        });
+                    }
+                });
+                
+                const projectMap = new Map<string, Project>(filteredNftProjects.map(p => [p.name, p]));
 
-                const processedCollections: DisplayCollection[] = allProjects.flatMap(project =>
+                const processedCollections: DisplayCollection[] = filteredNftProjects.flatMap(project =>
                     (project.nftCollections || [])
-                        .filter(collection => collection.status === 'published' && collection.isVisibleOnNftPage !== false)
+                        .filter(collection => {
+                            // Show collections that are published OR have no status set (default to visible)
+                            // AND are not explicitly hidden
+                            return (collection.status === 'published' || !collection.status) && collection.isVisibleOnNftPage !== false;
+                        })
                         .map(collection => {
                             const perksIn: { projectName: string; projectLogo: string; projectId: string; }[] = [];
                             const uniquePerkProjects = new Set<string>();
@@ -244,6 +265,8 @@ const NFTPage: React.FC = () => {
                             };
                         })
                 );
+                console.log('Final processed collections:', processedCollections.length);
+                console.log('======================');
                 setAllCollections(processedCollections);
             } catch (err) {
                 setError('Failed to load NFT collections. Please try again later.');
@@ -256,7 +279,7 @@ const NFTPage: React.FC = () => {
     }, []);
 
     const filteredAndSortedCollections = useMemo(() => {
-        const projectMap = new Map(projects.map(p => [p.id, p]));
+        const projectMap = new Map(nftProjects.map(p => [p.id, p]));
 
         let filtered = allCollections.filter(c =>
             fuzzySearch(debouncedSearchTerm, c.name) || fuzzySearch(debouncedSearchTerm, c.projectName)

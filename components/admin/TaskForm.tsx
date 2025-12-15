@@ -13,22 +13,28 @@ const FormSelect: React.FC<React.SelectHTMLAttributes<HTMLSelectElement>> = (pro
 
 interface TaskFormProps {
     task?: Partial<Task> | null;
-    onSave: (task: Task) => void;
+    onSave: (task: Task, projectId?: string) => void;
     onClose: () => void;
+    projects?: { id: string; name: string }[];
+    initialProjectId?: string;
 }
 
-const TaskForm: React.FC<TaskFormProps> = ({ task, onSave, onClose }) => {
+const TaskForm: React.FC<TaskFormProps> = ({ task, onSave, onClose, projects, initialProjectId }) => {
     const [formData, setFormData] = useState<Partial<Task>>(task || { name: '', description: '', task_type: 'social', reward_points: 100, task_config: { link: '' } });
-    
+    const [selectedProjectId, setSelectedProjectId] = useState<string>(initialProjectId || (projects && projects.length > 0 ? projects[0].id : ''));
+
     useEffect(() => {
         setFormData(task || { name: '', description: '', task_type: 'social', reward_points: 100, task_config: { link: '' } });
-    }, [task]);
+        if (initialProjectId) setSelectedProjectId(initialProjectId);
+    }, [task, initialProjectId]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         const isNumber = ['reward_points'].includes(name);
         if (name === 'link') {
             setFormData(prev => ({ ...prev, task_config: { ...(prev.task_config as object), link: value } }));
+        } else if (name === 'projectId') {
+            setSelectedProjectId(value);
         } else {
             setFormData(prev => ({ ...prev, [name]: isNumber ? parseInt(value, 10) || 0 : value }));
         }
@@ -39,13 +45,23 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSave, onClose }) => {
             alert('Please fill in title and link.');
             return;
         }
-        onSave(formData as Task);
+        onSave(formData as Task, selectedProjectId);
     };
 
     return (
         <form onSubmit={(e) => e.preventDefault()}>
             <h3 className="text-xl font-display font-bold text-on-surface mb-4">{task ? 'Edit Task' : 'Create New Task'}</h3>
-             <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2">
+            <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2">
+                {projects && (
+                    <FormRow>
+                        <FormLabel>Project</FormLabel>
+                        <FormField>
+                            <FormSelect name="projectId" value={selectedProjectId} onChange={handleChange}>
+                                {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                            </FormSelect>
+                        </FormField>
+                    </FormRow>
+                )}
                 <FormRow><FormLabel>Title</FormLabel><FormField><FormInput name="name" value={formData.name} onChange={handleChange} required /></FormField></FormRow>
                 <FormRow><FormLabel>Description</FormLabel><FormField><FormTextArea name="description" value={formData.description} onChange={handleChange} /></FormField></FormRow>
                 <FormRow><FormLabel>Type</FormLabel><FormField><FormSelect name="task_type" value={formData.task_type} onChange={handleChange}><option value="community">Community</option><option value="social">Social</option><option value="creative">Creative</option><option value="on-chain">On-chain</option></FormSelect></FormField></FormRow>

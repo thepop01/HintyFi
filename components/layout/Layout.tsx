@@ -26,7 +26,7 @@ const Layout: React.FC = () => {
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="bg-yellow-500 text-black font-semibold text-sm flex items-center justify-center overflow-hidden z-[60]"
+                  className="bg-yellow-500 text-black font-semibold text-sm flex items-center justify-center overflow-hidden z-"
                   role="alert"
                 >
                   <div className="p-2 flex items-center">

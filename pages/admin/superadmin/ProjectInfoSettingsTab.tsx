@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { Project, NftCollection, Coin, TeamMember, ProjectCategory, LinkItem, User } from '../../../src/types';
 import { useToast } from '../../../context/ToastContext';
-import { addOrUpdateProject } from '../../../src/services/dataService';
+import { addOrUpdateProject, getCategoriesFromDB } from '../../../src/services/dataService';
 import { Plus, Trash2 } from 'lucide-react';
 import { uid } from '../../../utils/helpers';
 import { useSuperAdminContext } from '../../../context/SuperAdminContext';
@@ -11,28 +11,28 @@ import ImageUploadInput from '../../../components/common/ImageUploadInput';
 // --- HELPER HOOKS & FUNCTIONS (Copied for component use) ---
 
 function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-  useEffect(() => {
-    const handler = setTimeout(() => { setDebouncedValue(value); }, delay);
-    return () => { clearTimeout(handler); };
-  }, [value, delay]);
-  return debouncedValue;
+    const [debouncedValue, setDebouncedValue] = useState<T>(value);
+    useEffect(() => {
+        const handler = setTimeout(() => { setDebouncedValue(value); }, delay);
+        return () => { clearTimeout(handler); };
+    }, [value, delay]);
+    return debouncedValue;
 }
 
 type Handler = (event: MouseEvent | TouchEvent) => void;
 function useClickOutside<T extends HTMLElement = HTMLElement>(ref: React.RefObject<T>, handler: Handler): void {
-  useEffect(() => {
-    const listener = (event: MouseEvent | TouchEvent) => {
-      if (!ref.current || ref.current.contains(event.target as Node)) return;
-      handler(event);
-    };
-    document.addEventListener('mousedown', listener);
-    document.addEventListener('touchstart', listener);
-    return () => {
-      document.removeEventListener('mousedown', listener);
-      document.removeEventListener('touchstart', listener);
-    };
-  }, [ref, handler]);
+    useEffect(() => {
+        const listener = (event: MouseEvent | TouchEvent) => {
+            if (!ref.current || ref.current.contains(event.target as Node)) return;
+            handler(event);
+        };
+        document.addEventListener('mousedown', listener);
+        document.addEventListener('touchstart', listener);
+        return () => {
+            document.removeEventListener('mousedown', listener);
+            document.removeEventListener('touchstart', listener);
+        };
+    }, [ref, handler]);
 }
 
 const fuzzySearch = (query: string, text: string): boolean => {
@@ -83,7 +83,7 @@ const UserSearchInput: React.FC<UserSearchInputProps> = ({ allUsers, value, onUs
 
     useEffect(() => {
         if (debouncedSearchTerm && isFocused) {
-            const filtered = allUsers.filter(user => 
+            const filtered = allUsers.filter(user =>
                 fuzzySearch(debouncedSearchTerm, user.name) ||
                 (user.discordUsername && fuzzySearch(debouncedSearchTerm, user.discordUsername))
             ).slice(0, 5);
@@ -158,6 +158,11 @@ export const ProjectInfoSettingsTab: React.FC = () => {
     const navigate = useNavigate();
     const { addToast } = useToast();
     const [formData, setFormData] = useState<Project>(initialProject!);
+    const [categories, setCategories] = useState<string[]>([]);
+
+    useEffect(() => {
+        getCategoriesFromDB().then(setCategories);
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -179,7 +184,7 @@ export const ProjectInfoSettingsTab: React.FC = () => {
     const handleLinkChange = (field: 'twitter' | 'discord') => (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData(p => ({ ...p, links: { ...p.links, websites: p.links?.websites || [], [field]: e.target.value } as Project['links'] }));
     };
-    
+
     const handleWebsiteChange = (index: number, field: keyof LinkItem, value: string) => {
         setFormData(p => {
             const newWebsites = [...(p.links?.websites || [])];
@@ -203,10 +208,10 @@ export const ProjectInfoSettingsTab: React.FC = () => {
     };
 
     const handleStrategyChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => { setFormData(prev => ({ ...prev, strategyWalkthrough: e.target.value.split('\n') })); };
-    
+
     const addTeamMember = () => setFormData(p => ({ ...p, team: [...(p.team || []), { name: '', role: '' }] }));
     const removeTeamMember = (index: number) => setFormData(p => ({ ...p, team: p.team?.filter((_, i) => i !== index) }));
-    
+
     const handleTeamChange = (index: number, field: keyof TeamMember, value: string) => {
         setFormData(prev => {
             if (!prev.team) return prev;
@@ -220,10 +225,10 @@ export const ProjectInfoSettingsTab: React.FC = () => {
         setFormData(prev => {
             if (!prev.team) return prev;
             const newTeam = [...prev.team];
-            newTeam[index] = { 
-                ...newTeam[index], 
-                name: user.name, 
-                discordUserId: user.discordId, 
+            newTeam[index] = {
+                ...newTeam[index],
+                name: user.name,
+                discordUserId: user.discordId,
                 discordUsername: user.discordUsername,
                 photoUrl: user.profile_pic_url,
                 socials: user.socials,
@@ -232,14 +237,14 @@ export const ProjectInfoSettingsTab: React.FC = () => {
         });
     };
 
-    const addCoin = () => setFormData(prev => prev ? ({...prev, coins: [...(prev.coins || []), { id: uid(), type: 'meme', network: 'mainnet', name: '', contractAddress: '', link: '', image: '', symbol: '', imageUrl: '' }] }) : null);
-    const removeCoin = (id: string) => { setFormData(prev => prev ? ({...prev, coins: prev.coins?.filter(c => c.id !== id) }) : null); };
-    const handleCoinChange = (id: string, field: keyof Omit<Coin, 'id'>, value: string) => { setFormData(prev => prev ? ({...prev, coins: prev.coins?.map(c => c.id === id ? { ...c, [field]: value } : c) }) : null); };
-    
-    const addCollection = () => { setFormData(prev => prev ? ({...prev, nftCollections: [...(prev.nftCollections || []), { id: uid(), name: '', image: '', contractAddress: '', link: '', network: 'mainnet', perks: [], status: 'draft', pointsPerDay: 0 }] }) : null); };
-    const removeCollection = (id: string) => { setFormData(prev => prev ? ({...prev, nftCollections: prev.nftCollections?.filter(c => c.id !== id) }) : null); };
-    const handleCollectionChange = (id: string, field: keyof Omit<NftCollection, 'id' | 'perks'>, value: string) => { setFormData(prev => prev ? ({...prev, nftCollections: prev.nftCollections?.map(c => c.id === id ? { ...c, [field]: value } : c) }) : null); };
-    
+    const addCoin = () => setFormData(prev => prev ? ({ ...prev, coins: [...(prev.coins || []), { id: uid(), type: 'meme', network: 'mainnet', name: '', contractAddress: '', link: '', image: '', symbol: '', imageUrl: '' }] }) : null);
+    const removeCoin = (id: string) => { setFormData(prev => prev ? ({ ...prev, coins: prev.coins?.filter(c => c.id !== id) }) : null); };
+    const handleCoinChange = (id: string, field: keyof Omit<Coin, 'id'>, value: string) => { setFormData(prev => prev ? ({ ...prev, coins: prev.coins?.map(c => c.id === id ? { ...c, [field]: value } : c) }) : null); };
+
+    const addCollection = () => { setFormData(prev => prev ? ({ ...prev, nftCollections: [...(prev.nftCollections || []), { id: uid(), name: '', image: '', contractAddress: '', link: '', network: 'mainnet', perks: [], status: 'draft', pointsPerDay: 0 }] }) : null); };
+    const removeCollection = (id: string) => { setFormData(prev => prev ? ({ ...prev, nftCollections: prev.nftCollections?.filter(c => c.id !== id) }) : null); };
+    const handleCollectionChange = (id: string, field: keyof Omit<NftCollection, 'id' | 'perks'>, value: string) => { setFormData(prev => prev ? ({ ...prev, nftCollections: prev.nftCollections?.map(c => c.id === id ? { ...c, [field]: value } : c) }) : null); };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const success = await addOrUpdateProject(formData);
@@ -250,7 +255,7 @@ export const ProjectInfoSettingsTab: React.FC = () => {
             addToast('Failed to save project info.', 'error');
         }
     };
-    
+
     if (!formData) return null;
 
     return (
@@ -272,9 +277,9 @@ export const ProjectInfoSettingsTab: React.FC = () => {
                     </FormSelect>
                 </FormField>
             </FormRow>
-            <FormRow><FormLabel>Category</FormLabel><FormField><div className="grid grid-cols-2 sm:grid-cols-3 gap-2">{['defi', 'nft', 'gaming', 'socialfi', 'dex', 'rwa', 'infrastructure', 'wallet', 'depin', 'ai', 'meme', 'launchpad'].map(cat => (<FormCheckbox key={cat} label={cat} value={cat} checked={formData.category?.includes(cat as ProjectCategory)} onChange={handleCategoryChange} />))}</div></FormField></FormRow>
+            <FormRow><FormLabel>Category</FormLabel><FormField><div className="grid grid-cols-2 sm:grid-cols-3 gap-2">{categories.map(cat => (<FormCheckbox key={cat} label={cat} value={cat} checked={formData.category?.includes(cat as ProjectCategory)} onChange={handleCategoryChange} />))}</div></FormField></FormRow>
             <FormRow><FormLabel>Strategy Walkthrough</FormLabel><FormField><FormTextArea value={formData.strategy_walkthrough?.join('\n') || ''} onChange={handleStrategyChange} rows={5} placeholder="One step per line" /></FormField></FormRow>
-            
+
             <FormSectionHeader>Links</FormSectionHeader>
             {formData.has_pending_changes && formData.pending_changes?.links && (
                 <div className="mb-4 p-3 bg-yellow-500/20 text-yellow-800 rounded-md text-sm">
@@ -290,12 +295,12 @@ export const ProjectInfoSettingsTab: React.FC = () => {
                     <div className="space-y-2">
                         {formData.links?.websites.map((site, i) => (
                             <div key={i} className="flex items-center gap-2">
-                                <FormInput value={site.label} onChange={e => handleWebsiteChange(i, 'label', e.target.value)} placeholder="Label (e.g., Main Site)" className="w-1/3"/>
+                                <FormInput value={site.label} onChange={e => handleWebsiteChange(i, 'label', e.target.value)} placeholder="Label (e.g., Main Site)" className="w-1/3" />
                                 <FormInput value={site.url} onChange={e => handleWebsiteChange(i, 'url', e.target.value)} placeholder="https://..." />
-                                <button type="button" onClick={() => removeWebsite(i)} className="neu-button !rounded-full !p-2 text-red-500"><Trash2 size={14}/></button>
+                                <button type="button" onClick={() => removeWebsite(i)} className="neu-button !rounded-full !p-2 text-red-500"><Trash2 size={14} /></button>
                             </div>
                         ))}
-                        <button type="button" onClick={addWebsite} className="neu-button px-3 py-1 text-sm flex items-center gap-1"><Plus size={14}/> Add Website</button>
+                        <button type="button" onClick={addWebsite} className="neu-button px-3 py-1 text-sm flex items-center gap-1"><Plus size={14} /> Add Website</button>
                     </div>
                 </FormField>
             </FormRow>
@@ -344,7 +349,7 @@ export const ProjectInfoSettingsTab: React.FC = () => {
                 </div>
             ))}
             <button type="button" onClick={addCoin} className="neu-button px-3 py-1 text-sm mt-3"><Plus size={14} /> Add Coin</button>
-            
+
             <FormSectionHeader>NFT Collections</FormSectionHeader>
             {formData.nftCollections?.map((coll) => (
                 <div key={coll.id} className="neu-outset-card p-3 mb-2 relative">
@@ -355,7 +360,7 @@ export const ProjectInfoSettingsTab: React.FC = () => {
                 </div>
             ))}
             <button type="button" onClick={addCollection} className="neu-button px-3 py-1 text-sm mt-3"><Plus size={14} /> Add NFT Collection</button>
-            
+
             <div className="mt-8 pt-4 border-t border-border/20 flex justify-end">
                 <button type="submit" className="neu-button active px-6 py-2 font-bold">Save Info</button>
             </div>

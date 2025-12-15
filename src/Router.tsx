@@ -15,7 +15,7 @@ const CampaignDetailPage = lazy(() => import('../pages/CampaignDetailPage'));
 const ProjectProfilePage = lazy(() => import('../pages/ProjectProfilePage'));
 const QuestDetailPage = lazy(() => import('../pages/QuestDetailPage'));
 const QuestIdentityPage = lazy(() => import('../pages/QuestIdentityPage'));
-const IDOPage = lazy(() => import('../pages/IDOPage'));
+
 const MemePage = lazy(() => import('../pages/MemePage'));
 const NFTPage = lazy(() => import('../pages/NFTPage'));
 const EarlyProjectsPage = lazy(() => import('../pages/EarlyProjectsPage'));
@@ -27,31 +27,26 @@ const PointsPage = lazy(() => import('../pages/PointsPage'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback'));
 const ProtectedRoute = lazy(() => import('../components/auth/ProtectedRoute'));
 
+// Collaboration Pages
+const CollabPage = lazy(() => import('../pages/CollabPage'));
+const IndividualCollabPage = lazy(() => import('../pages/IndividualCollabPage'));
 
-// Admin Pages (New Structure)
-const AdminProjectSelectionPage = lazy(() => import('../pages/admin/AdminProjectSelectionPage'));
-const ProjectAdminLayout = lazy(() => import('../layouts/ProjectAdminLayout'));
-const AdminEditProjectPage = lazy(() => import('../pages/admin/project/AdminEditProjectPage'));
-const AdminProjectCampaignsPage = lazy(() => import('../pages/admin/project/AdminProjectCampaignsPage'));
-const AdminProjectTasksPage = lazy(() => import('../pages/admin/project/AdminProjectTasksPage'));
-const AdminProjectNftsMemesPage = lazy(() => import('../pages/admin/project/AdminProjectNftsMemesPage'));
-const AdminProjectDiscordRolesPage = lazy(() => import('../pages/admin/project/AdminProjectDiscordRolesPage'));
+
+
 
 
 // Super Admin Pages & Layout
 const SuperAdminLayout = lazy(() => import('../pages/SuperAdminPage'));
 const UserManagementTab = lazy(() => import('../components/admin/UserManagementTab'));
 const ManageProjectDetail = lazy(() => import('../components/admin/manageprojectdetail'));
-const ContentManagementTab = lazy(() => import('../components/admin/ContentManagementTab'));
-const ManageQuestsTab = lazy(() => import('../components/admin/ManageQuestsTab'));
+const ManageEventsPage = lazy(() => import('../pages/admin/superadmin/ManageEventsPage'));
+const ManageCollabsPage = lazy(() => import('../pages/admin/superadmin/ManageCollabsPage'));
 const ManageNftTab = lazy(() => import('../components/admin/ManageNftTab'));
 const AddNftCollectionPage = lazy(() => import('../components/admin/AddNftCollectionPage'));
 const EditNftCollectionPage = lazy(() => import('../components/admin/EditNftCollectionPage'));
-const ManageMemeTab = lazy(() => import('../components/admin/ManageMemeTab'));
-const AddMemePage = lazy(() => import('../components/admin/AddMemePage'));
-const ManageIdoTab = lazy(() => import('../components/admin/ManageIdoTab'));
-const AddIdoPage = lazy(() => import('../pages/admin/AddIdoPage'));
-const ManageThisWeekTab = lazy(() => import('../pages/admin/superadmin/ManageThisWeekTab'));
+
+
+
 
 
 // Super Admin Project Management Pages & Layout
@@ -59,32 +54,37 @@ const SuperAdminProjectLayout = lazy(() => import('../layouts/SuperAdminProjectL
 const ProjectPointsSettingsTab = lazy(() => import('../pages/admin/superadmin/ProjectPointsSettingsTab'));
 const ProjectInfoSettingsTab = lazy(() => import('../pages/admin/superadmin/ProjectInfoSettingsTab'));
 const ProjectStatusSettingsTab = lazy(() => import('../pages/admin/superadmin/ProjectStatusSettingsTab'));
-const ProjectCampaignsVerificationTab = lazy(() => import('../pages/admin/superadmin/ProjectCampaignsVerificationTab'));
-const ProjectTasksVerificationTab = lazy(() => import('../pages/admin/superadmin/ProjectTasksVerificationTab'));
 const AddProjectPage = lazy(() => import('../pages/admin/superadmin/AddProjectPage'));
+const ManageProjectsPage = lazy(() => import('../pages/admin/superadmin/ManageProjectsPage'));
 
 
 // Redirect helper for legacy /project/:id routes -> maps ID to the new name-based path when possible
 const ProjectRedirect: React.FC = () => {
-  const { id } = ReactRouterDOM.useParams();
-  // find project by id or name (case-insensitive)
-  const [target, setTarget] = React.useState<string | null>(null);
+    const { id } = ReactRouterDOM.useParams();
+    // find project by id or name (case-insensitive)
+    const [target, setTarget] = React.useState<string | null>(null);
 
-  React.useEffect(() => {
-    const findProject = async () => {
-      const projects = await getProjects();
-      const project = projects.find(p => p.id === id) || projects.find(p => p.name.toLowerCase() === id?.toLowerCase());
-      const targetPath = project ? `/${project.name.toLowerCase()}` : `/project/${id}`;
-      setTarget(targetPath);
-    };
-    findProject();
-  }, [id]);
+    React.useEffect(() => {
+        const findProject = async () => {
+            const projects = await getProjects();
+            const project = projects.find(p => p.id === id) || projects.find(p => p.name.toLowerCase() === id?.toLowerCase());
+            const targetPath = project ? `/${project.name.toLowerCase()}` : `/project/${id}`;
+            setTarget(targetPath);
+        };
+        findProject();
+    }, [id]);
 
-  if (!target) {
-    return <Loader />;
-  }
+    if (!target) {
+        return <Loader />;
+    }
 
-  return <ReactRouterDOM.Navigate to={target} replace />;
+    return <ReactRouterDOM.Navigate to={target} replace />;
+};
+
+// Redirect helper for legacy /collab/:id routes -> redirect to /collabs/:id
+const CollabRedirect: React.FC = () => {
+    const { id } = ReactRouterDOM.useParams();
+    return <ReactRouterDOM.Navigate to={`/collabs/${id}`} replace />;
 };
 
 const Login = () => {
@@ -97,12 +97,12 @@ const Login = () => {
 
 
 export default function Router() {
-    const { user, loading } = useAuth()
+    const { currentUser, loading } = useAuth()
 
     if (loading) return <div className="text-center mt-10">Loading...</div>
 
     return (
-        <ReactRouterDOM.HashRouter>
+        <ReactRouterDOM.BrowserRouter>
             <>
                 <ScrollToTop />
                 <div className="max-w-[1920px] mx-auto app-container">
@@ -116,12 +116,18 @@ export default function Router() {
                                     <ReactRouterDOM.Route path="campaigns" element={<CampaignPage />} />
                                     <ReactRouterDOM.Route path="tasks" element={<TasksPage />} />
                                     <ReactRouterDOM.Route path="this-week" element={<ThisWeekPage />} />
+                                    <ReactRouterDOM.Route path="collaborations" element={<CollabPage />} />
+                                    <ReactRouterDOM.Route path="collabs" element={<CollabPage />} />
+                                    <ReactRouterDOM.Route path="collabs/:id" element={<IndividualCollabPage />} />
+                                    {/* Redirect old /collab URLs to /collabs */}
+                                    <ReactRouterDOM.Route path="collab" element={<ReactRouterDOM.Navigate to="/collabs" replace />} />
+                                    <ReactRouterDOM.Route path="collab/:id" element={<CollabRedirect />} />
 
                                     <ReactRouterDOM.Route path="quest/:id/identity" element={<QuestIdentityPage />} />
                                     <ReactRouterDOM.Route path="quest/:id" element={<QuestDetailPage />} />
                                     <ReactRouterDOM.Route path="campaign/:id" element={<CampaignDetailPage />} />
                                     <ReactRouterDOM.Route path="nft" element={<NFTPage />} />
-                                    <ReactRouterDOM.Route path="ido" element={<IDOPage />} />
+
                                     <ReactRouterDOM.Route path="meme" element={<MemePage />} />
 
                                     {/* Early Projects is now public, with internal checks */}
@@ -160,45 +166,31 @@ export default function Router() {
                                             <ReactRouterDOM.Route path="users" element={<UserManagementTab />} />
                                             <ReactRouterDOM.Route path="project-detail/add" element={<AddProjectPage />} />
                                             <ReactRouterDOM.Route path="project-detail" element={<ManageProjectDetail />} />
-                                            <ReactRouterDOM.Route path="content" element={<ContentManagementTab />} />
-                                            <ReactRouterDOM.Route path="quests" element={<ManageQuestsTab />} />
+                                            <ReactRouterDOM.Route path="project-detail/manage" element={<ManageProjectsPage />} />
+                                            <ReactRouterDOM.Route path="events" element={<ManageEventsPage />} />
+                                            <ReactRouterDOM.Route path="collabs" element={<ManageCollabsPage />} />
                                             <ReactRouterDOM.Route path="nfts" element={<ManageNftTab />} />
                                             <ReactRouterDOM.Route path="nfts/add" element={<AddNftCollectionPage />} />
                                             <ReactRouterDOM.Route path="nfts/edit/:projectId/:collectionId" element={<EditNftCollectionPage />} />
-                                            <ReactRouterDOM.Route path="memes" element={<ManageMemeTab />} />
-                                            <ReactRouterDOM.Route path="memes/add" element={<AddMemePage />} />
-                                            <ReactRouterDOM.Route path="idos" element={<ManageIdoTab />} />
-                                            <ReactRouterDOM.Route path="idos/add" element={<AddIdoPage />} />
-                                            <ReactRouterDOM.Route path="this-week" element={<ManageThisWeekTab />} />
-                                            <ReactRouterDOM.Route path="project-management/:id" element={<SuperAdminProjectLayout />}>
+
+
+
+                                            <ReactRouterDOM.Route path="project-detail/:id" element={<SuperAdminProjectLayout />}>
                                                 <ReactRouterDOM.Route index element={<ReactRouterDOM.Navigate to="points" replace />} />
                                                 <ReactRouterDOM.Route path="points" element={<ProjectPointsSettingsTab />} />
                                                 <ReactRouterDOM.Route path="info" element={<ProjectInfoSettingsTab />} />
                                                 <ReactRouterDOM.Route path="status" element={<ProjectStatusSettingsTab />} />
-                                                <ReactRouterDOM.Route path="campaigns" element={<ProjectCampaignsVerificationTab />} />
-                                                <ReactRouterDOM.Route path="tasks" element={<ProjectTasksVerificationTab />} />
                                             </ReactRouterDOM.Route>
                                         </ReactRouterDOM.Route>
                                     </ReactRouterDOM.Route>
 
-                                    {/* Admin Routes */}
-                                    <ReactRouterDOM.Route element={<ProtectedRoute roles={['project_admin', 'super_admin']} />}>
-                                        <ReactRouterDOM.Route path="admin" element={<AdminProjectSelectionPage />} />
-                                        <ReactRouterDOM.Route path="admin/project/:id" element={<ProjectAdminLayout />}>
-                                            <ReactRouterDOM.Route index element={<ReactRouterDOM.Navigate to="edit" replace />} />
-                                            <ReactRouterDOM.Route path="edit" element={<AdminEditProjectPage />} />
-                                            <ReactRouterDOM.Route path="campaigns" element={<AdminProjectCampaignsPage />} />
-                                            <ReactRouterDOM.Route path="tasks" element={<AdminProjectTasksPage />} />
-                                            <ReactRouterDOM.Route path="nfts-memes" element={<AdminProjectNftsMemesPage />} />
-                                            <ReactRouterDOM.Route path="discord-roles" element={<AdminProjectDiscordRolesPage />} />
-                                        </ReactRouterDOM.Route>
-                                    </ReactRouterDOM.Route>
+
                                 </ReactRouterDOM.Route>
                             </ReactRouterDOM.Routes>
                         </Suspense>
                     </div>
                 </div>
             </>
-        </ReactRouterDOM.HashRouter>
+        </ReactRouterDOM.BrowserRouter>
     )
 }

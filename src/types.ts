@@ -1,108 +1,108 @@
 // --- CUSTOM APP TYPES ---
 
 export type Ido = Tables<'idos'> & {
-    projects?: Project;
+  projects?: Project;
 };
 export type Meme = Tables<'memes'> & {
-    projects?: Project;
+  projects?: Project;
 };
 export type Nft = Tables<'nfts'> & {
-    projects?: Project;
+  projects?: Project;
 };
 
 // Extend auto-generated types for app-specific usage
 export type User = Tables<'users'> & {
-    // Add any custom client-side properties here if needed
-    name?: string;
-    discordId?: string;
-    discordRoles?: {
-        id: string;
-        name: string;
-        points: number;
-        serverId?: string;
-        roleId?: string;
-    }[];
-    associatedProjectIds?: string[];
-    profile_pic?: string;
-    profile_pic_url?: string;
-    nickname?: string;
-    walletAddress?: string;
-    socials?: {
-        twitter?: string;
-        discord?: string;
-        github?: string;
-    };
-    nftHoldings?: { projectId: string; daysHeld: number }[];
-    tokenHoldings?: { projectId: string; amount: number; daysHeld: number }[];
-    manualCredoPoints?: number;
-    projectsBuilding?: string[];
-    vouchedFor?: string[];
-    discordUsername?: string;
-    votedProjectIds?: string[];
-    votedCampaignEntryIds?: string[];
-    manualHintAdjustments?: ManualHintAdjustment[];
-    points?: number;
+  // Add any custom client-side properties here if needed
+  name?: string;
+  discordId?: string;
+  discordRoles?: {
+    id: string;
+    name: string;
+    points: number;
+    serverId?: string;
+    roleId?: string;
+  }[];
+  associatedProjectIds?: string[];
+  profile_pic?: string;
+  profile_pic_url?: string;
+  nickname?: string;
+  walletAddress?: string;
+  socials?: {
+    twitter?: string;
+    discord?: string;
+    github?: string;
+  };
+  nftHoldings?: { projectId: string; daysHeld: number }[];
+  tokenHoldings?: { projectId: string; amount: number; daysHeld: number }[];
+  manualCredoPoints?: number;
+  projectsBuilding?: string[];
+  vouchedFor?: string[];
+  discordUsername?: string;
+  votedProjectIds?: string[];
+  votedCampaignEntryIds?: string[];
+  manualHintAdjustments?: ManualHintAdjustment[];
+  points?: number;
 };
 
 export interface ManualHintAdjustment {
-    category: 'tasks' | 'wins' | 'rewards';
-    points: number;
-    reason: string;
+  category: 'tasks' | 'wins' | 'rewards';
+  points: number;
+  reason: string;
 }
 
 export type Project = Tables<'projects'> & {
-    // Example of extending with client-side computed properties
-    votes?: { up: number; down: number; voters: { userId: string; vote: 'up' | 'down' }[] };
-    category?: string[];
-    logo?: string;
-    banner?: string;
+  // Example of extending with client-side computed properties
+  votes?: { up: number; down: number; voters: { userId: string; vote: 'up' | 'down' }[] };
+  category?: string[];
+  logo?: string;
+  banner?: string;
+  links?: {
+    websites: { label: string; url: string }[];
+    twitter: string | null;
+    discord: string | null;
+  };
+  events?: Event[];
+  team?: TeamMember[];
+  discordRoles?: DiscordRole[];
+  nftCollections?: NftCollection[];
+  coins?: Coin[];
+  tokenHoldingTiers?: PointTier[];
+  tasks?: Task[];
+  token?: string;
+  tokenHoldingSettings?: {
+    name?: string;
+    contractAddress?: string;
+    link?: string;
+  };
+  isCrowned?: boolean;
+  isNew?: boolean;
+  isHot?: boolean;
+  dropStatus?: DropStatus;
+  ticker?: string;
+  idoDetails?: IdoDetails;
+  raise?: string;
+  longDescription?: string;
+  isPublished?: boolean;
+  approvalStatus?: 'pending' | 'approved' | 'rejected';
+  tasksInfo?: {
+    totalTasks: number;
+    cost: number;
+    categories: string[];
+  };
+  rewardType?: 'Airdrop' | 'Whitelist' | 'Points' | 'NFT';
+  strategy_walkthrough?: string[];
+  has_pending_changes?: boolean;
+  pending_changes?: {
     links?: {
-        websites: { label: string; url: string }[];
-        twitter: string | null;
-        discord: string | null;
+      [key: string]: string;
     };
-    events?: Event[];
-    team?: TeamMember[];
-    discordRoles?: DiscordRole[];
-    nftCollections?: NftCollection[];
-    coins?: Coin[];
-    tokenHoldingTiers?: PointTier[];
-    tasks?: Task[];
-    token?: string;
-    tokenHoldingSettings?: {
-        name?: string;
-        contractAddress?: string;
-        link?: string;
-    };
-    isCrowned?: boolean;
-    isNew?: boolean;
-    isHot?: boolean;
-    dropStatus?: DropStatus;
-    ticker?: string;
-    idoDetails?: IdoDetails;
-    raise?: string;
-    longDescription?: string;
-    isPublished?: boolean;
-    approvalStatus?: 'pending' | 'approved' | 'rejected';
-    tasksInfo?: {
-        totalTasks: number;
-        cost: number;
-        categories: string[];
-    };
-    rewardType?: 'Airdrop' | 'Whitelist' | 'Points' | 'NFT';
-    strategy_walkthrough?: string[];
-    has_pending_changes?: boolean;
-    pending_changes?: {
-        links?: {
-            [key: string]: string;
-        };
-    };
+  };
 };
 
 export interface IdoDetails {
-    tokenPrice?: string;
-    totalSupply?: string;
-    vestingSchedule?: string;
+  tokenPrice?: string;
+  totalSupply?: string;
+  vestingSchedule?: string;
 }
 
 export type ProjectCategory = 'defi' | 'dex' | 'nft' | 'gaming' | 'rwa' | 'infrastructure' | 'wallet' | 'depin' | 'ai' | 'meme' | 'launchpad' | 'prediction market' | 'social' | 'other infra' | 'identity' | 'dev tooling' | 'privacy' | 'other apps' | 'betting' | 'governance' | 'analytics' | 'gaming infra' | 'account abstraction';
@@ -110,192 +110,192 @@ export type ProjectCategory = 'defi' | 'dex' | 'nft' | 'gaming' | 'rwa' | 'infra
 export type DropStatus = 'ongoing' | 'upcoming' | 'completed';
 
 export type Quest = Tables<'quests'> & {
-    // Custom properties for different quest types
-    status?: 'ongoing' | 'past' | 'upcoming';
-    endTime?: number;
-    category?: string;
-    title?: string;
-    identityQuestion?: {
-        title: string;
-        prompt: string;
-        description?: string;
-        answers: { id: string; userId: string; username: string; answer: string }[];
-    };
-    multipleChoiceQuestion?: {
-        title: string;
-        prompt: string;
-        description?: string;
-        options: string[];
-        correctAnswerIndex: number;
-        answers: { userId: string; answerIndex: number }[];
-    };
-    max_submissions_per_user?: number;
-    entries?: QuestEntry[];
+  // Custom properties for different quest types
+  status?: 'ongoing' | 'past' | 'upcoming';
+  endTime?: number;
+  category?: string;
+  title?: string;
+  identityQuestion?: {
+    title: string;
+    prompt: string;
+    description?: string;
+    answers: { id: string; userId: string; username: string; answer: string }[];
+  };
+  multipleChoiceQuestion?: {
+    title: string;
+    prompt: string;
+    description?: string;
+    options: string[];
+    correctAnswerIndex: number;
+    answers: { userId: string; answerIndex: number }[];
+  };
+  max_submissions_per_user?: number;
+  entries?: QuestEntry[];
 };
 
 export type Event = {
-    id: string;
-    type: 'campaign' | 'milestone' | 'ama';
-    title: string;
-    description: string;
-    date: number; // timestamp
-    projectName: string;
-    status: 'pending' | 'approved' | 'rejected' | 'draft';
+  id: string;
+  type: 'campaign' | 'milestone' | 'ama';
+  title: string;
+  description: string;
+  date: number; // timestamp
+  projectName: string;
+  status: 'pending' | 'approved' | 'rejected' | 'draft';
 };
 
 export type CampaignEvent = Event & {
-    type: 'campaign';
-    entries?: CampaignEntry[];
-    endTime: number;
-    startTime: number;
-    winners?: any[];
-    numberOfWinners?: number;
-    reward?: string;
-    details?: {
-        introduction?: string;
-        timeline?: CampaignTimelineItem[];
-        eligibility?: string;
-        tracks?: string;
-        resourcesAndSupport?: string;
-        aboutUs?: string;
-        prizes?: string;
-    };
-    image?: string;
-    category?: string;
+  type: 'campaign';
+  entries?: CampaignEntry[];
+  endTime: number;
+  startTime: number;
+  winners?: any[];
+  numberOfWinners?: number;
+  reward?: string;
+  details?: {
+    introduction?: string;
+    timeline?: CampaignTimelineItem[];
+    eligibility?: string;
+    tracks?: string;
+    resourcesAndSupport?: string;
+    aboutUs?: string;
+    prizes?: string;
+  };
+  image?: string;
+  category?: string;
 };
 
 export interface CampaignEntry {
-    id: string;
-    userId: string;
-    link: string;
-    votes: { up: number; down: number };
-    voters: { userId: string; vote: 'up' | 'down' }[];
+  id: string;
+  userId: string;
+  link: string;
+  votes: { up: number; down: number };
+  voters: { userId: string; vote: 'up' | 'down' }[];
 }
 
 export interface CampaignTimelineItem {
-    label: string;
-    date: string;
+  label: string;
+  date: string;
 }
 
 
 // --- OTHER INTERFACES ---
 
 export interface TeamMember {
-    name: string;
-    role: string;
-    twitterUrl?: string;
-    linkedinUrl?: string;
-    photoUrl?: string;
-    discordUserId?: string;
-    discordUsername?: string;
-    socials?: {
-        twitter?: string;
-        discord?: string;
-        github?: string;
-    };
+  name: string;
+  role: string;
+  twitterUrl?: string;
+  linkedinUrl?: string;
+  photoUrl?: string;
+  discordUserId?: string;
+  discordUsername?: string;
+  socials?: {
+    twitter?: string;
+    discord?: string;
+    github?: string;
+  };
 }
 
 export interface DiscordRole {
-    id: string;
-    name: string;
-    points: number;
-    serverId?: string;
-    roleId?: string;
-    description?: string;
-    perks?: Perk[];
+  id: string;
+  name: string;
+  points: number;
+  serverId?: string;
+  roleId?: string;
+  description?: string;
+  perks?: Perk[];
 }
 
 export interface NftCollection {
-    id: string;
-    name: string;
-    image: string;
-    pointsPerDay: number;
-    oneTimePoints?: number;
-    perks?: NftPerk[];
-    contractAddress?: string;
-    link?: string;
-    network?: 'mainnet' | 'testnet';
-    status?: 'draft' | 'published';
-    supply?: string;
-    mintPrice?: string;
-    floorPrice?: string;
-    isVisibleOnNftPage?: boolean;
+  id: string;
+  name: string;
+  image: string;
+  pointsPerDay: number;
+  oneTimePoints?: number;
+  perks?: NftPerk[];
+  contractAddress?: string;
+  link?: string;
+  network?: 'mainnet' | 'testnet';
+  status?: 'draft' | 'published';
+  supply?: string;
+  mintPrice?: string;
+  floorPrice?: string;
+  isVisibleOnNftPage?: boolean;
 }
 
 export interface Coin {
-    id: string;
-    name: string;
-    symbol: string;
-    imageUrl: string;
-    type?: 'meme' | 'ecosystem';
-    network?: 'mainnet' | 'testnet';
-    contractAddress?: string;
-    link?: string;
-    image?: string;
-    status?: 'draft' | 'published';
-    supply?: string;
-    marketPrice?: string;
+  id: string;
+  name: string;
+  symbol: string;
+  imageUrl: string;
+  type?: 'meme' | 'ecosystem';
+  network?: 'mainnet' | 'testnet';
+  contractAddress?: string;
+  link?: string;
+  image?: string;
+  status?: 'draft' | 'published';
+  supply?: string;
+  marketPrice?: string;
 }
 
 export interface QuestEntry {
-    id: string;
-    userId: string;
-    username: string;
-    twitterLink: string;
-    votes: number;
-    voters: string[];
+  id: string;
+  userId: string;
+  username: string;
+  twitterLink: string;
+  votes: number;
+  voters: string[];
 }
 
 export interface CredoSettings {
-    roleBasedPartnerProjectNames: string[];
-    nftBasedPartnerProjectNames: string[];
-    tokenBasedPartnerProjectNames: string[];
-    sliderProjectNames: string[];
-    sliderNftNames: string[];
+  roleBasedPartnerProjectNames: string[];
+  nftBasedPartnerProjectNames: string[];
+  tokenBasedPartnerProjectNames: string[];
+  sliderProjectNames: string[];
+  sliderNftNames: string[];
 }
 
 export interface WeeklyDiscordEvent {
-    id: string;
-    title: string;
-    description: string;
-    dateTime: number; // timestamp
-    type?: 'community' | 'gaming' | 'mint' | 'ama' | 'creative' | 'other';
-    name?: string;
-    serverName?: string;
-    discordEventLink?: string;
-    image?: string;
-    customTypeLabel?: string;
-    reward?: string;
+  id: string;
+  title: string;
+  description: string;
+  dateTime: number; // timestamp
+  type?: 'community' | 'gaming' | 'mint' | 'ama' | 'creative' | 'other';
+  name?: string;
+  serverName?: string;
+  discordEventLink?: string;
+  image?: string;
+  customTypeLabel?: string;
+  reward?: string;
 }
 
 export interface SiteContentSettings {
-    campaigns: { title: string; subtitle: string; featuredProjectIds: string[] };
-    tasks: { title: string; subtitle: string; featuredProjectIds: string[] };
-    earlyProjects: { title: string; subtitle: string; featuredProjectIds: string[] };
-    ido: { title: string; subtitle: string; featuredProjectIds: string[] };
-    meme: { title: string; subtitle: string; featuredProjectIds: string[] };
-    nft: { title: string; subtitle: string; featuredProjectIds: string[] };
-    thisWeek: { title: string; subtitle: string; featuredProjectIds: string[] };
+  campaigns: { title: string; subtitle: string; featuredProjectIds: string[] };
+  tasks: { title: string; subtitle: string; featuredProjectIds: string[] };
+  earlyProjects: { title: string; subtitle: string; featuredProjectIds: string[] };
+  ido: { title: string; subtitle: string; featuredProjectIds: string[] };
+  meme: { title: string; subtitle: string; featuredProjectIds: string[] };
+  nft: { title: string; subtitle: string; featuredProjectIds: string[] };
+  thisWeek: { title: string; subtitle: string; featuredProjectIds: string[] };
 }
 
 export interface LinkItem {
-    label: string;
-    url: string;
+  label: string;
+  url: string;
 }
 
 export interface PointTier {
-    minAmount: number;
-    maxAmount: number | null;
-    pointsPerDay: number;
+  minAmount: number;
+  maxAmount: number | null;
+  pointsPerDay: number;
 }
 
 export type PerkType = 'Airdrop' | 'GTD' | 'FCFS' | 'Free Mint';
 
 export interface Perk {
-    description: string;
-    type: PerkType;
-    grantingProjectName?: string;
-    grantingProjectImage?: string;
+  description: string;
+  type: PerkType;
+  grantingProjectName?: string;
+  grantingProjectImage?: string;
 }
 
 export interface DisplayCollection extends NftCollection {
@@ -310,21 +310,21 @@ export interface DisplayCollection extends NftCollection {
 }
 
 export interface PerkRequirement {
-    count: number;
-    collectionName: string;
-    projectName: string;
+  count: number;
+  collectionName: string;
+  projectName: string;
 }
 
 export interface NftPerk {
-    holdingRequirement: PerkRequirement;
-    perk: Perk;
+  holdingRequirement: PerkRequirement;
+  perk: Perk;
 }
 
 
 export interface UserTokenHolding {
-    projectId: string;
-    amount: number;
-    daysHeld: number;
+  projectId: string;
+  amount: number;
+  daysHeld: number;
 }
 export type Json =
   | string
@@ -335,9 +335,9 @@ export type Json =
   | Json[];
 
 export type PendingChanges = {
-    links?: {
-        [key: string]: string;
-    };
+  links?: {
+    [key: string]: string;
+  };
 };
 
 export type Database = {
@@ -1790,116 +1790,116 @@ type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof DatabaseWithoutInternals },
+  | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+  | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+  ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+    DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+  : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+    DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
-    ? R
-    : never
+  ? R
+  : never
   : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-        Row: infer R
-      }
-      ? R
-      : never
-    : never
+    DefaultSchema["Views"])
+  ? (DefaultSchema["Tables"] &
+    DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+      Row: infer R
+    }
+  ? R
+  : never
+  : never
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
+  | keyof DefaultSchema["Tables"]
+  | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+  ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+  : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I
-    }
-    ? I
-    : never
+    Insert: infer I
+  }
+  ? I
+  : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Insert: infer I
-      }
-      ? I
-      : never
-    : never
+  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+    Insert: infer I
+  }
+  ? I
+  : never
+  : never
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
+  | keyof DefaultSchema["Tables"]
+  | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+  ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+  : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U
-    }
-    ? U
-    : never
+    Update: infer U
+  }
+  ? U
+  : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Update: infer U
-      }
-      ? U
-      : never
-    : never
+  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+    Update: infer U
+  }
+  ? U
+  : never
+  : never
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema["Enums"]
-    | { schema: keyof DatabaseWithoutInternals },
+  | keyof DefaultSchema["Enums"]
+  | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+  ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+  : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-    : never
+  ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+  : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof DatabaseWithoutInternals },
+  | keyof DefaultSchema["CompositeTypes"]
+  | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+  ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+  : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-    : never
+  ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  : never
 
 export const Constants = {
   public: {
@@ -1908,22 +1908,149 @@ export const Constants = {
 } as const
 
 export interface Achievement {
-    id: string;
-    logo: string;
-    title: string;
-    achievedItems: { name: string; points: number }[];
-    points: number;
-    isAchieved: boolean;
-    type: 'partner';
-    project: Project;
-    userId: string;
+  id: string;
+  logo: string;
+  title: string;
+  achievedItems: { name: string; points: number }[];
+  points: number;
+  isAchieved: boolean;
+  type: 'partner';
+  project: Project;
+  userId: string;
 }
 
 export type Task = Tables<'tasks'> & {
-    status?: 'draft' | 'pending' | 'approved' | 'rejected';
-    title?: string;
-    points?: number;
-    platform?: 'x' | 'discord' | 'guild' | 'youtube' | 'website' | 'testnet';
-    link?: string;
+  status?: 'draft' | 'pending' | 'approved' | 'rejected';
+  title?: string;
+  points?: number;
+  platform?: 'x' | 'discord' | 'guild' | 'youtube' | 'website' | 'testnet';
+  link?: string;
 };
 
+// --- COLLABORATION SYSTEM TYPES ---
+
+export interface Collab {
+  id: string;
+  title: string;
+  slug: string; // URL-friendly name for routing
+  description: string;
+  participating_projects: string[]; // Project IDs
+  status: 'running' | 'past';
+  start_date: string;
+  end_date?: string;
+  banner_image?: string;
+  photo?: string; // Profile photo for the collaboration
+  total_participants: number;
+  total_hint_points_distributed: number;
+  rewards?: {
+    total_pool: string;
+    types: string[];
+    featured_reward: string;
+  };
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CollabProject {
+  id: string;
+  name: string;
+  logo_url: string;
+  twitter_url: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CollabTask {
+  id: string;
+  collaboration_id: string;
+  title: string;
+  description: string;
+  task_type: 'twitter_follow' | 'twitter_like' | 'twitter_retweet' | 'discord_join' | 'custom';
+  hint_points_reward: number;
+  verification_data?: {
+    twitter_username?: string;
+    discord_server_id?: string;
+    custom_url?: string;
+  };
+  is_active: boolean;
+  created_at: string;
+}
+
+// Simplified Mystery Card system - only one type of card per collaboration
+export interface MysteryCard {
+  id: string;
+  collaboration_id: string;
+  title: string;
+  description: string;
+  hint_points_cost: number;
+  max_cards_per_user: number; // Admin-set limit per user (e.g., 7 cards max)
+  purchased_count: number; // Total cards purchased by all users
+  is_active: boolean;
+  can_purchase: boolean; // Can purchase during collaboration
+  can_open: boolean; // Can open after collaboration ends
+  raffle_pool: RaffleReward[]; // Available rewards in this card
+}
+
+// Keep old interface for backward compatibility
+export interface RewardCard extends MysteryCard {
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  reward_type: 'whitelist_fcfs' | 'whitelist_guaranteed' | 'hint_points' | 'money' | 'code';
+  reward_data: {
+    amount?: number;
+    code?: string;
+    whitelist_spots?: number;
+  };
+  claimed_count: number;
+  total_available: number; // Legacy field for backward compatibility
+}
+
+// New interfaces for raffle system
+export interface RaffleReward {
+  id: string;
+  type: 'whitelist' | 'tokens' | 'nft' | 'code' | 'points';
+  title: string;
+  description: string;
+  value: {
+    amount?: number;
+    code?: string;
+    token_symbol?: string;
+    nft_name?: string;
+  };
+  quantity: number; // How many of this reward are available
+  rarity_weight: number; // Higher weight = more likely to win (1-100)
+}
+
+export interface UserCardPurchase {
+  id: string;
+  user_id: string;
+  card_id: string;
+  collaboration_id: string;
+  purchased_at: string;
+  is_opened: boolean;
+  opened_at?: string;
+  reward_won?: RaffleReward;
+}
+
+export interface UserCollabProgress {
+  id: string;
+  user_id: string;
+  collaboration_id: string;
+  completed_tasks: string[]; // Task IDs
+  earned_hint_points: number;
+  opened_reward_cards: string[]; // RewardCard IDs
+  last_activity: string;
+  participating_projects: string[]; // Project IDs
+  status: 'running' | 'past';
+  start_date: string;
+  end_date?: string;
+  banner_image?: string;
+  total_participants: number;
+  total_hint_points_distributed: number;
+  created_at: string;
+  updated_at: string;
+}
+
+// Type aliases for backward compatibility
+export type Collaboration = Collab;
+export type CollaborationTask = CollabTask;
+export type UserCollaborationProgress = UserCollabProgress;

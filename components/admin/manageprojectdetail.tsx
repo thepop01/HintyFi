@@ -9,6 +9,7 @@ import { useSuperAdminContext } from '../../context/SuperAdminContext';
 import ConfirmationModal from '../common/ConfirmationModal';
 import { useToast } from '../../context/ToastContext';
 import Modal from '../common/Modal';
+import ManageButton from '../common/ManageButton';
 
 const ManageProjectDetail: React.FC = () => {
     const { allProjects, users, refreshData } = useSuperAdminContext();
@@ -17,11 +18,6 @@ const ManageProjectDetail: React.FC = () => {
     const { addToast } = useToast();
     const [viewMode, setViewMode] = useState<'all' | 'draft'>('all');
 
-    // State for deletion flow
-    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-    const [isSecondConfirmOpen, setIsSecondConfirmOpen] = useState(false);
-    const [itemToDelete, setItemToDelete] = useState<Project | null>(null);
-    const [confirmInput, setConfirmInput] = useState('');
 
 
     const projectsWithPendingCounts = useMemo(() => {
@@ -44,33 +40,6 @@ const ManageProjectDetail: React.FC = () => {
         return projectsToFilter.filter(p => fuzzySearch(searchTerm, p.name));
     }, [projectsWithPendingCounts, searchTerm, viewMode]);
 
-    const handleDeleteClick = (project: Project) => {
-        setItemToDelete(project);
-        setIsConfirmOpen(true);
-    };
-
-    const handleFirstConfirm = () => {
-        setIsConfirmOpen(false);
-        setIsSecondConfirmOpen(true);
-    };
-    
-    const confirmDelete = async () => {
-        if (!itemToDelete || confirmInput !== itemToDelete.name) return;
-        
-        const success = await addOrUpdateProject({ ...itemToDelete, is_published: false });
-
-        if (success) {
-            addToast(`Project "${itemToDelete.name}" unpublished and hidden.`, 'success');
-            refreshData();
-        } else {
-            addToast('Failed to hide project.', 'error');
-        }
-
-        // Reset all states
-        setIsSecondConfirmOpen(false);
-        setItemToDelete(null);
-        setConfirmInput('');
-    };
 
     const handlePublish = async (project: Project) => {
         const success = await addOrUpdateProject({ ...project, approval_status: 'approved', is_published: true });
@@ -109,6 +78,7 @@ const ManageProjectDetail: React.FC = () => {
                         <Plus size={18} />
                         Add New Project
                     </button>
+                    <ManageButton />
                 </div>
             </div>
             {filteredProjects.map(project => (
@@ -151,62 +121,16 @@ const ManageProjectDetail: React.FC = () => {
                                 </button>
                             )}
                             <button
-                                onClick={() => navigate(`/super-admin/project-management/${project.id}`)}
+                                onClick={() => navigate(`/super-admin/project-detail/${project.id}`)}
                                 className="neu-button active p-2"
                                 title="Manage Project"
                             >
                                 <ChevronRight size={24} className="text-on-surface-variant flex-shrink-0 group-hover:text-primary transition-colors" />
                             </button>
-                             <button
-                                onClick={() => handleDeleteClick(project)}
-                                className="neu-button p-2 hover:!text-red-500 hover:!border-red-500/50"
-                                title="Delete Project"
-                            >
-                                <Trash2 size={14} />
-                            </button>
                         </div>
                     </div>
                 </motion.div>
             ))}
-             <ConfirmationModal
-                isOpen={isConfirmOpen}
-                onClose={() => setIsConfirmOpen(false)}
-                onConfirm={handleFirstConfirm}
-                title={`Delete "${itemToDelete?.name}"?`}
-                confirmText="Delete"
-            >
-                Are you sure? This will permanently delete the project and all its associated data. This action cannot be undone.
-            </ConfirmationModal>
-            
-            <Modal
-                isOpen={isSecondConfirmOpen}
-                onClose={() => { setIsSecondConfirmOpen(false); setConfirmInput(''); }}
-                title={`Permanently Delete "${itemToDelete?.name}"?`}
-            >
-                <div className="space-y-4">
-                    <p className="text-on-surface-variant">
-                        This action is irreversible and will permanently remove all data associated with this project. To confirm, please type the project name below:
-                    </p>
-                    <p className="font-bold text-lg text-center text-primary">{itemToDelete?.name}</p>
-                    <input 
-                        type="text" 
-                        value={confirmInput} 
-                        onChange={e => setConfirmInput(e.target.value)} 
-                        className="neu-inset-input w-full mt-4" 
-                        aria-label="Confirm project name"
-                    />
-                    <div className="flex justify-end gap-3 mt-4">
-                         <button onClick={() => { setIsSecondConfirmOpen(false); setConfirmInput(''); }} className="neu-button px-4 py-2 font-bold">Cancel</button>
-                        <button 
-                            onClick={confirmDelete}
-                            disabled={confirmInput !== itemToDelete?.name}
-                            className="neu-button active !text-red-500 !border-red-500/50 px-4 py-2 font-bold disabled:opacity-50 disabled:cursor-not-allowed disabled:!text-on-surface-variant disabled:!border-border/10"
-                        >
-                            Permanently Delete
-                        </button>
-                    </div>
-                </div>
-            </Modal>
         </div>
     );
 };

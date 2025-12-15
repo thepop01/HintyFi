@@ -72,31 +72,31 @@ const SentimentVoteControl: React.FC<SentimentVoteControlProps> = ({ project, on
         <div className="relative group" ref={wrapperRef}>
             <button
                 onClick={handleToggle}
-                className="flex items-center gap-4 text-on-surface-variant p-2 rounded-md hover:bg-surface/50 transition-colors w-full justify-center"
+                className="flex items-center gap-1.5 sm:gap-3 text-on-surface-variant p-0.5 sm:p-1.5 rounded-md hover:bg-surface/50 transition-colors w-full justify-center"
                 aria-haspopup="true"
                 aria-expanded={isOpen}
             >
                 <motion.div
-                    className={`flex items-center gap-1.5 transition-colors ${hasUpvoted ? 'text-green-400' : 'hover:text-green-400'}`}
+                    className={`flex items-center gap-0.5 sm:gap-1 transition-colors ${hasUpvoted ? 'text-green-400' : 'hover:text-green-400'}`}
                     variants={iconVariants}
                     animate={animateState === 'up' ? "voted" : "idle"}
                     onAnimationComplete={() => setAnimateState('idle')}
                 >
-                    <Heart size={20} className={hasUpvoted ? 'fill-current' : ''} />
-                    <span className="font-semibold text-base">{project.votes.up}</span>
+                    <Heart size={13} className={`sm:w-4 sm:h-4 ${hasUpvoted ? 'fill-current' : ''}`} />
+                    <span className="font-semibold text-xs sm:text-xs md:text-sm">{project.votes.up}</span>
                 </motion.div>
                 <motion.div
-                    className={`flex items-center gap-1.5 transition-colors ${hasDownvoted ? 'text-red-400' : 'hover:text-red-400'}`}
+                    className={`flex items-center gap-0.5 sm:gap-1 transition-colors ${hasDownvoted ? 'text-red-400' : 'hover:text-red-400'}`}
                     variants={iconVariants}
                     animate={animateState === 'down' ? "voted" : "idle"}
                     onAnimationComplete={() => setAnimateState('idle')}
                 >
-                    <HeartCrack size={20} className={hasDownvoted ? 'fill-current' : ''} />
-                    <span className="font-semibold text-base">{project.votes.down}</span>
+                    <HeartCrack size={13} className={`sm:w-4 sm:h-4 ${hasDownvoted ? 'fill-current' : ''}`} />
+                    <span className="font-semibold text-xs sm:text-xs md:text-sm">{project.votes.down}</span>
                 </motion.div>
             </button>
 
-            <div className="absolute bottom-full mb-2 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none mr-2">
+            <div className="absolute bottom-full mb-2 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none mr-2 hidden sm:block">
                 <div className="bg-background-alt text-on-surface text-xs rounded-md shadow-lg p-2 max-w-xs text-wrap">
                     Have "full access" in Monad or 50 Hint Points to vote.
                 </div>
@@ -114,17 +114,17 @@ const SentimentVoteControl: React.FC<SentimentVoteControlProps> = ({ project, on
                     >
                         <button
                             onClick={() => handleVoteClick('up')}
-                            className={`p-2 rounded-full transition-colors ${hasUpvoted ? 'bg-green-500/20 text-green-400' : 'hover:bg-green-500/10 text-on-surface-variant hover:text-green-400'}`}
+                            className={`p-1 sm:p-1.5 rounded-full transition-colors ${hasUpvoted ? 'bg-green-500/20 text-green-400' : 'hover:bg-green-500/10 text-on-surface-variant hover:text-green-400'}`}
                             aria-label="Vote up"
                         >
-                            <Heart size={20} />
+                            <Heart size={13} className="sm:w-4 sm:h-4" />
                         </button>
                         <button
                             onClick={() => handleVoteClick('down')}
-                            className={`p-2 rounded-full transition-colors ${hasDownvoted ? 'bg-red-500/20 text-red-400' : 'hover:bg-red-500/10 text-on-surface-variant hover:text-red-400'}`}
+                            className={`p-1 sm:p-1.5 rounded-full transition-colors ${hasDownvoted ? 'bg-red-500/20 text-red-400' : 'hover:bg-red-500/10 text-on-surface-variant hover:text-red-400'}`}
                             aria-label="Vote down"
                         >
-                            <HeartCrack size={20} />
+                            <HeartCrack size={13} className="sm:w-4 sm:h-4" />
                         </button>
                     </motion.div>
                 )}

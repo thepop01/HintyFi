@@ -81,12 +81,13 @@ const ProjectTable: React.FC<{
 }> = ({ projects, totalProjects, onRowClick, expandedProjectId, requestSort, sortConfig, currentPage, pageSize, onVote, isLoading }) => {
     const { prefetch } = usePrefetch(getProjectById);
 
-    const SortableHeader: React.FC<{ sortKey: SortableKeys; children: React.ReactNode; className?: string }> = ({ sortKey, children, className }) => {
+    const SortableHeader: React.FC<{ sortKey: SortableKeys; children: React.ReactNode; className?: string; style?: React.CSSProperties }> = ({ sortKey, children, className, style }) => {
         const isSorted = sortConfig?.key === sortKey;
         return (
             <th
-                className={`px-6 py-3 text-left text-lg font-display font-bold text-on-surface-variant cursor-pointer hover:text-on-surface transition-colors ${className}`}
+                className={`px-1 py-2 text-left text-sm font-display font-bold text-on-surface-variant cursor-pointer hover:text-on-surface transition-colors ${className}`}
                 onClick={() => requestSort(sortKey)}
+                style={style}
             >
                 <div className="flex items-center gap-1">
                     {children}
@@ -97,23 +98,23 @@ const ProjectTable: React.FC<{
     };
 
     return (
-        <div className="bg-[#faf0ff] rounded-xl shadow-lg overflow-x-auto text-on-surface border border-border/5">
-            <table className="w-full min-w-[700px]">
+        <div className="bg-[#faf0ff] rounded-xl shadow-lg overflow-x-auto text-on-surface border border-border/5 mobile-table-container">
+            <table className="w-full min-w-[600px]">
                 <thead className="bg-surface/50">
                     <tr>
-                        <th className="px-4 py-3 text-left text-lg font-display font-bold text-on-surface-variant w-12 text-center">#</th>
-                        <SortableHeader sortKey="name">Name</SortableHeader>
-                        <SortableHeader sortKey="stage">Stage</SortableHeader>
-                        <SortableHeader sortKey="raise">Raise</SortableHeader>
-                        <SortableHeader sortKey="dropStatus" className="min-w-40">WL/Drop Info</SortableHeader>
-                        <SortableHeader sortKey="sentiment">Sentiment</SortableHeader>
-                        <th className="py-3 w-12"></th>
+                        <th className="px-1 py-2 text-left text-sm font-display font-bold text-on-surface-variant text-center" style={{width: "40px"}}>#</th>
+                        <SortableHeader sortKey="name" className="" style={{width: "35%"}}>Name</SortableHeader>
+                        <SortableHeader sortKey="stage" className="" style={{width: "12%"}}>Stage</SortableHeader>
+                        <SortableHeader sortKey="raise" className="" style={{width: "12%"}}>Raise</SortableHeader>
+                        <SortableHeader sortKey="dropStatus" className="" style={{width: "18%"}}>WL/Drop Info</SortableHeader>
+                        <SortableHeader sortKey="sentiment" className="" style={{width: "18%"}}>Sentiment</SortableHeader>
+                        <th className="py-2 text-center" style={{width: "40px"}}></th>
                     </tr>
                 </thead>
                 <tbody>
                     {isLoading ? (
                         <tr>
-                            <td colSpan={7} className="text-center py-12">
+                            <td colSpan={7} className="text-center py-8">
                                 <div className="flex justify-center items-center gap-2 text-on-surface-variant">
                                     <Loader size={16} className="animate-spin" />
                                     <span>Filtering {totalProjects} projects...</span>
@@ -134,48 +135,51 @@ const ProjectTable: React.FC<{
                                         onMouseEnter={() => prefetch(project.id)}
                                         whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
                                     >
-                                        <td className="px-4 py-4 whitespace-nowrap text-sm text-on-surface-variant text-center">{currentPage * pageSize + index + 1}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center">
-                                                <img className="h-10 w-10 rounded-full bg-surface-container object-cover" src={project.logo} alt={`${project.name} logo`} loading="lazy" />
-                                                <div className="ml-4">
-                                                    <div className="flex items-center gap-2">
+                                        <td className="px-1 py-2 whitespace-nowrap text-xs text-on-surface-variant text-center">{currentPage * pageSize + index + 1}</td>
+                                        <td className="px-1 py-2">
+                                            <div className="flex items-center overflow-hidden">
+                                                <img className="h-6 w-6 sm:h-8 sm:w-8 project-logo-mobile rounded-full bg-surface-container object-cover flex-shrink-0" src={project.logo} alt={`${project.name} logo`} loading="lazy" />
+                                                <div className="ml-1.5 sm:ml-2 min-w-0 flex-1">
+                                                    <div className="flex items-center gap-1 sm:gap-2">
                                                         <ReactRouterDOM.Link
                                                             to={`/${project.name.toLowerCase()}`}
                                                             onClick={(e) => e.stopPropagation()}
-                                                            className="text-lg font-heading font-medium text-on-surface hover:text-primary transition-all duration-200 inline-block transform hover:scale-105"
+                                                            className="text-xs sm:text-sm font-heading font-medium text-on-surface hover:text-primary transition-all duration-200 inline-block transform hover:scale-105 truncate"
                                                         >
                                                             {project.name}
                                                         </ReactRouterDOM.Link>
-                                                        {project.is_crowned && <span title="Crowned Project"><Crown size={16} className="text-yellow-500 fill-yellow-500" /></span>}
-                                                        {project.is_new && <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-blue-500/20 text-blue-400">New</span>}
-                                                        {project.is_hot && <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-red-500/20 text-red-400">Hot</span>}
+                                                        {project.is_crowned && <span title="Crowned Project"><Crown size={10} className="text-yellow-500 fill-yellow-500 sm:w-3 sm:h-3 flex-shrink-0" /></span>}
+                                                        {project.is_new && <span className="px-1 py-0.5 text-xs font-bold rounded-full bg-blue-500/20 text-blue-400 hidden sm:inline flex-shrink-0">New</span>}
+                                                        {project.is_hot && <span className="px-1 py-0.5 text-xs font-bold rounded-full bg-red-500/20 text-red-400 hidden sm:inline flex-shrink-0">Hot</span>}
                                                     </div>
-                                                    <div className="flex items-center gap-1.5 mt-1">
-                                                        {project.category.map(cat => {
+                                                    <div className="flex items-center gap-1 mt-1 overflow-hidden">
+                                                        {project.category.slice(0, 2).map(cat => {
                                                             const categoryInfo = categoryConfig[cat];
                                                             if (!categoryInfo) {
                                                                 console.warn(`Category "${cat}" not found in categoryConfig for project "${project.name}"`);
                                                                 return null;
                                                             }
                                                             return (
-                                                                <div key={cat} className={`flex items-center gap-1 text-sm px-2 py-0.5 rounded-full font-semibold ${categoryInfo.color.replace('text-', 'bg-')} text-on-primary`}>
-                                                                    {React.cloneElement(categoryInfo.icon, { size: 14 })}
-                                                                    <span className="font-heading font-bold">{categoryInfo.label}</span>
+                                                                <div key={cat} className={`flex items-center gap-0.5 text-xs px-1 py-0.5 rounded-full font-semibold category-badge-mobile ${categoryInfo.color.replace('text-', 'bg-')} text-on-primary flex-shrink-0`}>
+                                                                    {React.cloneElement(categoryInfo.icon, { size: 8 })}
+                                                                    <span className="font-heading font-bold hidden sm:inline text-xs">{categoryInfo.label}</span>
                                                                 </div>
                                                             );
                                                         })}
+                                                        {project.category.length > 2 && (
+                                                            <span className="text-xs text-on-surface-variant flex-shrink-0">+{project.category.length - 2}</span>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-base text-on-surface font-semibold">{project.stage || 'N/A'}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-base text-on-surface font-semibold">{project.raise_amount || 'N/A'}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{renderDropStatus(project.drop_status as DropStatus)}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="px-1 py-2 whitespace-nowrap text-sm text-on-surface font-semibold">{project.stage || 'N/A'}</td>
+                                        <td className="px-1 py-2 whitespace-nowrap text-sm text-on-surface font-semibold">{project.raise_amount || 'N/A'}</td>
+                                        <td className="px-1 py-2 whitespace-nowrap">{renderDropStatus(project.drop_status as DropStatus)}</td>
+                                        <td className="px-1 py-2 whitespace-nowrap">
                                             <SentimentVoteControl project={project} onVote={onVote} />
                                         </td>
-                                        <td className="py-4 whitespace-nowrap text-center">
+                                        <td className="py-2 whitespace-nowrap text-center">
                                             <motion.div
                                                 className="inline-block"
                                                 animate={{ rotate: isExpanded ? 90 : 0 }}
@@ -482,7 +486,14 @@ const EcosystemPage: React.FC = () => {
                 }
             });
         });
-        return allCategories.filter(cat => categoriesWithProjects.has(cat as ProjectCategory));
+        const filteredCategories = allCategories.filter(cat => categoriesWithProjects.has(cat as ProjectCategory));
+        
+        // Sort categories alphabetically by label
+        return filteredCategories.sort((a, b) => {
+            const labelA = categoryConfig[a]?.label || a;
+            const labelB = categoryConfig[b]?.label || b;
+            return labelA.localeCompare(labelB);
+        });
     }, [projects, allCategories]);
 
     const requestSort = (key: SortableKeys) => {
@@ -496,11 +507,11 @@ const EcosystemPage: React.FC = () => {
     return (
         <div>
             <div className="mb-8">
-                <h1 className="text-5xl lg:text-7xl font-display font-extrabold text-[rgb(var(--color-background))] tracking-widest uppercase [text-shadow:2px_2px_3px_rgba(0,0,0,0.5),_-2px_-2px_3px_rgba(255,255,255,0.08)]">
+                <h1 className="text-5xl lg:text-7xl ecosystem-main-title font-display font-extrabold text-[rgb(var(--color-background))] tracking-widest uppercase [text-shadow:2px_2px_3px_rgba(0,0,0,0.5),_-2px_-2px_3px_rgba(255,255,255,0.08)]">
                     The Vault
                 </h1>
                 <h2
-                    className="text-[36px] text-on-background-variant flex flex-wrap items-center justify-start mt-2 min-h-12"
+                    className="text-[36px] ecosystem-subtitle text-on-background-variant flex flex-wrap items-center justify-start mt-2 min-h-12"
                     style={{ fontFamily: "'Bangers', cursive" }}
                     aria-live="polite"
                 >
@@ -515,13 +526,13 @@ const EcosystemPage: React.FC = () => {
 
             <EcosystemHero projects={projects} activeCategory={activeCategory} />
 
-            <div className="max-w-[84rem] mx-auto">
-                <div className="flex flex-col sm:flex-row justify-between items-center mb-6 mt-12 md:mt-16 lg:mt-20">
-                    <div>
-                        <h2 className="text-3xl font-display font-bold tracking-tight text-on-background">All Projects</h2>
-                        <p className="text-lg font-subheading text-on-background-variant mt-1">Filter and sort to find projects that interest you.</p>
+            <div className="max-w-[84rem] mx-auto px-4 sm:px-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 mt-12 md:mt-16 lg:mt-20">
+                    <div className="mb-4 sm:mb-0">
+                        <h2 className="text-2xl sm:text-3xl font-display font-bold tracking-tight text-on-background">All Projects</h2>
+                        <p className="text-base sm:text-lg font-subheading text-on-background-variant mt-1">Filter and sort to find projects that interest you.</p>
                     </div>
-                    <div className="flex items-center gap-2 mt-4 sm:mt-0">
+                    <div className="flex items-center gap-2 stage-filter-mobile">
                         <span className="text-sm font-semibold text-on-surface-variant">Stage:</span>
                         <select
                             value={stageFilter}
@@ -541,7 +552,7 @@ const EcosystemPage: React.FC = () => {
                 <div className="py-3 mb-6 md:flow-root">
                     <div ref={searchWrapperRef} className="w-full mb-4 md:mb-0 md:w-[35%] md:float-left md:pr-4">
                         <div className="relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" size={24} />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" size={20} />
                             <input
                                 type="text"
                                 placeholder="Search collections or projects"
@@ -549,7 +560,7 @@ const EcosystemPage: React.FC = () => {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 onFocus={() => setIsSearchFocused(true)}
                                 onKeyDown={(e) => { if (e.key === 'Enter') { handleSearchSubmit(); } }}
-                                className="neu-inset-control w-full pl-12 pr-4 py-3 text-lg text-on-surface placeholder:text-on-surface-variant/70"
+                                className="neu-inset-control search-input-mobile w-full pl-12 pr-4 py-3 text-lg text-on-surface placeholder:text-on-surface-variant/70"
                             />
                             <AnimatePresence>
                                 {isSearchFocused && (
@@ -557,7 +568,7 @@ const EcosystemPage: React.FC = () => {
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: -10 }}
-                                        className="absolute top-full mt-2 w-full bg-surface/95 backdrop-blur-md rounded-lg shadow-lg z-50 border border-border/10 overflow-hidden"
+                                        className="absolute top-full mt-2 w-full bg-surface/95 backdrop-blur-md rounded-lg shadow-lg z-50 border border-border/10 overflow-hidden max-h-64 overflow-y-auto"
                                     >
                                         {searchTerm.length === 0 && history.length > 0 && (
                                             <div>
@@ -594,7 +605,7 @@ const EcosystemPage: React.FC = () => {
                             </AnimatePresence>
                         </div>
                     </div>
-                    <div className="flex flex-wrap items-center justify-start gap-2">
+                    <div className="flex flex-wrap items-center justify-start gap-2 filter-buttons-container">
                         <div className="skeu-button-wrapper">
                             <input
                                 type="radio"
@@ -687,7 +698,7 @@ const EcosystemPage: React.FC = () => {
                 />
 
                 {paginatedProjects.length > 0 && (
-                    <div className="mt-6">
+                    <div className="mt-6 pagination-mobile">
                         <PaginationControls
                             currentPage={currentPage}
                             totalPages={totalPages}

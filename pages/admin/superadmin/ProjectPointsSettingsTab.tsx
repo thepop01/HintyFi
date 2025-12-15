@@ -159,7 +159,7 @@ const ProjectPointsSettingsTab: React.FC = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="neu-card p-6">
+        <form onSubmit={handleSubmit} className="neu-card" style={{ border: '0.5rem solid #e0e0e0', padding: '1rem' }}>
             <div className="flex items-center justify-between gap-4 mb-6">
                 <h2 className="text-2xl font-display font-bold text-on-surface">Manage Points & Status</h2>
                 <button type="button" onClick={toggleCrowned} className={`neu-button text-sm px-4 py-2 flex items-center gap-2 ${formData.is_crowned ? 'active' : ''}`}>
@@ -168,65 +168,73 @@ const ProjectPointsSettingsTab: React.FC = () => {
                 </button>
             </div>
             
-            <div className="max-h-[70vh] overflow-y-auto pr-2">
-                <FormSectionHeader><Shield /> Discord Role Points</FormSectionHeader>
-                <div className="space-y-4">
-                    {(formData.discordRoles || []).map((role, index) => (
-                        <div key={index} className="neu-outset-card p-4 relative">
-                             <button type="button" onClick={() => removeRole(index)} className="absolute top-2 right-2 p-1 text-red-500 hover:text-red-400"><Trash2 size={16} /></button>
-                             <FormRow><FormLabel>Role Name</FormLabel><FormField><FormInput value={role.name} onChange={e => handleRoleChange(index, 'name', e.target.value)} placeholder="e.g., OG" /></FormField></FormRow>
-                             <FormRow><FormLabel>Server ID</FormLabel><FormField><FormInput value={role.serverId} onChange={e => handleRoleChange(index, 'serverId', e.target.value)} /></FormField></FormRow>
-                             <FormRow><FormLabel>Role ID</FormLabel><FormField><FormInput value={role.roleId} onChange={e => handleRoleChange(index, 'roleId', e.target.value)} /></FormField></FormRow>
-                             <FormRow><FormLabel>Points</FormLabel><FormField><FormInput type="number" value={role.points || 0} onChange={e => handleRoleChange(index, 'points', parseInt(e.target.value, 10) || 0)} placeholder="Points" /></FormField></FormRow>
-                        </div>
-                    ))}
-                </div>
-                <button type="button" onClick={addRole} className="neu-button px-3 py-1 text-sm flex items-center gap-1 mt-3"><Plus size={14} /> Add Role</button>
-
-
-                <FormSectionHeader><Gem /> NFT Holding Points</FormSectionHeader>
-                <div className="space-y-4">
-                    {(formData.nftCollections || []).map((collection, index) => (
-                         <div key={index} className="neu-outset-card p-4 relative">
-                            <button type="button" onClick={() => removeCollection(index)} className="absolute top-2 right-2 p-1 text-red-500 hover:text-red-400"><Trash2 size={16} /></button>
-                            <FormRow><FormLabel>Collection Name</FormLabel><FormField><FormInput value={collection.name} onChange={e => handleCollectionChange(index, 'name', e.target.value)}/></FormField></FormRow>
-                            <FormRow><FormLabel>Image</FormLabel><FormField><ImageUploadInput value={collection.image} onChange={val => handleCollectionChange(index, 'image', val)} /></FormField></FormRow>
-                            <FormRow><FormLabel>Contract Address</FormLabel><FormField><FormInput value={collection.contractAddress || ''} onChange={e => handleCollectionChange(index, 'contractAddress', e.target.value)}/></FormField></FormRow>
-                            <FormRow><FormLabel>Marketplace Link</FormLabel><FormField><FormInput value={collection.link || ''} onChange={e => handleCollectionChange(index, 'link', e.target.value)}/></FormField></FormRow>
-                            <FormRow><FormLabel>One-time Points</FormLabel><FormField><FormInput type="number" value={collection.oneTimePoints || 0} onChange={e => handleCollectionChange(index, 'oneTimePoints', parseInt(e.target.value) || 0)} placeholder="Points for holding" /></FormField></FormRow>
-                            <FormRow><FormLabel>Points per Day</FormLabel><FormField><FormInput type="number" value={collection.pointsPerDay || 0} onChange={e => handleCollectionChange(index, 'pointsPerDay', parseInt(e.target.value) || 0)} placeholder="Daily points for holding" /></FormField></FormRow>
-                         </div>
-                    ))}
-                </div>
-                 <button type="button" onClick={addCollection} className="neu-button px-3 py-1 text-sm flex items-center gap-1 mt-3"><Plus size={14} /> Add NFT Collection</button>
-
-
-                <FormSectionHeader><Banknote />Token Settings</FormSectionHeader>
-                <div className="neu-outset-card p-4">
-                    <FormRow><FormLabel>Token Name</FormLabel><FormField><FormInput value={formData.tokenHoldingSettings?.name || ''} onChange={e => handleTokenSettingsChange('name', e.target.value)} /></FormField></FormRow>
-                    <FormRow><FormLabel>Contract Address</FormLabel><FormField><FormInput value={formData.tokenHoldingSettings?.contractAddress || ''} onChange={e => handleTokenSettingsChange('contractAddress', e.target.value)} /></FormField></FormRow>
-                    <FormRow><FormLabel>Info Link</FormLabel><FormField><FormInput value={formData.tokenHoldingSettings?.link || ''} onChange={e => handleTokenSettingsChange('link', e.target.value)} placeholder="e.g., BirdEye URL" /></FormField></FormRow>
+            <div className="max-h-[70vh] overflow-visible pr-2">
+                <div className="relative">
+                    <FormSectionHeader><Shield /> Discord Role Points</FormSectionHeader>
+                    <div className="space-y-4">
+                        {(formData.discordRoles || []).map((role, index) => (
+                            <div key={index} className="neu-outset-card p-4 relative">
+                                 <button type="button" onClick={() => removeRole(index)} className="absolute top-2 right-2 p-1 text-red-500 hover:text-red-400"><Trash2 size={16} /></button>
+                                 <FormRow><FormLabel>Role Name</FormLabel><FormField><FormInput value={role.name} onChange={e => handleRoleChange(index, 'name', e.target.value)} placeholder="e.g., OG" /></FormField></FormRow>
+                                 <FormRow><FormLabel>Server ID</FormLabel><FormField><FormInput value={role.serverId} onChange={e => handleRoleChange(index, 'serverId', e.target.value)} /></FormField></FormRow>
+                                 <FormRow><FormLabel>Role ID</FormLabel><FormField><FormInput value={role.roleId} onChange={e => handleRoleChange(index, 'roleId', e.target.value)} /></FormField></FormRow>
+                                 <FormRow><FormLabel>Points</FormLabel><FormField><FormInput type="number" value={role.points || 0} onChange={e => handleRoleChange(index, 'points', parseInt(e.target.value, 10) || 0)} placeholder="Points" /></FormField></FormRow>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="absolute right-0" style={{ marginTop: '1rem', zIndex: 10 }}><button type="button" onClick={addRole} className="neu-button px-3 py-1 text-sm flex items-center gap-1"><Plus size={14} /> Add Role</button></div>
                 </div>
 
-                <FormSectionHeader><Banknote />Token Holding Tiers</FormSectionHeader>
-                <div className="space-y-3">
-                    {formData.tokenHoldingTiers?.map((tier, index) => (
-                        <div key={index} className="p-3 rounded-lg bg-surface/50 flex items-center gap-4">
-                            <FormInput type="number" value={tier.minAmount} onChange={e => handleTierChange(index, 'minAmount', parseInt(e.target.value, 10) || 0)} placeholder="Min Amount" />
-                            <span className="font-bold">-</span>
-                            <FormInput type="number" value={tier.maxAmount ?? ''} onChange={e => handleTierChange(index, 'maxAmount', e.target.value ? parseInt(e.target.value, 10) : null)} placeholder="Max (optional)" />
-                            <span className="font-bold">=</span>
-                            <FormInput type="number" value={tier.pointsPerDay} onChange={e => handleTierChange(index, 'pointsPerDay', parseInt(e.target.value, 10) || 0)} placeholder="Points/Day" />
-                            <button type="button" onClick={() => removeTier(index)} className="p-1 text-red-500 hover:text-red-400"><Trash2 size={16} /></button>
-                        </div>
-                    ))}
+                <div className="relative mt-12">
+                    <FormSectionHeader><Gem /> NFT Holding Points</FormSectionHeader>
+                    <div className="space-y-4">
+                        {(formData.nftCollections || []).map((collection, index) => (
+                             <div key={index} className="neu-outset-card p-4 relative">
+                                <button type="button" onClick={() => removeCollection(index)} className="absolute top-2 right-2 p-1 text-red-500 hover:text-red-400"><Trash2 size={16} /></button>
+                                <FormRow><FormLabel>Collection Name</FormLabel><FormField><FormInput value={collection.name} onChange={e => handleCollectionChange(index, 'name', e.target.value)}/></FormField></FormRow>
+                                <FormRow><FormLabel>Image</FormLabel><FormField><ImageUploadInput value={collection.image} onChange={val => handleCollectionChange(index, 'image', val)} /></FormField></FormRow>
+                                <FormRow><FormLabel>Contract Address</FormLabel><FormField><FormInput value={collection.contractAddress || ''} onChange={e => handleCollectionChange(index, 'contractAddress', e.target.value)}/></FormField></FormRow>
+                                <FormRow><FormLabel>Marketplace Link</FormLabel><FormField><FormInput value={collection.link || ''} onChange={e => handleCollectionChange(index, 'link', e.target.value)}/></FormField></FormRow>
+                                <FormRow><FormLabel>One-time Points</FormLabel><FormField><FormInput type="number" value={collection.oneTimePoints || 0} onChange={e => handleCollectionChange(index, 'oneTimePoints', parseInt(e.target.value) || 0)} placeholder="Points for holding" /></FormField></FormRow>
+                                <FormRow><FormLabel>Points per Day</FormLabel><FormField><FormInput type="number" value={collection.pointsPerDay || 0} onChange={e => handleCollectionChange(index, 'pointsPerDay', parseInt(e.target.value) || 0)} placeholder="Daily points for holding" /></FormField></FormRow>
+                             </div>
+                        ))}
+                    </div>
+                    <div className="absolute right-0" style={{ marginTop: '1rem', zIndex: 10 }}><button type="button" onClick={addCollection} className="neu-button px-3 py-1 text-sm flex items-center gap-1"><Plus size={14} /> Add NFT Collection</button></div>
                 </div>
-                <button type="button" onClick={addTier} className="neu-button px-3 py-1 text-sm flex items-center gap-1 mt-3"><Plus size={14} /> Add Tier</button>
+
+
+                <div className="relative mt-12">
+                    <FormSectionHeader><Banknote />Token Settings</FormSectionHeader>
+                    <div className="neu-outset-card p-4">
+                        <FormRow><FormLabel>Token Name</FormLabel><FormField><FormInput value={formData.tokenHoldingSettings?.name || ''} onChange={e => handleTokenSettingsChange('name', e.target.value)} /></FormField></FormRow>
+                        <FormRow><FormLabel>Contract Address</FormLabel><FormField><FormInput value={formData.tokenHoldingSettings?.contractAddress || ''} onChange={e => handleTokenSettingsChange('contractAddress', e.target.value)} /></FormField></FormRow>
+                        <FormRow><FormLabel>Info Link</FormLabel><FormField><FormInput value={formData.tokenHoldingSettings?.link || ''} onChange={e => handleTokenSettingsChange('link', e.target.value)} placeholder="e.g., BirdEye URL" /></FormField></FormRow>
+                    </div>
+                </div>
+                
+                <div className="relative mt-12 mb-12">
+                    <FormSectionHeader><Banknote />Token Holding Tiers</FormSectionHeader>
+                    <div className="space-y-3">
+                        {formData.tokenHoldingTiers?.map((tier, index) => (
+                            <div key={index} className="p-3 rounded-lg bg-surface/50 flex items-center gap-4">
+                                <FormInput type="number" value={tier.minAmount} onChange={e => handleTierChange(index, 'minAmount', parseInt(e.target.value, 10) || 0)} placeholder="Min Amount" />
+                                <span className="font-bold">-</span>
+                                <FormInput type="number" value={tier.maxAmount ?? ''} onChange={e => handleTierChange(index, 'maxAmount', e.target.value ? parseInt(e.target.value, 10) : null)} placeholder="Max (optional)" />
+                                <span className="font-bold">=</span>
+                                <FormInput type="number" value={tier.pointsPerDay} onChange={e => handleTierChange(index, 'pointsPerDay', parseInt(e.target.value, 10) || 0)} placeholder="Points/Day" />
+                                <button type="button" onClick={() => removeTier(index)} className="p-1 text-red-500 hover:text-red-400"><Trash2 size={16} /></button>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="absolute right-0" style={{ marginTop: '1rem', zIndex: 10 }}><button type="button" onClick={addTier} className="neu-button px-3 py-1 text-sm flex items-center gap-1"><Plus size={14} /> Add Tier</button></div>
+                </div>
+                <div style={{ height: '4rem' }} />
             </div>
             
             <div className="mt-8 pt-4 border-t border-border/20 flex justify-end gap-3">
-                <motion.button type="button" onClick={() => navigate('/super-admin/project-detail')} className="neu-button px-6 py-2 font-bold">Cancel</motion.button>
-                <motion.button type="submit" className="neu-button active px-6 py-2 font-bold">Save Changes</motion.button>
+                <motion.button type="button" onClick={() => navigate('/super-admin/project-detail')} className="neu-button px-6 py-2 font-bold" style={{ marginLeft: '1rem' }}>Cancel</motion.button>
+                <motion.button type="submit" className="neu-button active px-6 py-2 font-bold" style={{ marginLeft: '1rem' }}>Save Changes</motion.button>
             </div>
         </form>
     );

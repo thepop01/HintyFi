@@ -30,7 +30,7 @@ const SuperAdminProjectLayout: React.FC = () => {
         const campaignsCount = 0;
         const tasksCount = 0;
         const infoCount = (project.has_pending_changes && (project.pending_changes as any)?.links && Object.keys((project.pending_changes as any).links).length > 0) ? 1 : 0;
-        
+
         setPendingCounts({ campaigns: campaignsCount, tasks: tasksCount, info: infoCount });
 
     }, [project]);
@@ -38,15 +38,13 @@ const SuperAdminProjectLayout: React.FC = () => {
     if (!project) {
         return <Loader message="Loading project data..." />;
     }
-    
+
     const totalPending = pendingCounts.campaigns + pendingCounts.tasks + pendingCounts.info;
 
     const navItems = [
         { to: 'points', label: 'Manage Points', icon: <Award size={16} />, pendingCount: 0 },
         { to: 'info', label: 'Manage Info', icon: <Info size={16} />, pendingCount: pendingCounts.info },
         { to: 'status', label: 'Status', icon: <Tag size={16} />, pendingCount: 0 },
-        { to: 'campaigns', label: 'Campaigns', icon: <Megaphone size={16} />, pendingCount: pendingCounts.campaigns },
-        { to: 'tasks', label: 'Tasks', icon: <ClipboardList size={16} />, pendingCount: pendingCounts.tasks },
     ];
 
     return (
@@ -59,7 +57,7 @@ const SuperAdminProjectLayout: React.FC = () => {
                     <img src={project.logo_url} alt={project.name} className="w-12 h-12 rounded-lg bg-surface object-contain p-1" />
                     <div>
                         <h1 className="text-2xl font-display font-bold text-on-surface">{project.name}</h1>
-                        <p className="text-sm text-on-surface-variant">Project Management</p>
+                        <p className="text-sm text-on-surface-variant">Project Details</p>
                     </div>
                 </div>
             </div>
@@ -70,23 +68,22 @@ const SuperAdminProjectLayout: React.FC = () => {
                     This project has {totalPending} item(s) pending your review. Check the tabs with notification badges.
                 </div>
             )}
-            
+
             <nav className="mb-6 w-full overflow-x-auto hide-scrollbar">
                 <div className="flex items-center gap-2 border-b border-border/10 pb-2">
                     {navItems.map(item => (
-                         <NavLink
+                        <NavLink
                             key={item.to}
                             to={item.to}
                             end
                             className={({ isActive }) =>
-                                `flex items-center gap-2 px-3 py-2 font-semibold text-sm rounded-md transition-colors whitespace-nowrap ${
-                                    isActive ? 'bg-primary/10 text-primary' : 'text-on-surface-variant hover:bg-surface/80'
+                                `flex items-center gap-2 px-3 py-2 font-semibold text-sm rounded-md transition-colors whitespace-nowrap ${isActive ? 'bg-primary/10 text-primary' : 'text-on-surface-variant hover:bg-surface/80'
                                 }`
                             }
                         >
                             {item.icon}
                             <span>{item.label}</span>
-                             {item.pendingCount > 0 && (
+                            {item.pendingCount > 0 && (
                                 <span className="ml-1 bg-amber-400 text-amber-900 text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
                                     {item.pendingCount}
                                 </span>
@@ -95,7 +92,7 @@ const SuperAdminProjectLayout: React.FC = () => {
                     ))}
                 </div>
             </nav>
-            
+
             <Outlet context={{ project }} />
         </div>
     );
